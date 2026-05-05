@@ -1,5 +1,9 @@
 {
   "ping": {
-    "response": "🏓 **Пинг** \nЗадержка API: `%d мс`"
+    "response": [
+      "🏓 **Понг** \n",
+      "Задержка **Rest** `%d мс` | **Gateway** `%d мс`\n",
+      "-# **Rest** - скорость обработки действия Discord API. **Gateway** - скорость реакции Discord API"
+    ]
   }
 }
