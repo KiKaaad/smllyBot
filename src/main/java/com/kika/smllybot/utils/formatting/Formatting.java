@@ -1,6 +1,6 @@
-package com.kika.smllybot.utils;
+package com.kika.smllybot.utils.formatting;
 
-public class formatting {
+public class Formatting {
     public static final String RESETFORMAT = "\\u001B[0m"; // Сброс форматирования
     public static final String BOLD = "\u001B[1m";         // Жирный
     public static final String ITALICS = "\\u001B[3m";     // Наклонный

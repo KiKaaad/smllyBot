@@ -1,4 +1,4 @@
-package com.kika.smllybot.utils;
+package com.kika.smllybot.utils.localization;
 
 public record I18nRequest(String lang, String category, String module, String name, String key) {
 

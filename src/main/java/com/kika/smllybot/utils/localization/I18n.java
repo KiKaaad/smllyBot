@@ -1,14 +1,15 @@
-package com.kika.smllybot.utils;
+package com.kika.smllybot.utils.localization;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.kika.smllybot.utils.colors.RED;
+import static com.kika.smllybot.utils.formatting.Colors.RED;
 
 public class I18n {
     private static final Map<String, JsonObject> cache = new HashMap<>();
@@ -42,8 +43,24 @@ public class I18n {
             }
         }
 
+        if (current == null) return key + " ? Ключ не найден";
+
+        if (current.isJsonPrimitive()) {
+            return current.getAsString();
+        }
+
+        if (current.isJsonArray()) {
+            StringBuilder sb = new StringBuilder();
+            current.getAsJsonArray().forEach(element -> {
+                if (element.isJsonPrimitive()) {
+                    sb.append(element.getAsString());
+                }
+            });
+            return sb.toString();
+        }
+
         // Если все верно - то все верно, иначе в терминале увидишь ключ который мы пытались найти, но не нашли
-        return (current != null && current.isJsonPrimitive()) ? current.getAsString() : key;
+        return key + " ? Ключ не найден";
     }
 
 }

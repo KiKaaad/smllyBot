@@ -1,0 +1,8 @@
+{
+  "database": {
+    "connect": {
+      "success": "✅ DB:ON | База данных PostgreSQL подключена!",
+      "failure": "⛔ DB:ERR | Не удалось связаться с базой!\n💬 Причина: %s"
+    }
+  }
+}

@@ -1,6 +1,6 @@
-package com.kika.smllybot.utils;
+package com.kika.smllybot.utils.formatting;
 
-public class colors {
+public class Colors {
     public static final String RESET = "\u001B[0m";  // Сброс цвета
     public static final String BLACK = "\u001B[30m";    // Черный
     public static final String RED = "\u001B[31m";    // Красный
