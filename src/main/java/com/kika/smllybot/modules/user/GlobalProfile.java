@@ -1,12 +1,15 @@
 package com.kika.smllybot.modules.user;
 
 import com.kika.smllybot.Main;
-import com.kika.smllybot.database.postgresql.users.User;
-import com.kika.smllybot.database.postgresql.users.UserTable;
+import com.kika.smllybot.database.postgresql.user.User;
+import com.kika.smllybot.database.postgresql.user.UserTable;
+import com.kika.smllybot.modules.user.ui.GlobalProfileUI;
+import net.dv8tion.jda.api.components.container.Container;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
-import java.time.format.DateTimeFormatter;
+import java.time.Duration;
 import java.util.Set;
 
 public class GlobalProfile extends ListenerAdapter {
@@ -15,35 +18,86 @@ public class GlobalProfile extends ListenerAdapter {
     public void onMessageReceived(MessageReceivedEvent event) {
         if (event.getAuthor().isBot()) return;
 
-        String content = event.getMessage().getContentRaw().toLowerCase().trim();
-        String prefix = Main.prefixes[0].toLowerCase();
+        String rawContent = event.getMessage().getContentRaw().trim();
+        String prefix = Main.prefixes[0];
 
-        Set<String> commands = Set.of("анкета", "анкет а");
+        if (!rawContent.toLowerCase().startsWith(prefix.toLowerCase())) return;
 
-        if (content.startsWith(prefix)) {
-            content = content.substring(prefix.length()).trim();
+        String withoutPrefix = rawContent.substring(prefix.length()).trim();
+        String[] parts = withoutPrefix.split("\\s+", 2);
+        String command = parts[0].toLowerCase();
+
+        Set<String> commands = Set.of("анкета", "anketa");
+
+        if (!commands.contains(command)) return;
+
+        net.dv8tion.jda.api.entities.User targetUser;
+
+        // Если это ответ - берем автора из сообщения на которое
+        // был произведен ответ
+        if (event.getMessage().getReferencedMessage() != null) {
+            targetUser = event.getMessage().getReferencedMessage().getAuthor();
         }
 
-        if (commands.contains(content)) {
+        else if (parts.length > 1) {
+            String arg = parts[1];
 
-            var author = event.getAuthor();
-            long discordId = author.getIdLong();
+            if (!event.getMessage().getMentions().getUsers().isEmpty()) {
+                targetUser = event.getMessage().getMentions().getUsers().get(0);
+            }
 
-            String name = author.getName();
-            String discordCreated = author.getTimeCreated().format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+            // Поиск по айди
+            else if (arg.matches("\\d+")) {
+                try {
+                    targetUser = event.getJDA().retrieveUserById(arg).complete();
+                } catch (Exception e) {
+                    event.getChannel().sendMessage("❌ Упс... Пользователь с таким ID не найден")
+                            .delay(Duration.ofSeconds(5))
+                            .flatMap(Message::delete)
+                            .queue();;
+                    return;
+                }
+            }
 
-            User dbUser = UserTable.getOrCreateUser(discordId);
+            // ———— ———— ———— ———— ———— ———— ———— ———— ————
+            // Поиск по юзернейму*
+            // * - Работает только внутри самого сервера,
+            //     то есть поиск среди людей внутри гильдии
+            //
+            // P.S Думаю, позже просто можно записывать чела в бд и позже его показывать оттуда
+            //     помечая как "архивные данные"
+            // ———— ———— ———— ———— ———— ———— ———— ———— ————
 
-            String response = String.format("""
-                    Анкета %s
-                    created discord: %s
-                    id locale: %d
-                    id discord: %d
-                    """, name, discordCreated, dbUser.internalId(), dbUser.discordId()
-            );
+            else {
+                var members = event.getGuild().getMembersByName(arg, true);
 
-            event.getChannel().sendMessage(response).queue();
+                if (members.isEmpty()) {
+                    members = event.getGuild().getMembersByNickname(arg, true);
+                }
+
+                if (!members.isEmpty()) {
+                    targetUser = members.get(0).getUser();
+                } else {
+                    event.getChannel().sendMessage("❌ Упс... Пользователь с таким юзернеймом не найден")
+                            .delay(Duration.ofSeconds(5))
+                            .flatMap(Message::delete)
+                            .queue();
+                    return;
+                }
+            }
+        } else {
+            targetUser = event.getAuthor();
         }
+
+
+        long discordId = targetUser.getIdLong();
+        User dbUser = UserTable.getOrCreateUser(discordId);
+
+        Container response = GlobalProfileUI.buildProfile(targetUser, dbUser, event.getAuthor());
+
+        event.getChannel().sendMessageComponents(response)
+                .useComponentsV2(true)
+                .queue();
     }
-}
 
+}
