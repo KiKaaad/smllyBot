@@ -1,0 +1,6 @@
+{
+  "start": {
+    "success": "Bot was started successfully",
+    "failure": "Bot wasn't started"
+  }
+}

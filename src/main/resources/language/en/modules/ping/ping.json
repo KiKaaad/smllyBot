@@ -1,0 +1,5 @@
+{
+  "ping": {
+    "response": "🏓**Ping**\nAPI Delay: `%d ms`"
+  }
+}
