@@ -1,10 +1,11 @@
 package com.kika.smllybot.modules.user;
 
 import com.kika.smllybot.Main;
-import com.kika.smllybot.database.postgresql.user.User;
-import com.kika.smllybot.database.postgresql.user.UserTable;
+import com.kika.smllybot.database.DatabaseService;
+import com.kika.smllybot.database.UsersData;
 import com.kika.smllybot.modules.user.ui.GlobalProfileUI;
 import net.dv8tion.jda.api.components.container.Container;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -13,6 +14,8 @@ import java.time.Duration;
 import java.util.Set;
 
 public class GlobalProfile extends ListenerAdapter {
+
+    private static final Set<String> COMMANDS = Set.of("анкета", "anketa");
 
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
@@ -27,9 +30,7 @@ public class GlobalProfile extends ListenerAdapter {
         String[] parts = withoutPrefix.split("\\s+", 2);
         String command = parts[0].toLowerCase();
 
-        Set<String> commands = Set.of("анкета", "anketa");
-
-        if (!commands.contains(command)) return;
+        if (!COMMANDS.contains(command)) return;
 
         net.dv8tion.jda.api.entities.User targetUser;
 
@@ -43,7 +44,7 @@ public class GlobalProfile extends ListenerAdapter {
             String arg = parts[1];
 
             if (!event.getMessage().getMentions().getUsers().isEmpty()) {
-                targetUser = event.getMessage().getMentions().getUsers().get(0);
+                targetUser = event.getMessage().getMentions().getUsers().getFirst();
             }
 
             // Поиск по айди
@@ -54,7 +55,7 @@ public class GlobalProfile extends ListenerAdapter {
                     event.getChannel().sendMessage("❌ Упс... Пользователь с таким ID не найден")
                             .delay(Duration.ofSeconds(5))
                             .flatMap(Message::delete)
-                            .queue();;
+                            .queue();
                     return;
                 }
             }
@@ -76,7 +77,7 @@ public class GlobalProfile extends ListenerAdapter {
                 }
 
                 if (!members.isEmpty()) {
-                    targetUser = members.get(0).getUser();
+                    targetUser = members.getFirst().getUser();
                 } else {
                     event.getChannel().sendMessage("❌ Упс... Пользователь с таким юзернеймом не найден")
                             .delay(Duration.ofSeconds(5))
@@ -89,11 +90,17 @@ public class GlobalProfile extends ListenerAdapter {
             targetUser = event.getAuthor();
         }
 
+        UsersData data = DatabaseService.getFullData(targetUser.getIdLong(), targetUser.getName());
+        Member targetMember = event.getGuild().getMember(targetUser);
 
-        long discordId = targetUser.getIdLong();
-        User dbUser = UserTable.getOrCreateUser(discordId);
+        GlobalProfileContext ctx = new GlobalProfileContext(
+                targetUser,
+                event.getAuthor(),
+                targetMember,
+                data
+        );
 
-        Container response = GlobalProfileUI.buildProfile(targetUser, dbUser, event.getAuthor());
+        Container response = GlobalProfileUI.buildProfile(ctx);
 
         event.getChannel().sendMessageComponents(response)
                 .useComponentsV2(true)
