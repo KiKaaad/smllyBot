@@ -1,10 +1,13 @@
 package com.kika.smllybot;
 
 import com.kika.smllybot.database.postgresql.DatabaseManager;
+import com.kika.smllybot.database.postgresql.bank.BankTable;
 import com.kika.smllybot.database.postgresql.user.UserTable;
+import com.kika.smllybot.modules.economy.Farm;
 import com.kika.smllybot.modules.ping.PrefixPing;
 import com.kika.smllybot.modules.ping.SlashPing;
-import com.kika.smllybot.modules.user.AboutMe;
+import com.kika.smllybot.modules.tops.FarmTop;
+import com.kika.smllybot.modules.user.Motto;
 import com.kika.smllybot.modules.user.GlobalProfile;
 import com.kika.smllybot.modules.user.ui.GlobalProfileModal;
 import com.kika.smllybot.modules.user.Meow;
@@ -20,6 +23,7 @@ import net.dv8tion.jda.api.hooks.EventListener;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
+import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.PrintStream;
@@ -43,6 +47,7 @@ public class Main implements EventListener {
 
             System.out.println(BOLD+GREEN + I18n.get(logReq));
             UserTable.createTable();
+            BankTable.createTable();
         } catch (SQLException e) {
             var logReq = new I18nRequest("ru", "logger", "Database", "database.connect.failure");
 
@@ -54,10 +59,13 @@ public class Main implements EventListener {
         String token = dotenv.get("TOKEN");
 
         JDA jda = JDABuilder.createDefault(token)
+                // Сисиписи
                 .enableIntents(GatewayIntent.MESSAGE_CONTENT)
                 .enableIntents(GatewayIntent.GUILD_MEMBERS)
+                .enableIntents(GatewayIntent.GUILD_PRESENCES)
                 .setMemberCachePolicy(MemberCachePolicy.ALL)
                 .setChunkingFilter(ChunkingFilter.ALL)
+                .enableCache(CacheFlag.ONLINE_STATUS)
                 .setActivity(Activity.streaming("100 фактов о фембоях", "https://youtube.com/watch?v=o97WByHtOZM"))
                 .addEventListeners(new Main())
                 // Pinger
@@ -65,9 +73,13 @@ public class Main implements EventListener {
                 .addEventListeners(new SlashPing())
                 // User
                 .addEventListeners(new GlobalProfile())
-                .addEventListeners(new AboutMe())
+                .addEventListeners(new Motto())
                 .addEventListeners(new GlobalProfileModal())
                 .addEventListeners(new Meow())
+                // Economy
+                .addEventListeners(new Farm())
+                // Tops
+                .addEventListeners(new FarmTop())
                 .build();
 
         jda.awaitReady();

@@ -12,7 +12,7 @@ import java.util.Set;
 
 public class PrefixPing extends ListenerAdapter {
 
-    Set<String> commands = Set.of("ping", "pong", "пинг", "понг");
+    private static final Set<String> COMMANDS = Set.of("ping", "pong", "пинг", "понг");
 
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
@@ -21,7 +21,7 @@ public class PrefixPing extends ListenerAdapter {
         String command = PrefixUtil.getCommandBody(event.getMessage().getContentRaw(), Main.prefixes);
         if (command == null) return;
 
-        if (commands.contains(command)) {
+        if (COMMANDS.contains(command)) {
             PingService.fetchPing(event.getJDA(), data -> {
                 Container text = PingComponent.render(data);
                 event.getChannel().sendMessageComponents(text)

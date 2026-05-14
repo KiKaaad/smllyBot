@@ -6,10 +6,10 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class Interaction {
 
-    /**
-     * Проверяет, является ли пользователь владельцем кнопки.
-     * Ожидается формат ID: "action::subaction::ownerId"
-     */
+
+    //  Проверяет, является ли пользователь владельцем кнопки
+    //  Ожидается формат: action::subAction::ownerId
+
 
     private enum DenyReason {
         MISTER_FISH("❌ Но но но мистер фиш"),
