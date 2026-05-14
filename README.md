@@ -1,6 +1,6 @@
 # 🦧 Discord bot Femboy#6593
 ![Лицензия](https://img.shields.io/badge/Apache-2.0-license)
-![Версия](https://img.shields.io/badge/Version-0.1.3-red)
+![Версия](https://img.shields.io/badge/Version-0.2.0-red)
 ![Стадия](https://img.shields.io/badge/Стадия%20беты-101010)\
 Этот бот - аналог [Iris | Чат-менеджер](https://teletype.in/@iris_cm) для дискорда и все команды будут практически полностью индентичны
 ### 🛟 Поддержка
