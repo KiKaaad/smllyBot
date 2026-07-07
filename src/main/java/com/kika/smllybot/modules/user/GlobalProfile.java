@@ -1,109 +1,100 @@
 package com.kika.smllybot.modules.user;
 
-import com.kika.smllybot.Main;
-import com.kika.smllybot.database.DatabaseService;
-import com.kika.smllybot.database.UsersData;
+import com.kika.smllybot.database.sql.bank.BankTable;
+import com.kika.smllybot.database.sql.bank.dto.BankAccount;
+import com.kika.smllybot.database.sql.privacy.PrivacyTable;
+import com.kika.smllybot.database.sql.privacy.dto.PrivacyAccount;
+import com.kika.smllybot.database.sql.user.UserTable;
+import com.kika.smllybot.database.sql.user.dto.UserAccount;
 import com.kika.smllybot.modules.user.ui.GlobalProfileUI;
+import com.kika.smllybot.other.BaseCmd;
 import net.dv8tion.jda.api.components.container.Container;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import java.time.Duration;
 import java.util.Set;
 
-public class GlobalProfile extends ListenerAdapter {
+public class GlobalProfile extends BaseCmd {
 
-    private static final Set<String> COMMANDS = Set.of("анкета", "anketa");
+    public GlobalProfile() {
+        super(Set.of("анкета", "anketa"));
+    }
 
     @Override
-    public void onMessageReceived(MessageReceivedEvent event) {
-        if (event.getAuthor().isBot()) return;
+    public void execute(MessageReceivedEvent event, String args) {
 
-        String rawContent = event.getMessage().getContentRaw().trim();
-        String prefix = Main.prefixes[0];
-
-        if (!rawContent.toLowerCase().startsWith(prefix.toLowerCase())) return;
-
-        String withoutPrefix = rawContent.substring(prefix.length()).trim();
-        String[] parts = withoutPrefix.split("\\s+", 2);
-        String command = parts[0].toLowerCase();
-
-        if (!COMMANDS.contains(command)) return;
-
-        net.dv8tion.jda.api.entities.User targetUser;
-
-        // Если это ответ - берем автора из сообщения на которое
-        // был произведен ответ
         if (event.getMessage().getReferencedMessage() != null) {
-            targetUser = event.getMessage().getReferencedMessage().getAuthor();
+            sendProfileResponse(event, event.getMessage().getReferencedMessage().getAuthor());
+            return;
         }
 
-        else if (parts.length > 1) {
-            String arg = parts[1];
+        if (args.isEmpty()) {
+            sendProfileResponse(event, event.getAuthor());
+            return;
+        }
 
-            if (!event.getMessage().getMentions().getUsers().isEmpty()) {
-                targetUser = event.getMessage().getMentions().getUsers().getFirst();
-            }
+        String[] parts = args.trim().split("\\s+", 1);
+        String arg = parts[0];
 
-            // Поиск по айди
-            else if (arg.matches("\\d+")) {
-                try {
-                    targetUser = event.getJDA().retrieveUserById(arg).complete();
-                } catch (Exception e) {
-                    event.getChannel().sendMessage("❌ Упс... Пользователь с таким ID не найден")
-                            .delay(Duration.ofSeconds(5))
-                            .flatMap(Message::delete)
-                            .queue();
-                    return;
-                }
-            }
+        if (!event.getMessage().getMentions().getUsers().isEmpty()) {
+            sendProfileResponse(event, event.getMessage().getMentions().getUsers().getFirst());
+            return;
+        }
 
-            // ———— ———— ———— ———— ———— ———— ———— ———— ————
-            // Поиск по юзернейму*
-            // * - Работает только внутри самого сервера,
-            //     то есть поиск среди людей внутри гильдии
-            //
-            // P.S Думаю, позже просто можно записывать чела в бд и позже его показывать оттуда
-            //     помечая как "архивные данные"
-            // ———— ———— ———— ———— ———— ———— ———— ———— ————
+        if (arg.matches("\\d+")) {
+            event.getJDA().retrieveUserById(arg).queue(
+                    targetUser -> sendProfileResponse(event, targetUser),
+                    failure -> sendError(event, "❌ Упс... Пользователь с таким ID не найден")
+            );
+            return;
+        }
 
-            else {
-                var members = event.getGuild().getMembersByName(arg, true);
+        var members = event.getGuild().getMembersByName(arg, true);
 
-                if (members.isEmpty()) {
-                    members = event.getGuild().getMembersByNickname(arg, true);
-                }
+        if (members.isEmpty()) {
+            members = event.getGuild().getMembersByNickname(arg, true);
+        }
 
-                if (!members.isEmpty()) {
-                    targetUser = members.getFirst().getUser();
-                } else {
-                    event.getChannel().sendMessage("❌ Упс... Пользователь с таким юзернеймом не найден")
-                            .delay(Duration.ofSeconds(5))
-                            .flatMap(Message::delete)
-                            .queue();
-                    return;
-                }
-            }
+        if (!members.isEmpty()) {
+            sendProfileResponse(event, members.getFirst().getUser());
         } else {
-            targetUser = event.getAuthor();
+            sendError(event, "❌ Упс... Пользователь с таким юзернеймом не найден");
         }
+    }
 
-        UsersData data = DatabaseService.getFullData(targetUser.getIdLong(), targetUser.getName());
-        Member targetMember = event.getGuild().getMember(targetUser);
+    private void sendProfileResponse(MessageReceivedEvent event, User targetUser) {
+
+        Member targetMember = event.isFromGuild()
+                ? event.getGuild().getMember(targetUser)
+                : null;
+
+        UserAccount user = UserTable.getOrCreateUser(targetMember.getIdLong(), targetMember.getEffectiveName());
+        BankAccount bank = BankTable.getOrCreateBank(user.internalId(), targetMember.getEffectiveName());
+        PrivacyAccount privacy = PrivacyTable.getOrCreatePrivacy(user.internalId());
 
         GlobalProfileContext ctx = new GlobalProfileContext(
                 targetUser,
                 event.getAuthor(),
                 targetMember,
-                data
+                user,
+                bank,
+                privacy
         );
 
         Container response = GlobalProfileUI.buildProfile(ctx);
 
         event.getChannel().sendMessageComponents(response)
                 .useComponentsV2(true)
+                .queue();
+    }
+
+    private void sendError(MessageReceivedEvent event, String text) {
+        event.getChannel().sendMessage(text)
+                .delay(Duration.ofSeconds(5))
+                .flatMap(Message::delete)
                 .queue();
     }
 

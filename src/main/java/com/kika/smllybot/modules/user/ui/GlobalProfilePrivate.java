@@ -12,36 +12,51 @@ import com.kika.smllybot.modules.user.GlobalProfileContext;
 import com.kika.smllybot.other.BaseCmd;
 import com.kika.smllybot.utils.Interaction;
 import net.dv8tion.jda.api.components.label.Label;
-import net.dv8tion.jda.api.components.textinput.TextInput;
-import net.dv8tion.jda.api.components.textinput.TextInputStyle;
+import net.dv8tion.jda.api.components.radiogroup.RadioGroup;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
+import net.dv8tion.jda.api.interactions.modals.ModalMapping;
 import net.dv8tion.jda.api.modals.Modal;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 
-public class GlobalProfileModal extends BaseCmd implements ButtonHandler, ModalHandler {
+public class GlobalProfilePrivate extends BaseCmd implements ButtonHandler, ModalHandler {
 
-    public GlobalProfileModal() { super(Set.of("profile")); }
+    public GlobalProfilePrivate() { super(Set.of("private")); }
 
     @Override
     public void onButton(@NotNull ButtonInteractionEvent event, String[] parts) {
 
         if (!Interaction.checkOwner(event, parts)) return;
 
-        if (parts.length > 1 && parts[1].equals("modal")) {
+        if (parts.length > 1 && parts[1].equals("private")) {
 
             String ownerId = parts.length > 2 ? parts[2] : "";
-            TextInput mottoInput = TextInput.create("motto_field", TextInputStyle.PARAGRAPH)
-                    .setPlaceholder("Какой же я красавчик... 😎")
-                    .setMaxLength(255)
-                    .setRequired(false)
+            RadioGroup bagSettings = RadioGroup.create("BagSettings")
+                    .addOption("Все", "false")
+                    .addOption("Никто", "true")
+                    .setSelectedValue("false")
+                    .setRequired(true)
+                    .build();
+            RadioGroup activity = RadioGroup.create("ActivitySettings")
+                    .addOption("Все", "false")
+                    .addOption("Никто", "true")
+                    .setSelectedValue("false")
+                    .setRequired(true)
+                    .build();
+            RadioGroup activityTime = RadioGroup.create("LastActivitySettings")
+                    .addOption("Все", "false")
+                    .addOption("Никто", "true")
+                    .setSelectedValue("false")
+                    .setRequired(true)
                     .build();
 
-            Modal modal = Modal.create("profile:submit:" + ownerId, "🗿 Редактировать профиль")
+            Modal modal = Modal.create("private:submit:" + ownerId, "🕶️ Настройки приватности")
                     .addComponents(
-                            Label.of("🐾 Девиз", mottoInput)
+                            Label.of("Кто видит мой мешок?", bagSettings),
+                            Label.of("Кто видит мою активность?", activity),
+                            Label.of("Кто видит время моего последнего захода?", activityTime)
                     )
                     .build();
 
@@ -49,20 +64,24 @@ public class GlobalProfileModal extends BaseCmd implements ButtonHandler, ModalH
         }
     }
 
+    // TODO: Реализовать адекватную логику приватности
     @Override
     public void onModal(ModalInteractionEvent event, String[] parts) {
         if (parts.length > 1 && parts[1].equals("submit")) {
-
-            var value = event.getValue("motto_field");
-            if (value == null) return;
-
-            String newAboutMe = value.getAsString().isBlank() ? null : value.getAsString();
             long discordId = event.getUser().getIdLong();
             String username = event.getUser().getName();
 
-            UserTable.updateMotto(discordId, newAboutMe);
-
             UserAccount user = UserTable.getOrCreateUser(discordId, username);
+
+            ModalMapping bagMapping = event.getValue("BagSettings");
+            PrivacyTable.updateBagPrivacy(user.internalId(), bagMapping.getAsString().equals("true"));
+
+            ModalMapping activityMapping = event.getValue("ActivitySettings");
+            PrivacyTable.updateActivityPrivacy(user.internalId(), activityMapping.getAsString().equals("true"));
+
+            ModalMapping lastActivityMapping = event.getValue("LastActivitySettings");
+            PrivacyTable.updateLastActivityPrivacy(user.internalId(), lastActivityMapping.getAsString().equals("true"));
+
             BankAccount bank = BankTable.getOrCreateBank(user.internalId(), username);
             PrivacyAccount privacy = PrivacyTable.getOrCreatePrivacy(user.internalId());
 
