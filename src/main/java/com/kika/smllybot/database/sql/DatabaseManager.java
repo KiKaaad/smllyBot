@@ -1,4 +1,4 @@
-package com.kika.smllybot.database.postgresql;
+package com.kika.smllybot.database.sql;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;

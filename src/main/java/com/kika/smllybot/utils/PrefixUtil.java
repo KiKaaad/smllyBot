@@ -1,6 +1,7 @@
 package com.kika.smllybot.utils;
 
 public class PrefixUtil {
+
     public static String getCommandBody(String content, String[] prefixes) {
         if (content == null || content.isEmpty()) return null;
 
@@ -20,6 +21,7 @@ public class PrefixUtil {
 
         return null;
     }
+
 }
 
 

@@ -2,7 +2,6 @@ package com.kika.smllybot.modules.ping;
 
 import com.kika.smllybot.Main;
 import com.kika.smllybot.styles.component.ping.PingComponent;
-import com.kika.smllybot.styles.text.ping.PingText;
 import com.kika.smllybot.utils.PrefixUtil;
 import net.dv8tion.jda.api.components.container.Container;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -18,7 +17,7 @@ public class PrefixPing extends ListenerAdapter {
     public void onMessageReceived(MessageReceivedEvent event) {
         if (event.getAuthor().isBot()) return;
 
-        String command = PrefixUtil.getCommandBody(event.getMessage().getContentRaw(), Main.prefixes);
+        String command = PrefixUtil.getCommandBody(event.getMessage().getContentRaw(), Main.PREFIXES);
         if (command == null) return;
 
         if (COMMANDS.contains(command)) {
