@@ -1,3 +1,5 @@
 package com.kika.smllybot.modules.tops;
 
-public record FarmTopContext(String topFarm) {}
+import java.util.List;
+
+public record FarmTopContext(List<String> topFarmLines) {}

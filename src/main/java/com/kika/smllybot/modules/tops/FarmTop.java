@@ -1,103 +1,113 @@
 package com.kika.smllybot.modules.tops;
 
-import com.kika.smllybot.Main;
-import com.kika.smllybot.database.postgresql.bank.BankTable;
-import com.kika.smllybot.database.postgresql.bank.GetBank;
+import com.kika.smllybot.database.sql.bank.dto.BankTopAmount;
+import com.kika.smllybot.other.BaseCmd;
+import com.kika.smllybot.database.sql.bank.BankTable;
 import com.kika.smllybot.modules.tops.ui.FarmTopUI;
 import net.dv8tion.jda.api.components.container.Container;
+import net.dv8tion.jda.api.components.container.ContainerChildComponent;
+import net.dv8tion.jda.api.components.textdisplay.TextDisplay;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
-public class FarmTop extends ListenerAdapter {
+public class FarmTop extends BaseCmd {
 
-    private static final Set<String> COMMANDS = Set.of("топ", "top");
+    public FarmTop() {
+        super(Set.of("гтоп", "gtop"));
+    }
 
     @Override
-    public void onMessageReceived(MessageReceivedEvent event) {
-        if (event.getAuthor().isBot()) return;
+    public void execute(MessageReceivedEvent event, String arg) {
 
-        String rawContent = event.getMessage().getContentRaw().trim();
-        String prefix = Main.prefixes[0];
+        String[] parts = arg.trim().split("\\s+", 2);
+        String subCommand = parts[0].toLowerCase();
 
-        if (!rawContent.toLowerCase().startsWith(prefix.toLowerCase())) return;
+        String title;
+        String icon;
+        String suffix;
+        String ownerId = event.getAuthor().getId();
+        List<BankTopAmount> topEntries;
+        IFarmTop value;
 
-        String withoutPrefix = rawContent.substring(prefix.length()).trim();
-        String[] parts = withoutPrefix.split("\\s+");
-        String command = parts[0].toLowerCase();
+        int limit = 1000;
 
-        if (!COMMANDS.contains(command)) return;
-
-        // Дефолтный лимит - 30
-        int limit = 30;
-
-        if (parts.length > 1) {
+        if (parts.length > 2) {
 
             try {
-                int parsedLimit = Integer.parseInt(parts[1].trim());
+                int parsedLimit = Integer.parseInt(parts[2].trim());
 
-                if (parsedLimit >= 1 && parsedLimit <= 50) {
+                if (parsedLimit >= 1 && parsedLimit <= 100) {
                     limit = parsedLimit;
                 } else {
-                    event.getChannel().sendMessage("🟡 Упс! Число вне диапазона **от 1 до 50**")
+                    event.getChannel().sendMessage("🟡 Упс! Число вне диапазона **от 1 до 100**")
                             .delay(Duration.ofSeconds(5))
                             .flatMap(Message::delete)
                             .queue();
                     return;
                 }
             } catch (NumberFormatException e) {
-                // TODO: Дебаг вывод требуется удалить
-                System.out.println("В FarmTop пользователь ввел что-то не то: топ <тут_неверный_аргумент>. Вполне возможно он не хотел вызывать команду");
                 return;
             }
 
         }
 
-        List<GetBank> topEntries = BankTable.getTopIrisCoins(limit);
+        switch (subCommand) {
+            case "коины" -> {
+                title = "ирис-коинам";
+                icon = "☢️";
+                suffix = " i¢";
+                topEntries = BankTable.getTopIrisCoins(limit);
+                value = BankTopAmount::amount;
+            }
+            case "ириски" -> {
+                title = "ирискам";
+                icon = "🍬";
+                suffix = " шт.";
+                topEntries = BankTable.getTopIris(limit);
+                value = BankTopAmount::amount;
+            }
+            default -> { return; }
+        }
 
-        // Топ пустой
         if (topEntries.isEmpty()) {
-            event.getChannel().sendMessage("💀 Как-то тут пусто однако...").queue();
+            ContainerChildComponent main = TextDisplay.of("## \\💀 Как-то тут пусто однако...");
+            Container response = Container.of(main);
+
+            event.getChannel().sendMessageComponents(response)
+                    .useComponentsV2(true)
+                    .queue();
             return;
         }
 
-        // Делаем все красивенько:
-        // Значки для первых 3 мест
-        // {число}. Жирный ник - число ирис-коинов
-        StringBuilder topFarm = new StringBuilder();
+        List<String> topLines = new ArrayList<>();
         for (int i = 0; i < topEntries.size(); i++) {
-            GetBank entry = topEntries.get(i);
-            String irisCoin = String.format(Locale.GERMAN, "%,d", entry.irisCoin());
+            BankTopAmount entry = topEntries.get(i);
+
+            String formattedValue = String.format(Locale.GERMAN, "%,d", value.extract(entry));
 
             String placeEmoji = switch (i) {
-                case 0 -> "1. 🥇";
-                case 1 -> "2. 🥈";
-                case 2 -> "3. 🥉";
+                case 0 -> "1. \\🥇";
+                case 1 -> "2. \\🥈";
+                case 2 -> "3. \\🥉";
                 default -> (i + 1) + ".";
             };
 
-            topFarm.append(placeEmoji)
-                    .append(" **")
-                    .append(entry.name())
-                    .append("** — ")
-                    .append(irisCoin)
-                    .append(" i¢\n");
+            String line = "%s **%s** — %s%s".formatted(placeEmoji, entry.name(), formattedValue, suffix);
+            topLines.add(line);
         }
 
-        FarmTopContext ctx = new FarmTopContext(
-                topFarm.toString()
-        );
+        FarmTopContext ctx = new FarmTopContext(topLines);
 
-        Container response = FarmTopUI.buildFarmTop(ctx);
+        Container response = FarmTopUI.buildFarmTop(icon, title, subCommand, limit, 0, ownerId, ctx);
 
         event.getChannel().sendMessageComponents(response)
                 .useComponentsV2(true)
                 .queue();
     }
-
 }
