@@ -1,11 +1,11 @@
 plugins {
     java
-    kotlin("jvm") version "2.1.0"
+    kotlin("jvm") version "2.1.10"
     id("com.gradleup.shadow") version "9.4.1"
 }
 
 group = "kikaaad.smlly"
-version = "0.2.0-beta"
+version = "0.4.7-beta"
 
 java {
     toolchain {
@@ -23,7 +23,7 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:1.5.32")
     implementation("ch.qos.logback:logback-core:1.5.32")
     implementation("com.google.code.gson:gson:2.13.2")
-    implementation("net.dv8tion:JDA:6.4.1")
+    implementation("net.dv8tion:JDA:6.5.0")
     implementation(libs.io.github.cdimascio.dotenv.java)
     implementation(libs.org.jetbrains.kotlin.kotlin.stdlib.jdk8)
     testImplementation(libs.org.jetbrains.kotlin.kotlin.test)
@@ -33,5 +33,7 @@ tasks.withType<JavaCompile>().configureEach {
     options.encoding = "UTF-8"
     options.compilerArgs.add("--enable-preview")
 }
+
+
 
 
