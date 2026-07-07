@@ -1,5 +1,6 @@
 package com.kika.smllybot.utils.formatting;
 
+@Deprecated
 public class Formatting {
     public static final String RESETFORMAT = "\\u001B[0m"; // Сброс форматирования
     public static final String BOLD = "\u001B[1m";         // Жирный

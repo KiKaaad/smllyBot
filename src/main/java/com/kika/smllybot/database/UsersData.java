@@ -1,6 +1,7 @@
 package com.kika.smllybot.database;
 
-import com.kika.smllybot.database.postgresql.bank.GetBank;
-import com.kika.smllybot.database.postgresql.user.GetUsers;
+import com.kika.smllybot.database.sql.bank.dto.BankAccount;
+import com.kika.smllybot.database.sql.user.dto.UserAccount;
 
-public record UsersData(GetUsers dbUser, GetBank dbBank) {}
+@Deprecated
+public record UsersData(UserAccount dbUser, BankAccount dbBank) {}
