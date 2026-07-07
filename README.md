@@ -1,5 +1,6 @@
 # 🦧 Discord bot Femboy#6593
 ![Лицензия](https://img.shields.io/badge/Apache-2.0-license)
+[![CodeFactor](https://www.codefactor.io/repository/github/kikaaad/smllybotdiscordjda/badge/main)](https://www.codefactor.io/repository/github/kikaaad/smllybotdiscordjda/overview/main)
 ![Версия](https://img.shields.io/badge/Version-0.4.7-orange)
 ![Java](https://img.shields.io/badge/Java-25-orange)
 ![Стадия](https://img.shields.io/badge/Стадия%20беты-101010)\
