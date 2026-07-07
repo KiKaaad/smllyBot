@@ -1,4 +1,4 @@
-package com.kika.smllybot;
+package com.kika.smllybot.other;
 
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
