@@ -8,7 +8,7 @@ public enum UserStatus {
     IDLE("<:idle:1502685519308521522>"),
     DO_NOT_DISTURB("<:dnd:1502685514963357847>"),
     OFFLINE("<:invisible:1502685512220147854>"),
-    BOT("<:bot:1502710577435381913>");
+    BOT(" <:bot:1502710577435381913>");
 
     private final String emoji;
 
@@ -17,6 +17,7 @@ public enum UserStatus {
     }
 
     public static String getEmoji(Member member) {
+        if (member == null) return " ...";
         if (member.getUser().isBot()) return BOT.emoji;
 
         return switch (member.getOnlineStatus()) {
@@ -26,6 +27,5 @@ public enum UserStatus {
             default -> OFFLINE.emoji;
         };
     }
-
 
 }
