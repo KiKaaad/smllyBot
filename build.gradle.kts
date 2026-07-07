@@ -17,6 +17,12 @@ repositories {
     mavenCentral()
 }
 
+tasks.jar {
+    manifest {
+        attributes["Main-Class"] = "com.kika.smllybot.Main"
+    }
+}
+
 dependencies {
     implementation("com.zaxxer:HikariCP:7.0.2")
     implementation("org.postgresql:postgresql:42.7.10")
