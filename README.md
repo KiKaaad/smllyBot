@@ -5,6 +5,9 @@
 ![Java](https://img.shields.io/badge/Java-25-orange)
 ![Стадия](https://img.shields.io/badge/Стадия%20беты-101010)\
 Этот бот — аналог [Iris | Чат-менеджер](https://teletype.in/@iris_cm) для дискорда и все команды будут практически полностью индентичны
+
+<img width="2560" alt="kikameowoow" src="https://github.com/user-attachments/assets/ed7fc82d-fbd1-4be8-ac8a-4d61a87c280f" />
+
 ### 🛟 Поддержка
 Телеграм — [t.me/kikaaad](https://t.me/KiKaaad)\
 Дискорд-сервер — [discord.gg/3JSz5fEeee](https://discord.gg/3JSz5fEeee)\
