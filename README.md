@@ -1,6 +1,6 @@
 # 🦧 Discord bot Femboy#6593
 ![Лицензия](https://img.shields.io/badge/Apache-2.0-license)
-[![CodeFactor](https://www.codefactor.io/repository/github/kikaaad/smllybotdiscordjda/badge/main)](https://www.codefactor.io/repository/github/kikaaad/smllybotdiscordjda/overview/main)
+[![CodeFactor](https://www.codefactor.io/repository/github/kikaaad/smllybot/badge)](https://www.codefactor.io/repository/github/kikaaad/smllybot)
 ![Версия](https://img.shields.io/badge/Version-0.4.7-orange)
 ![Java](https://img.shields.io/badge/Java-25-orange)
 ![Стадия](https://img.shields.io/badge/Стадия%20беты-101010)\
@@ -12,6 +12,27 @@
 Телеграм — [t.me/kikaaad](https://t.me/KiKaaad)\
 Дискорд-сервер — [discord.gg/3JSz5fEeee](https://discord.gg/3JSz5fEeee)\
 Вы можете задать любой вопрос или сообщить об уязвимости, для обычных багов есть [issues](https://github.com/KiKaaad/smllyBotDiscordJDA/issues)
+
+## ℹ️ Как запустить?
+1. Создайте пустую папку, например: bot
+2. Закиньте туда файл бота, это будет что-то типо `smllyDS-0.4.7-beta.jar`
+3. Создайте в этой же папке .env файл с содержанием:
+```TOKEN=ВАШ_ТОКЕН
+   DB_HOST=localhost
+   DB_PORT=5432
+   DB_NAME=НАЗВАНИЕ_БАЗЫ_ДАННЫХ
+   DB_USER=ПОЛЬЗОВАТЕЛЬ_БАЗЫ_ДАННЫХ
+   DB_PASS=ПАРОЛЬ_ОТ_БАЗЫ_ДАННЫХ
+   ```
+- Если вы не создавали юзера, используйте имя `postgres`\
+_P. S Бот поддерживает только базу данных PostgreSQL_
+4. После этого запустите терминал (ПКМ в свободном месте директории)
+5. Пропишите команду `java -Xms128M -Xmx4096M название_вашего_файла.jar`
+   - Пример: `java -Xms128M -Xmx4096M -jar smllyDS-0.4.7-beta.jar`
+6. Если полезли какие-то страшные и не понятные символы, 
+закройте бота (сочетание ctrl + c) и пропишите команду 
+`[console]::outputEncoding = [System.Text.Encoding]::UTF8`
+после чего запустите бота вновь
 
 ## 📋 Навигация
 - [🛰️ Модули](#-модули)
