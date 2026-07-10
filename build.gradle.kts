@@ -1,7 +1,7 @@
 plugins {
     java
-    kotlin("jvm") version "2.1.10"
-    id("com.gradleup.shadow") version "9.4.1"
+    kotlin("jvm") version "2.4.0"
+    id("com.gradleup.shadow") version "9.5.1"
     id("org.sonarqube") version "7.3.1.8318"
 }
 
@@ -25,8 +25,8 @@ tasks.jar {
 }
 
 dependencies {
-    implementation("com.zaxxer:HikariCP:7.0.2")
-    implementation("org.postgresql:postgresql:42.7.10")
+    implementation("com.zaxxer:HikariCP:7.1.0")
+    implementation("org.postgresql:postgresql:42.7.11")
     implementation("ch.qos.logback:logback-classic:1.5.32")
     implementation("ch.qos.logback:logback-core:1.5.32")
     implementation("com.google.code.gson:gson:2.13.2")
