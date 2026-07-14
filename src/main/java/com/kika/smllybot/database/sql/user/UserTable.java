@@ -2,12 +2,14 @@ package com.kika.smllybot.database.sql.user;
 
 import com.kika.smllybot.database.sql.DatabaseManager;
 import com.kika.smllybot.database.sql.user.dto.UserAccount;
+import com.kika.smllybot.database.sql.user.dto.UsersTotal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.sql.*;
+import java.time.OffsetDateTime;
 
 public class UserTable {
 
@@ -22,7 +24,7 @@ public class UserTable {
                 role VARCHAR,
                 name VARCHAR,
                 discord_id BIGINT UNIQUE NOT NULL,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
                 motto VARCHAR(255) DEFAULT 'Пользователь не указал описание.'
             );
             """;
@@ -38,14 +40,14 @@ public class UserTable {
 
     public static UserAccount getOrCreateUser(long discordId, String currentName) {
         String selectSql = """
-        SELECT id, discord_id, role, name, motto, to_char(created_at, 'DD.MM.YYYY HH24:MI') AS created_at
+        SELECT id, discord_id, role, name, motto, created_at
         FROM users WHERE discord_id = ?;
         """;
 
         String insertSql = """
         INSERT INTO users (discord_id, name) VALUES (?, ?)
         ON CONFLICT (discord_id) DO NOTHING
-        RETURNING id, discord_id, role, name, motto, to_char(created_at, 'DD.MM.YYYY HH24:MI') AS created_at;
+        RETURNING id, discord_id, role, name, motto, created_at;
         """;
 
         try (Connection conn = DatabaseManager.getConnection()) {
@@ -123,6 +125,24 @@ public class UserTable {
         }
     }
 
+    public static UsersTotal getTotalUsers() {
+        String sql = "SELECT COUNT(id) FROM users";
+
+        try (Connection conn = DatabaseManager.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+
+            long count = 0;
+            if (rs.next()) count = rs.getLong(1);
+
+
+            return new UsersTotal(count);
+        } catch (SQLException e) {
+            log.error("❌ Ошибка при попытке достать количество юзеров из таблицы USERS: ");
+        }
+        return new UsersTotal(0);
+    }
+
     private static UserAccount mapUser(ResultSet rs) throws SQLException {
         return new UserAccount(
                 rs.getInt("id"),
@@ -130,7 +150,7 @@ public class UserTable {
                 rs.getString("role"),
                 rs.getString("name"),
                 rs.getString("motto"),
-                rs.getString("created_at")
+                rs.getObject("created_at", OffsetDateTime.class)
         );
     }
 
