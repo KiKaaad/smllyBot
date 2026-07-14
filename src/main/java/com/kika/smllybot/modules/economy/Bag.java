@@ -34,7 +34,7 @@ public class Bag extends BaseCmd {
         if (args.isEmpty()) {
             sendBugResponse(event, event.getAuthor());
             return null;
-        };
+        }
 
         if (!event.getMessage().getMentions().getUsers().isEmpty()) {
             sendBugResponse(event, event.getMessage().getMentions().getUsers().getFirst());
