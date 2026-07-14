@@ -7,13 +7,10 @@ import net.dv8tion.jda.api.components.actionrow.ActionRow;
 import net.dv8tion.jda.api.components.buttons.Button;
 import net.dv8tion.jda.api.components.container.Container;
 import net.dv8tion.jda.api.components.container.ContainerChildComponent;
-import net.dv8tion.jda.api.components.mediagallery.MediaGallery;
-import net.dv8tion.jda.api.components.mediagallery.MediaGalleryItem;
 import net.dv8tion.jda.api.components.section.Section;
 import net.dv8tion.jda.api.components.separator.Separator;
 import net.dv8tion.jda.api.components.textdisplay.TextDisplay;
 import net.dv8tion.jda.api.components.thumbnail.Thumbnail;
-import net.dv8tion.jda.api.entities.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +18,10 @@ import java.util.List;
 public abstract class GlobalProfileUI {
 
     public static Container buildProfile(GlobalProfileContext ctx) {
+        List<ContainerChildComponent> components = new ArrayList<>(15);
+
+        String invisible = "-# Скрыто (видно только вам)";
+
         boolean isOwner = ctx.target().getIdLong() == ctx.viewer().getIdLong();
 
         String idUser = Formatter.germanNum(ctx.user().internalId());
@@ -32,20 +33,15 @@ public abstract class GlobalProfileUI {
         String star = Formatter.germanNum(ctx.bank().star());
 
         // Даты
-        String discordCreated = TimeUtil.getDiscordTimestamp(ctx.target().getTimeCreated());
-        String botCreated = TimeUtil.getBotTimestamp(ctx.user().createdAt());
+        String discordCreated = TimeUtil.getTimestamp(ctx.target().getTimeCreated());
+        String discordCreatedRelative = TimeUtil.getTimestampRelative(ctx.target().getTimeCreated());
+        String botCreated = TimeUtil.getTimestamp(ctx.user().createdAt());
+        String botCreatedRelative = TimeUtil.getTimestampRelative(ctx.user().createdAt());
 
         // Аватар
         String avatarUrl = ctx.target().getEffectiveAvatarUrl();
 
-        // Баннер
-        User.Profile profile = ctx.target().retrieveProfile().complete();
-        String bannerUrl = null;
-        if (profile.getBanner() != null) {
-            bannerUrl = profile.getBanner().getUrl(1024);
-        }
-
-        // О себе
+        // Девиз
         String aboutMe = ctx.user().motto();
         if (aboutMe == null || aboutMe.isBlank()) {
             aboutMe = "Пользователь не указал описание.";
@@ -63,23 +59,32 @@ public abstract class GlobalProfileUI {
         );
 
         // Средняя секция
+        // Краткая информация:
         ContainerChildComponent headerMid = TextDisplay.of("## \\👀 Краткая информация: ");
-        ContainerChildComponent midRole = TextDisplay.of("\\👑 Создатель бота");
+        // Активность
         String activityVisible = "";
-        if (ctx.privacy().activity()) activityVisible = "-# Скрыто (видно только вам)";
+        if (ctx.privacy().activity()) activityVisible = invisible;
         ContainerChildComponent mid = TextDisplay.of("""
                 \\📊 **Активность** (день | нед | мес | всего): %s | %s | %s | %s
                 %s
                 """.formatted(-1, -1, -1, -1, activityVisible));
-        ContainerChildComponent mid0 = TextDisplay.of("\\🕐 Во вселенной дискорд с **%s**".formatted(discordCreated));
-        ContainerChildComponent mid1 = TextDisplay.of("\\⌛ Во вселенной бота с **%s**".formatted(botCreated));
+
+        // Во вселенной дискорда с ...
+        ContainerChildComponent mid0 = TextDisplay.of("\\🕐 Во вселенной дискорд с **%s** (**%s**)"
+                .formatted(discordCreated, discordCreatedRelative));
+
+        // Во вселенной бота с ...
+        ContainerChildComponent mid1 = TextDisplay.of("\\⌛ Во вселенной бота с **%s** (**%s**)"
+                .formatted(botCreated, botCreatedRelative));
+
+        // Айдишечки
         ContainerChildComponent mid2 = TextDisplay.of("IDB `%s`".formatted(idUser));
         ContainerChildComponent mid3 = TextDisplay.of("IDD `%d`".formatted(discordId));
 
         // Секция экономики (самая нижняя)
         String bagVisible = "";
-        if (ctx.privacy().bag()) bagVisible = "-# Скрыто (видно только вам)";
-        ContainerChildComponent economy0 = TextDisplay.of("""
+        if (ctx.privacy().bag()) bagVisible = invisible;
+        ContainerChildComponent economyHeader = TextDisplay.of("""
                 ### \\💰 Мешок
                 %s
                 """.formatted(bagVisible));
@@ -89,33 +94,40 @@ public abstract class GlobalProfileUI {
         // Футер
         ContainerChildComponent footer = TextDisplay.of("-# **IDB** - айди внутри бота. **IDD** - айди внутри дискорд.");
 
-        List<ContainerChildComponent> components = new ArrayList<>(15);
-
-        // Баннер если есть
-        if (profile.getBanner() != null) components.add(MediaGallery.of(MediaGalleryItem.fromUrl(bannerUrl)));
-
-        // Главная секция
+        // Это ...
+        // Девиз: ...
         components.add(main);
         components.add(Separator.createDivider(Separator.Spacing.SMALL));
 
-        // Средняя секция
+        // Краткая информация:
         components.add(headerMid);
-        if (ctx.user().role() != null && ctx.user().role()
-                .equalsIgnoreCase("owner")) components.add(midRole);
 
         // Если не скрыто - показать активность
         if (!ctx.privacy().bag()) components.add(mid);
         else if (isOwner) components.add(mid);
 
-        components.add(mid0); components.add(mid1); components.add(mid2); components.add(mid3);
+        // Во вселенной дискорда с ...
+        components.add(mid0);
+        // Во вселенной бота с ...
+        components.add(mid1);
+        // Айди в дискорде и боте
+        components.add(mid2);
+        components.add(mid3);
 
         // Если не скрыто - показать мешок
         if (!ctx.privacy().bag()) {
             components.add(Separator.createDivider(Separator.Spacing.SMALL));
-            components.add(economy0); components.add(economy1); components.add(economy2);
+            // Мешок
+            components.add(economyHeader);
+            // ... ирисок | ... звездочек
+            components.add(economy1);
+            // ... i¢
+            components.add(economy2);
         } else if (isOwner) {
             components.add(Separator.createDivider(Separator.Spacing.SMALL));
-            components.add(economy0); components.add(economy1); components.add(economy2);
+            components.add(economyHeader);
+            components.add(economy1);
+            components.add(economy2);
         }
 
 
@@ -129,11 +141,10 @@ public abstract class GlobalProfileUI {
             ));
         }
 
-        // Подвал
+        // IDB - айди внутри бота. IDD - айди внутри дискорд.
         components.add(footer);
 
         return Container.of(components);
     }
-}
 
-// TODO: Это вообще пиздец, полностью переделать
+}

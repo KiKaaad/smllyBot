@@ -9,12 +9,17 @@ import com.kika.smllybot.database.sql.user.dto.UserAccount;
 import com.kika.smllybot.modules.user.ui.GlobalProfileUI;
 import com.kika.smllybot.other.BaseCmd;
 import net.dv8tion.jda.api.components.container.Container;
-import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.components.container.ContainerChildComponent;
+import net.dv8tion.jda.api.components.mediagallery.MediaGallery;
+import net.dv8tion.jda.api.components.mediagallery.MediaGalleryItem;
+import net.dv8tion.jda.api.components.textdisplay.TextDisplay;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 public class GlobalProfile extends BaseCmd {
@@ -24,16 +29,16 @@ public class GlobalProfile extends BaseCmd {
     }
 
     @Override
-    public void execute(MessageReceivedEvent event, String args) {
+    public Container execute(MessageReceivedEvent event, String args) {
 
         if (event.getMessage().getReferencedMessage() != null) {
             sendProfileResponse(event, event.getMessage().getReferencedMessage().getAuthor());
-            return;
+            return null;
         }
 
         if (args.isEmpty()) {
             sendProfileResponse(event, event.getAuthor());
-            return;
+            return null;
         }
 
         String[] parts = args.trim().split("\\s+", 1);
@@ -41,15 +46,15 @@ public class GlobalProfile extends BaseCmd {
 
         if (!event.getMessage().getMentions().getUsers().isEmpty()) {
             sendProfileResponse(event, event.getMessage().getMentions().getUsers().getFirst());
-            return;
+            return null;
         }
 
         if (arg.matches("\\d+")) {
             event.getJDA().retrieveUserById(arg).queue(
                     targetUser -> sendProfileResponse(event, targetUser),
-                    failure -> sendError(event, "❌ Упс... Пользователь с таким ID не найден")
+                    throwable -> sendError(event, "### \\❌ Упс... Пользователь с таким ID не найден")
             );
-            return;
+            return null;
         }
 
         var members = event.getGuild().getMembersByName(arg, true);
@@ -61,18 +66,19 @@ public class GlobalProfile extends BaseCmd {
         if (!members.isEmpty()) {
             sendProfileResponse(event, members.getFirst().getUser());
         } else {
-            sendError(event, "❌ Упс... Пользователь с таким юзернеймом не найден");
+            sendError(event, "### \\❌ Упс... Пользователь с таким юзернеймом не найден");
         }
+        return null;
     }
 
     private void sendProfileResponse(MessageReceivedEvent event, User targetUser) {
 
-        Member targetMember = event.isFromGuild()
-                ? event.getGuild().getMember(targetUser)
-                : null;
+        var targetMember = event.isFromGuild() ? event.getGuild().getMember(targetUser) : null;
 
-        UserAccount user = UserTable.getOrCreateUser(targetMember.getIdLong(), targetMember.getEffectiveName());
-        BankAccount bank = BankTable.getOrCreateBank(user.internalId(), targetMember.getEffectiveName());
+        assert targetMember != null;
+        UserAccount user = UserTable.getOrCreateUser(event.getAuthor().getIdLong(), targetUser.getName());
+        assert user != null;
+        BankAccount bank = BankTable.getOrCreateBank(user.internalId(), targetUser.getName());
         PrivacyAccount privacy = PrivacyTable.getOrCreatePrivacy(user.internalId());
 
         GlobalProfileContext ctx = new GlobalProfileContext(
@@ -84,15 +90,32 @@ public class GlobalProfile extends BaseCmd {
                 privacy
         );
 
-        Container response = GlobalProfileUI.buildProfile(ctx);
+        targetUser.retrieveProfile().queue(
+                profile -> {
+                    Container response = GlobalProfileUI.buildProfile(ctx);
+                    List<ContainerChildComponent> components = new ArrayList<>(response.getComponents());
 
-        event.getChannel().sendMessageComponents(response)
-                .useComponentsV2(true)
-                .queue();
+                    MediaGallery banner;
+                    if (profile.getBannerUrl() != null) {
+                        String bannerUrl = profile.getBanner().getUrl(1024);
+                        banner = MediaGallery.of(MediaGalleryItem.fromUrl(bannerUrl));
+                        components.addFirst(banner);
+                    }
+
+                    response = Container.of(components);
+
+                    event.getChannel().sendMessageComponents(response)
+                            .useComponentsV2(true)
+                            .queue();
+                }
+        );
     }
 
-    private void sendError(MessageReceivedEvent event, String text) {
-        event.getChannel().sendMessage(text)
+    private void sendError(MessageReceivedEvent event, String e) {
+        ContainerChildComponent main = TextDisplay.of(e);
+
+        event.getChannel().sendMessageComponents(Container.of(main))
+                .useComponentsV2(true)
                 .delay(Duration.ofSeconds(5))
                 .flatMap(Message::delete)
                 .queue();
