@@ -10,7 +10,7 @@ public record GlobalProfileContext(
         User target,        // Чей профиль смотрим
         User viewer,        // Кто профиль смотрит
         Member member,      // Отображение активности (онлайн / оффлайн)
-        UserAccount user,   // Данные с базы данных
+        UserAccount user,
         BankAccount bank,
         PrivacyAccount privacy
 ) {}
