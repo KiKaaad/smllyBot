@@ -2,6 +2,8 @@ package com.kika.smllybot.modules.economy;
 
 import com.kika.smllybot.database.sql.bank.BankTable;
 import com.kika.smllybot.database.sql.bank.dto.BankAccount;
+import com.kika.smllybot.database.sql.user.UserTable;
+import com.kika.smllybot.database.sql.user.dto.UserAccount;
 import com.kika.smllybot.modules.economy.ui.BagUI;
 import com.kika.smllybot.other.BaseCmd;
 import net.dv8tion.jda.api.components.container.Container;
@@ -61,7 +63,8 @@ public class Bag extends BaseCmd {
 
     public void sendBugResponse(MessageReceivedEvent event, User targetUser) {
 
-        BankAccount bank = BankTable.getOrCreateBank(targetUser.getIdLong(), targetUser.getName());
+        UserAccount user = UserTable.getOrCreateUser(targetUser.getIdLong(), targetUser.getEffectiveName());
+        BankAccount bank = BankTable.getOrCreateBank(user.internalId(), targetUser.getEffectiveName());
 
         BagContext ctx = new BagContext(
                 targetUser,

@@ -25,8 +25,14 @@ public abstract class BagUI {
         ContainerChildComponent economy2 = TextDisplay.of("\\☢️ **%s** i¢".formatted(irisCoin));
         ContainerChildComponent footer = TextDisplay.of("-# Каждый день от звёздности отнимается **0.1%**");
 
-        components.add(header); components.add(separator);
-        components.add(economy1); components.add(economy2);
+        // Мешок ...
+        components.add(header);
+        components.add(separator);
+        // ... ирисок | ... звездочек
+        components.add(economy1);
+        // ... i¢
+        components.add(economy2);
+        // Каждый день от звёздности отнимается 0.1%
         components.add(footer);
 
 
