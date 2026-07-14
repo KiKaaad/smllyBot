@@ -35,12 +35,17 @@ public class TimeUtil {
     }
 
     // Таймстамп для профиля
-    public static String getDiscordTimestamp(OffsetDateTime time) {
+    public static String getTimestamp(OffsetDateTime time) {
         return TimeFormat.DATE_TIME_SHORT.atTimestamp(time.toInstant().toEpochMilli()).toString();
     }
 
+    public static String getTimestampRelative(OffsetDateTime time) {
+        return TimeFormat.RELATIVE.atTimestamp(time.toInstant().toEpochMilli()).toString();
+    }
+
+    @Deprecated
     public static String getBotTimestamp(String date) {
-        if (date == null || date.isBlank()) return "Неизвестно ?";
+        if (date == null || date.isBlank()) return "Неизвестно";
 
         LocalDateTime dateTime = LocalDateTime.parse(date, DATE_TIME_FORMATTER);
         long millis = dateTime.toInstant(ZoneOffset.UTC).toEpochMilli();
