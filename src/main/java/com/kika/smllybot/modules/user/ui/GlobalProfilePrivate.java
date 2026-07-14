@@ -11,7 +11,11 @@ import com.kika.smllybot.handlers.ModalHandler;
 import com.kika.smllybot.modules.user.GlobalProfileContext;
 import com.kika.smllybot.other.BaseCmd;
 import com.kika.smllybot.utils.Interaction;
+import net.dv8tion.jda.api.components.container.Container;
+import net.dv8tion.jda.api.components.container.ContainerChildComponent;
 import net.dv8tion.jda.api.components.label.Label;
+import net.dv8tion.jda.api.components.mediagallery.MediaGallery;
+import net.dv8tion.jda.api.components.mediagallery.MediaGalleryItem;
 import net.dv8tion.jda.api.components.radiogroup.RadioGroup;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
@@ -19,6 +23,8 @@ import net.dv8tion.jda.api.interactions.modals.ModalMapping;
 import net.dv8tion.jda.api.modals.Modal;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 public class GlobalProfilePrivate extends BaseCmd implements ButtonHandler, ModalHandler {
@@ -27,6 +33,8 @@ public class GlobalProfilePrivate extends BaseCmd implements ButtonHandler, Moda
 
     @Override
     public void onButton(@NotNull ButtonInteractionEvent event, String[] parts) {
+        UserAccount user = UserTable.getOrCreateUser(event.getUser().getIdLong(), event.getUser().getName());
+        PrivacyAccount privacy = PrivacyTable.getOrCreatePrivacy(user.internalId());
 
         if (!Interaction.checkOwner(event, parts)) return;
 
@@ -36,19 +44,19 @@ public class GlobalProfilePrivate extends BaseCmd implements ButtonHandler, Moda
             RadioGroup bagSettings = RadioGroup.create("BagSettings")
                     .addOption("Все", "false")
                     .addOption("Никто", "true")
-                    .setSelectedValue("false")
+                    .setSelectedValue("%s".formatted(privacy.bag()))
                     .setRequired(true)
                     .build();
             RadioGroup activity = RadioGroup.create("ActivitySettings")
                     .addOption("Все", "false")
                     .addOption("Никто", "true")
-                    .setSelectedValue("false")
+                    .setSelectedValue("%s".formatted(privacy.activity()))
                     .setRequired(true)
                     .build();
             RadioGroup activityTime = RadioGroup.create("LastActivitySettings")
                     .addOption("Все", "false")
                     .addOption("Никто", "true")
-                    .setSelectedValue("false")
+                    .setSelectedValue("%s".formatted(privacy.lastActivity()))
                     .setRequired(true)
                     .build();
 
@@ -64,7 +72,6 @@ public class GlobalProfilePrivate extends BaseCmd implements ButtonHandler, Moda
         }
     }
 
-    // TODO: Реализовать адекватную логику приватности
     @Override
     public void onModal(ModalInteractionEvent event, String[] parts) {
         if (parts.length > 1 && parts[1].equals("submit")) {
@@ -94,11 +101,27 @@ public class GlobalProfilePrivate extends BaseCmd implements ButtonHandler, Moda
                     privacy
             );
 
-            var updatedProfile = GlobalProfileUI.buildProfile(ctx);
+            event.getUser().retrieveProfile().queue(
+                    profile -> {
+                        Container response = GlobalProfileUI.buildProfile(ctx);
+                        List<ContainerChildComponent> components = new ArrayList<>(response.getComponents());
 
-            event.editComponents(updatedProfile)
-                    .useComponentsV2(true)
-                    .queue();
+                        MediaGallery banner;
+                        if (profile.getBannerUrl() != null) {
+                            String bannerUrl = profile.getBanner().getUrl(1024);
+                            banner = MediaGallery.of(MediaGalleryItem.fromUrl(bannerUrl));
+                            components.addFirst(banner);
+                        }
+
+                        response = Container.of(components);
+
+                        event.editComponents(response)
+                                .useComponentsV2(true)
+                                .queue();
+                    }
+            );
+
+
         }
     }
 
