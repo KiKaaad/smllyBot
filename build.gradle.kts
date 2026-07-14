@@ -2,7 +2,6 @@ plugins {
     java
     kotlin("jvm") version "2.4.0"
     id("com.gradleup.shadow") version "9.5.1"
-    id("org.sonarqube") version "7.3.1.8318"
 }
 
 group = "kikaaad.smlly"
@@ -31,16 +30,11 @@ dependencies {
     implementation("ch.qos.logback:logback-core:1.5.32")
     implementation("com.google.code.gson:gson:2.13.2")
     implementation("net.dv8tion:JDA:6.5.0")
+    implementation("club.minnced:jda-ktx:0.15.0")
     implementation(libs.io.github.cdimascio.dotenv.java)
     implementation(libs.org.jetbrains.kotlin.kotlin.stdlib.jdk8)
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.11.0")
     testImplementation(libs.org.jetbrains.kotlin.kotlin.test)
-}
-
-sonar {
-    properties {
-        property("sonar.projectKey", "KiKaaad_smllyBotDiscordJDA")
-        property("sonar.organization", "kikaaad")
-    }
 }
 
 tasks.withType<JavaCompile>().configureEach {
