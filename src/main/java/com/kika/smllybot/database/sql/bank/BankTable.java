@@ -23,7 +23,7 @@ public class BankTable {
 
         String sql = """
                 CREATE TABLE IF NOT EXISTS bank (
-                id INTEGER PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+                id INT PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
                 name VARCHAR(32),
                 star INT DEFAULT 0,
                 iris BIGINT DEFAULT 0,
@@ -37,12 +37,12 @@ public class BankTable {
             stmt.execute(sql);
             log.info("✅ Таблица BANK успешно проверена / создана");
         } catch (SQLException e) {
-            log.error("❌ Ошибка создания таблицы BANK: {}", e.getMessage(), e);
+            log.error("❌ Ошибка создания таблицы BANK: ");
         }
     }
 
     @Nullable
-    public static BankAccount getOrCreateBank(int internalId, String defaultName) {
+    public static BankAccount getOrCreateBank(long internalId, String defaultName) {
         String upsertSql = """
                 INSERT INTO bank (id, name) VALUES (?, ?)
                 ON CONFLICT (id) DO UPDATE SET id = EXCLUDED.id
@@ -52,7 +52,7 @@ public class BankTable {
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(upsertSql)) {
 
-            pstmt.setInt(1, internalId);
+            pstmt.setLong(1, internalId);
             pstmt.setString(2, defaultName);
 
             try (ResultSet rs = pstmt.executeQuery()) {
@@ -68,7 +68,7 @@ public class BankTable {
                 }
             }
         } catch (SQLException e) {
-            log.error("❌ Ошибка при получении / создании BANK: ");
+            log.error("❌ Ошибка при получении / создании BANK: ", e);
         }
         return null;
     }
@@ -91,11 +91,11 @@ public class BankTable {
         }
     }
 
-    public static void updateLastFarm(int internalId) {
+    public static void updateLastFarm(long internalId) {
         String sql = "UPDATE bank SET last_farm = CURRENT_TIMESTAMP WHERE id = ?";
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, internalId);
+            pstmt.setLong(1, internalId);
             pstmt.executeUpdate();
         } catch (SQLException e) {
             log.error("❌ Ошибка обновления времени фармы: {}", e.getMessage(), e);
@@ -128,7 +128,7 @@ public class BankTable {
                 }
             }
         } catch (SQLException e) {
-            log.error("❌ Ошибка получения топа коинов: ");
+            log.error("❌ Ошибка получения топа коинов: ", e);
         }
         return topList;
     }
@@ -159,7 +159,7 @@ public class BankTable {
                 }
             }
         } catch (SQLException e) {
-            log.error("❌ Ошибка получения топа ирисок: ");
+            log.error("❌ Ошибка получения топа ирисок: ", e);
         }
         return topList;
     }

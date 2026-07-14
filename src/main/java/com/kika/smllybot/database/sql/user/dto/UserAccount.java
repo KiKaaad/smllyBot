@@ -1,7 +1,9 @@
 package com.kika.smllybot.database.sql.user.dto;
 
-public record UserAccount(int internalId, long discordId,
+import java.time.OffsetDateTime;
+
+public record UserAccount(long internalId, long discordId,
                           String role,
                           String name,
                           String motto,
-                          String createdAt) {}
+                          OffsetDateTime createdAt) {}

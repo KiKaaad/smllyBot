@@ -2,7 +2,6 @@ package com.kika.smllybot.database.sql.privacy;
 
 import com.kika.smllybot.database.sql.DatabaseManager;
 import com.kika.smllybot.database.sql.privacy.dto.PrivacyAccount;
-import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,12 +30,11 @@ public class PrivacyTable {
             stmt.execute(sql);
             log.info("✅ Таблица PRIVACY успешно проверена / создана");
         } catch (SQLException e) {
-            log.error("❌ Ошибка создания таблицы PRIVACY: {}", e.getMessage(), e);
+            log.error("❌ Ошибка создания таблицы PRIVACY: ");
         }
     }
 
-    @Nullable
-    public static PrivacyAccount getOrCreatePrivacy(int internalId) {
+    public static PrivacyAccount getOrCreatePrivacy(long internalId) {
         String selectSql = "SELECT id, bag, activity, last_activity FROM privacy WHERE id = ?";
         String insertSql = """
             INSERT INTO privacy (id) VALUES (?)
@@ -46,7 +44,7 @@ public class PrivacyTable {
 
         try (Connection conn = DatabaseManager.getConnection()) {
             try (PreparedStatement pstmt = conn.prepareStatement(selectSql)) {
-                pstmt.setInt(1, internalId);
+                pstmt.setLong(1, internalId);
                 try (ResultSet rs = pstmt.executeQuery()) {
                     if (rs.next()) {
                         return mapPrivacy(rs);
@@ -55,7 +53,7 @@ public class PrivacyTable {
             }
 
             try (PreparedStatement pstmt = conn.prepareStatement(insertSql)) {
-                pstmt.setInt(1, internalId);
+                pstmt.setLong(1, internalId);
                 try (ResultSet rs = pstmt.executeQuery()) {
                     if (rs.next()) {
                         return mapPrivacy(rs);
@@ -64,7 +62,7 @@ public class PrivacyTable {
             }
 
             try (PreparedStatement pstmt = conn.prepareStatement(selectSql)) {
-                pstmt.setInt(1, internalId);
+                pstmt.setLong(1, internalId);
                 try (ResultSet rs = pstmt.executeQuery()) {
                     if (rs.next()) return mapPrivacy(rs);
                 }
@@ -76,26 +74,26 @@ public class PrivacyTable {
         return null;
     }
 
-    public static void updateBagPrivacy(int internalId, boolean visible) {
+    public static void updateBagPrivacy(long internalId, boolean visible) {
         executePrivacyUpdate("UPDATE privacy SET bag = ? WHERE id = ?", internalId, visible);
     }
 
-    public static void updateActivityPrivacy(int internalId, boolean visible) {
+    public static void updateActivityPrivacy(long internalId, boolean visible) {
         executePrivacyUpdate("UPDATE privacy SET activity = ? WHERE id = ?", internalId, visible);
     }
 
-    public static void updateLastActivityPrivacy(int internalId, boolean visible) {
+    public static void updateLastActivityPrivacy(long internalId, boolean visible) {
         executePrivacyUpdate("UPDATE privacy SET last_activity = ? WHERE id = ?", internalId, visible);
     }
 
-    private static void executePrivacyUpdate(String sql, int internalId, boolean value) {
+    private static void executePrivacyUpdate(String sql, long internalId, boolean value) {
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setBoolean(1, value);
-            pstmt.setInt(2, internalId);
+            pstmt.setLong(2, internalId);
             pstmt.executeUpdate();
         } catch (SQLException e) {
-            log.error("❌ Ошибка обновления приватности для ID {}: ", internalId);
+            log.error("❌ Ошибка обновления приватности (internalId: {}): ", internalId);
         }
     }
 
