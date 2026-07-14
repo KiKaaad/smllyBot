@@ -35,7 +35,7 @@ public class Farm extends BaseCmd {
     }
 
     @Override
-    public void execute(MessageReceivedEvent event, String arg) {
+    public Container execute(MessageReceivedEvent event, String arg) {
 
         long discordId = event.getAuthor().getIdLong();
         String name = event.getAuthor().getEffectiveName();
@@ -63,7 +63,7 @@ public class Farm extends BaseCmd {
             event.getChannel().sendMessageComponents(response)
                     .useComponentsV2(true)
                     .queue();
-            return;
+            return response;
         }
 
         long star = bank.star();
@@ -104,5 +104,6 @@ public class Farm extends BaseCmd {
                 .useComponentsV2(true)
                 .queue();
 
+        return response;
     }
 }

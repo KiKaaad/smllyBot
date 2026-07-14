@@ -20,7 +20,7 @@ public class Dice extends BaseCmd {
     InputStream stream = getClass().getResourceAsStream("/images/five.gif");
 
     @Override
-    public void execute(MessageReceivedEvent event, String args) {
+    public Container execute(MessageReceivedEvent event, String args) {
 
         FileUpload upload = FileUpload.fromData(stream, "images/five.gif");
         ContainerChildComponent response = MediaGallery.of(
@@ -31,5 +31,6 @@ public class Dice extends BaseCmd {
                 .useComponentsV2(true)
                 .queue();
 
+        return null;
     }
 }

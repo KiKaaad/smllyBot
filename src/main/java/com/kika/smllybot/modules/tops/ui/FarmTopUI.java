@@ -52,8 +52,7 @@ public class FarmTopUI {
             String baseId = "gtop:%s:%d".formatted(subCommand, limit);
 
             Button prevButton = Button.primary("%s:%d:%s".formatted(baseId, page - 1, ownerId), "◀️ Назад");
-            Button pageIndicator = Button.secondary("gtop:noop:" + ownerId, "Стр. %d/%d".formatted(page + 1, totalPages))
-                    .asDisabled();
+            Button pageIndicator = Button.secondary("gtop:noop:" + ownerId, "Стр. %d/%d".formatted(page + 1, totalPages));
             Button nextButton = Button.primary("%s:%d:%s".formatted(baseId, page + 1, ownerId), "Вперед ▶️");
 
             if (page == 0) prevButton = prevButton.asDisabled();
@@ -64,4 +63,5 @@ public class FarmTopUI {
 
         return Container.of(components);
     }
+
 }

@@ -23,7 +23,7 @@ public class FarmTop extends BaseCmd {
     }
 
     @Override
-    public void execute(MessageReceivedEvent event, String arg) {
+    public Container execute(MessageReceivedEvent event, String arg) {
 
         String[] parts = arg.trim().split("\\s+", 2);
         String subCommand = parts[0].toLowerCase();
@@ -49,10 +49,10 @@ public class FarmTop extends BaseCmd {
                             .delay(Duration.ofSeconds(5))
                             .flatMap(Message::delete)
                             .queue();
-                    return;
+                    return null;
                 }
             } catch (NumberFormatException e) {
-                return;
+                return null;
             }
 
         }
@@ -72,7 +72,9 @@ public class FarmTop extends BaseCmd {
                 topEntries = BankTable.getTopIris(limit);
                 value = BankTopAmount::amount;
             }
-            default -> { return; }
+            default -> {
+                return null;
+            }
         }
 
         if (topEntries.isEmpty()) {
@@ -82,7 +84,7 @@ public class FarmTop extends BaseCmd {
             event.getChannel().sendMessageComponents(response)
                     .useComponentsV2(true)
                     .queue();
-            return;
+            return response;
         }
 
         List<String> topLines = new ArrayList<>();
@@ -109,5 +111,6 @@ public class FarmTop extends BaseCmd {
         event.getChannel().sendMessageComponents(response)
                 .useComponentsV2(true)
                 .queue();
+        return response;
     }
 }

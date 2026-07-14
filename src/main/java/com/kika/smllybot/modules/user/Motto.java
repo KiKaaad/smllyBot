@@ -25,7 +25,7 @@ public class Motto extends BaseCmd implements ButtonHandler {
     public Motto() { super(Set.of("+девиз", "-девиз", "motto", "девиз")); }
 
     @Override
-    public void execute(MessageReceivedEvent event, String args) {
+    public Container execute(MessageReceivedEvent event, String args) {
 
         String rawMessage = event.getMessage().getContentRaw();
         String commandWord = PrefixUtil.getCommandBody(rawMessage, Main.PREFIXES).split("\\s+")[0].toLowerCase();
@@ -44,7 +44,7 @@ public class Motto extends BaseCmd implements ButtonHandler {
                     event.getAuthor(), dbUser, "❌ Описание удалено", false);
 
             event.getChannel().sendMessageComponents(response).useComponentsV2(true).queue();
-            return;
+            return response;
         }
 
         // Показать девиз
@@ -55,13 +55,14 @@ public class Motto extends BaseCmd implements ButtonHandler {
                     event.getAuthor(), dbUser, "Ваш текущий девиз", false);
 
             event.getChannel().sendMessageComponents(response).useComponentsV2(true).queue();
-            return;
+            return response;
         }
 
         String aboutMeText = args.trim();
 
         UserTable.updateMotto(discordId, aboutMeText);
         response(event, "✅ Описание обновлено");
+        return null;
     }
 
     private void response(MessageReceivedEvent event, String title) {

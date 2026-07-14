@@ -10,8 +10,6 @@ import com.kika.smllybot.modules.ping.PrefixPing;
 import com.kika.smllybot.modules.ping.SlashPing;
 import com.kika.smllybot.other.ComponentManager;
 import com.kika.smllybot.other.slashCmdInfo;
-import com.kika.smllybot.utils.localization.I18n;
-import com.kika.smllybot.utils.localization.I18nRequest;
 import io.github.cdimascio.dotenv.Dotenv;
 import io.github.cdimascio.dotenv.DotenvException;
 import net.dv8tion.jda.api.JDA;
@@ -38,9 +36,6 @@ import java.nio.file.StandardOpenOption;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Scanner;
-
-import static com.kika.smllybot.utils.formatting.Colors.*;
-import static com.kika.smllybot.utils.formatting.Formatting.BOLD;
 
 public class Main implements EventListener {
 
@@ -89,8 +84,7 @@ public class Main implements EventListener {
         }
 
         try (Connection conn = DatabaseManager.getConnection()) {
-            var logReq = new I18nRequest("ru", "logger", "Database", "database.connect.success");
-            System.out.println(BOLD+GREEN + I18n.get(logReq) + RESET);
+            log.info("✅ База данных PostgreSQL подключена!");
 
             // Создание таблиц
             UserTable.createTable();
@@ -98,9 +92,8 @@ public class Main implements EventListener {
             PrivacyTable.createTable();
 
         } catch (SQLException e) {
-            var logReq = new I18nRequest("ru", "logger", "Database", "database.connect.failure");
+            log.error("❌ Не удалось подключиться к базе данных: ");
 
-            System.err.printf(BOLD+RED + I18n.get(logReq), e.getMessage() + RESET);
             throw new RuntimeException();
         }
 
