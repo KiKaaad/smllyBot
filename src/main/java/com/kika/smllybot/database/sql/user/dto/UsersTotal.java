@@ -1,4 +1,4 @@
 package com.kika.smllybot.database.sql.user.dto;
 
-public record UserAnketa() {
+public record UsersTotal(long Total) {
 }
