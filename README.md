@@ -1,7 +1,7 @@
 # 🦧 Discord bot Femboy#6593
 ![Лицензия](https://img.shields.io/badge/Apache-2.0-license)
 [![CodeFactor](https://www.codefactor.io/repository/github/kikaaad/smllybot/badge)](https://www.codefactor.io/repository/github/kikaaad/smllybot)
-![Версия](https://img.shields.io/badge/Version-0.4.7-orange)
+![Версия](https://img.shields.io/badge/Version-0.4.16-orange)
 ![Java](https://img.shields.io/badge/Java-25-orange)
 ![Стадия](https://img.shields.io/badge/Стадия%20беты-101010)\
 Этот бот — аналог [Iris | Чат-менеджер](https://teletype.in/@iris_cm) для дискорда и все команды будут практически полностью индентичны
