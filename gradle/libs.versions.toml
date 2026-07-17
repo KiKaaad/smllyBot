@@ -2,7 +2,7 @@
 # https://docs.gradle.org/current/userguide/version_catalogs.html#sec::toml-dependencies-format
 
 [versions]
-ch-qos-logback-logback-classic = "1.5.13"
+ch-qos-logback-logback-classic = "1.5.38"
 io-github-cdimascio-dotenv-java = "3.2.0"
 net-dv8tion-jda = "6.5.0"
 org-jetbrains-kotlin-kotlin-stdlib-jdk8 = "2.4.0"
