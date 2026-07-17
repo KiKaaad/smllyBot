@@ -26,8 +26,8 @@ tasks.jar {
 dependencies {
     implementation("com.zaxxer:HikariCP:7.1.0")
     implementation("org.postgresql:postgresql:42.7.11")
-    implementation("ch.qos.logback:logback-classic:1.5.32")
-    implementation("ch.qos.logback:logback-core:1.5.32")
+    implementation("ch.qos.logback:logback-classic:1.5.38")
+    implementation("ch.qos.logback:logback-core:1.5.38")
     implementation("com.google.code.gson:gson:2.13.2")
     implementation("net.dv8tion:JDA:6.5.0")
     implementation("club.minnced:jda-ktx:0.15.0")
