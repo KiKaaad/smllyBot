@@ -2,6 +2,8 @@ package com.kika.smllybot.modules.economy;
 
 import com.kika.smllybot.database.sql.bank.BankTable;
 import com.kika.smllybot.database.sql.bank.dto.BankAccount;
+import com.kika.smllybot.database.sql.privacy.PrivacyTable;
+import com.kika.smllybot.database.sql.privacy.dto.PrivacyAccount;
 import com.kika.smllybot.database.sql.user.UserTable;
 import com.kika.smllybot.database.sql.user.dto.UserAccount;
 import com.kika.smllybot.modules.economy.ui.BagUI;
@@ -22,28 +24,28 @@ public class Bag extends BaseCmd {
     }
 
     @Override
-    public Container execute(MessageReceivedEvent event, String args) {
+    public Container execute(MessageReceivedEvent event, String raw, String args) {
 
         String[] parts = args.trim().split("\\s+");
 
         if (event.getMessage().getReferencedMessage() != null) {
-            sendBugResponse(event, event.getMessage().getReferencedMessage().getAuthor());
+            sendBagResponse(event, event.getMessage().getReferencedMessage().getAuthor());
             return null;
         }
 
         if (args.isEmpty()) {
-            sendBugResponse(event, event.getAuthor());
+            sendBagResponse(event, event.getAuthor());
             return null;
         }
 
         if (!event.getMessage().getMentions().getUsers().isEmpty()) {
-            sendBugResponse(event, event.getMessage().getMentions().getUsers().getFirst());
+            sendBagResponse(event, event.getMessage().getMentions().getUsers().getFirst());
             return null;
         }
 
         if (args.matches("\\d+")) {
             event.getJDA().retrieveUserById(parts[0]).queue(
-                    targetUser -> sendBugResponse(event, targetUser),
+                    targetUser -> sendBagResponse(event, targetUser),
                     failure -> sendError(event)
             );
             return null;
@@ -53,7 +55,7 @@ public class Bag extends BaseCmd {
         var members = event.getGuild().getMembersByName(args, true);
 
         if (!members.isEmpty()) {
-            sendBugResponse(event, members.getFirst().getUser());
+            sendBagResponse(event, members.getFirst().getUser());
         } else {
             sendError(event);
         }
@@ -61,14 +63,17 @@ public class Bag extends BaseCmd {
         return null;
     }
 
-    public void sendBugResponse(MessageReceivedEvent event, User targetUser) {
+    public void sendBagResponse(MessageReceivedEvent event, User targetUser) {
 
         UserAccount user = UserTable.getOrCreateUser(targetUser.getIdLong(), targetUser.getEffectiveName());
         BankAccount bank = BankTable.getOrCreateBank(user.internalId(), targetUser.getEffectiveName());
+        PrivacyAccount privacy = PrivacyTable.getOrCreatePrivacy(user.internalId());
 
         BagContext ctx = new BagContext(
+                event.getAuthor().getIdLong(),
                 targetUser,
-                bank
+                bank,
+                privacy
         );
 
         Container response = BagUI.buildBug(ctx);

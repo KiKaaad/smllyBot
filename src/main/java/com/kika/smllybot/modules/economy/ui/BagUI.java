@@ -24,16 +24,26 @@ public abstract class BagUI {
         ContainerChildComponent economy1 = TextDisplay.of("\\🍬 **%s** ирисок | \\⭐ **%s** звездочек".formatted(iris, star));
         ContainerChildComponent economy2 = TextDisplay.of("\\☢️ **%s** i¢".formatted(irisCoin));
         ContainerChildComponent footer = TextDisplay.of("-# Каждый день от звёздности отнимается **0.1%**");
+        ContainerChildComponent privacyAuthor = TextDisplay.of("-# Скрыто (видно только вам)");
 
-        // Мешок ...
-        components.add(header);
-        components.add(separator);
-        // ... ирисок | ... звездочек
-        components.add(economy1);
-        // ... i¢
-        components.add(economy2);
-        // Каждый день от звёздности отнимается 0.1%
-        components.add(footer);
+        if (!ctx.privacy().bag() || ctx.author() == ctx.target().getIdLong()) {
+            // Мешок ...
+            components.add(header);
+            if (ctx.privacy().bag()) components.add(privacyAuthor);
+            components.add(separator);
+            // ... ирисок | ... звездочек
+            components.add(economy1);
+            // ... i¢
+            components.add(economy2);
+            // Каждый день от звёздности отнимается 0.1%
+            components.add(footer);
+        } else {
+            ContainerChildComponent privacy = TextDisplay.of("## \\❌ Увы и ах мешок этого пользователя скрыт");
+            ContainerChildComponent footerPrivacy = TextDisplay
+                    .of("-# Попросите пользователя открыть мешок в настройках приватности");
+            components.add(privacy);
+            components.add(footerPrivacy);
+        }
 
 
         return Container.of(components);
