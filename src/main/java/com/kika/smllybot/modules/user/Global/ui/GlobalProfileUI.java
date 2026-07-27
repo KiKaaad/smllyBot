@@ -1,6 +1,8 @@
-package com.kika.smllybot.modules.user.ui;
+package com.kika.smllybot.modules.user.Global.ui;
 
-import com.kika.smllybot.modules.user.GlobalProfileContext;
+import com.kika.smllybot.database.sql.statistic.StatisticTable;
+import com.kika.smllybot.database.sql.statistic.dto.TotalStatisticUser;
+import com.kika.smllybot.modules.user.Global.GlobalProfileContext;
 import com.kika.smllybot.utils.Formatter;
 import com.kika.smllybot.utils.TimeUtil;
 import net.dv8tion.jda.api.components.actionrow.ActionRow;
@@ -15,10 +17,12 @@ import net.dv8tion.jda.api.components.thumbnail.Thumbnail;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class GlobalProfileUI {
+public class GlobalProfileUI {
 
     public static Container buildProfile(GlobalProfileContext ctx) {
-        List<ContainerChildComponent> components = new ArrayList<>(15);
+        List<ContainerChildComponent> components = new ArrayList<>(18);
+
+        TotalStatisticUser userStat = StatisticTable.getTotalUserStatistic(ctx.user().internalId());
 
         String invisible = "-# Скрыто (видно только вам)";
 
@@ -42,9 +46,9 @@ public abstract class GlobalProfileUI {
         String avatarUrl = ctx.target().getEffectiveAvatarUrl();
 
         // Девиз
-        String aboutMe = ctx.user().motto();
-        if (aboutMe == null || aboutMe.isBlank()) {
-            aboutMe = "Пользователь не указал описание.";
+        String motto = ctx.user().motto();
+        if (motto == null || motto.isBlank()) {
+            motto = "Пользователь не указал описание.";
         }
 
         // Статус пользователя (онлайн / оффлайн)
@@ -55,7 +59,7 @@ public abstract class GlobalProfileUI {
                 Thumbnail.fromUrl(avatarUrl),
                 TextDisplay.of("# \\🗿 Это %s%s".formatted(ctx.target().getEffectiveName(), status)),
                 TextDisplay.of("### Девиз:"),
-                TextDisplay.of(aboutMe)
+                TextDisplay.of(motto)
         );
 
         // Средняя секция
@@ -67,7 +71,7 @@ public abstract class GlobalProfileUI {
         ContainerChildComponent mid = TextDisplay.of("""
                 \\📊 **Активность** (день | нед | мес | всего): %s | %s | %s | %s
                 %s
-                """.formatted(-1, -1, -1, -1, activityVisible));
+                """.formatted(userStat.day(), userStat.week(), userStat.month(), userStat.total(), activityVisible));
 
         // Во вселенной дискорда с ...
         ContainerChildComponent mid0 = TextDisplay.of("\\🕐 Во вселенной дискорд с **%s** (**%s**)"
@@ -133,7 +137,7 @@ public abstract class GlobalProfileUI {
 
         // Управление
         if (isOwner) {
-            components.add(TextDisplay.of("### Кнопки управления профилем"));
+            components.add(TextDisplay.of("### Настройки профиля"));
             components.add(Separator.createDivider(Separator.Spacing.SMALL));
             components.add(ActionRow.of(
                     Button.primary("profile:modal:" + ctx.target().getId(), "ℹ️ Редактировать профиль"),

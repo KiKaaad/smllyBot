@@ -1,4 +1,4 @@
-package com.kika.smllybot.modules.user.ui;
+package com.kika.smllybot.modules.user.Global.ui;
 
 import com.kika.smllybot.database.sql.bank.BankTable;
 import com.kika.smllybot.database.sql.bank.dto.BankAccount;
@@ -8,7 +8,7 @@ import com.kika.smllybot.database.sql.user.UserTable;
 import com.kika.smllybot.database.sql.user.dto.UserAccount;
 import com.kika.smllybot.handlers.ButtonHandler;
 import com.kika.smllybot.handlers.ModalHandler;
-import com.kika.smllybot.modules.user.GlobalProfileContext;
+import com.kika.smllybot.modules.user.Global.GlobalProfileContext;
 import com.kika.smllybot.other.BaseCmd;
 import com.kika.smllybot.utils.Interaction;
 import net.dv8tion.jda.api.components.container.Container;
@@ -74,7 +74,7 @@ public class GlobalProfilePrivate extends BaseCmd implements ButtonHandler, Moda
 
     @Override
     public void onModal(ModalInteractionEvent event, String[] parts) {
-        if (parts.length > 1 && parts[1].equals("submit")) {
+        if (parts[1].equals("submit")) {
             long discordId = event.getUser().getIdLong();
             String username = event.getUser().getName();
 

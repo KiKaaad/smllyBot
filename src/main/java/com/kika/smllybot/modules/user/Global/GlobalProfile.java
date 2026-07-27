@@ -1,4 +1,4 @@
-package com.kika.smllybot.modules.user;
+package com.kika.smllybot.modules.user.Global;
 
 import com.kika.smllybot.database.sql.bank.BankTable;
 import com.kika.smllybot.database.sql.bank.dto.BankAccount;
@@ -6,7 +6,7 @@ import com.kika.smllybot.database.sql.privacy.PrivacyTable;
 import com.kika.smllybot.database.sql.privacy.dto.PrivacyAccount;
 import com.kika.smllybot.database.sql.user.UserTable;
 import com.kika.smllybot.database.sql.user.dto.UserAccount;
-import com.kika.smllybot.modules.user.ui.GlobalProfileUI;
+import com.kika.smllybot.modules.user.Global.ui.GlobalProfileUI;
 import com.kika.smllybot.other.BaseCmd;
 import net.dv8tion.jda.api.components.container.Container;
 import net.dv8tion.jda.api.components.container.ContainerChildComponent;
@@ -29,29 +29,30 @@ public class GlobalProfile extends BaseCmd {
     }
 
     @Override
-    public Container execute(MessageReceivedEvent event, String args) {
+    public Container execute(MessageReceivedEvent event, String raw, String args) {
+
+        String[] parts = raw.trim().split("\\s+", 2);
 
         if (event.getMessage().getReferencedMessage() != null) {
-            sendProfileResponse(event, event.getMessage().getReferencedMessage().getAuthor());
+            sendAnketaResponse(event, event.getMessage().getReferencedMessage().getAuthor());
             return null;
         }
 
-        if (args.isEmpty()) {
-            sendProfileResponse(event, event.getAuthor());
+        if (parts.length < 2) {
+            sendAnketaResponse(event, event.getAuthor());
             return null;
         }
 
-        String[] parts = args.trim().split("\\s+", 1);
-        String arg = parts[0];
+        String arg = parts[1];
 
         if (!event.getMessage().getMentions().getUsers().isEmpty()) {
-            sendProfileResponse(event, event.getMessage().getMentions().getUsers().getFirst());
+            sendAnketaResponse(event, event.getMessage().getMentions().getUsers().getFirst());
             return null;
         }
 
         if (arg.matches("\\d+")) {
             event.getJDA().retrieveUserById(arg).queue(
-                    targetUser -> sendProfileResponse(event, targetUser),
+                    targetUser -> sendAnketaResponse(event, targetUser),
                     throwable -> sendError(event, "### \\❌ Упс... Пользователь с таким ID не найден")
             );
             return null;
@@ -64,20 +65,18 @@ public class GlobalProfile extends BaseCmd {
         }
 
         if (!members.isEmpty()) {
-            sendProfileResponse(event, members.getFirst().getUser());
+            sendAnketaResponse(event, members.getFirst().getUser());
         } else {
             sendError(event, "### \\❌ Упс... Пользователь с таким юзернеймом не найден");
         }
         return null;
     }
 
-    private void sendProfileResponse(MessageReceivedEvent event, User targetUser) {
+    private void sendAnketaResponse(MessageReceivedEvent event, User targetUser) {
 
         var targetMember = event.isFromGuild() ? event.getGuild().getMember(targetUser) : null;
 
-        assert targetMember != null;
-        UserAccount user = UserTable.getOrCreateUser(event.getAuthor().getIdLong(), targetUser.getName());
-        assert user != null;
+        UserAccount user = UserTable.getOrCreateUser(targetUser.getIdLong(), targetUser.getName());
         BankAccount bank = BankTable.getOrCreateBank(user.internalId(), targetUser.getName());
         PrivacyAccount privacy = PrivacyTable.getOrCreatePrivacy(user.internalId());
 
@@ -96,7 +95,7 @@ public class GlobalProfile extends BaseCmd {
                     List<ContainerChildComponent> components = new ArrayList<>(response.getComponents());
 
                     MediaGallery banner;
-                    if (profile.getBannerUrl() != null) {
+                    if (profile.getBanner() != null) {
                         String bannerUrl = profile.getBanner().getUrl(1024);
                         banner = MediaGallery.of(MediaGalleryItem.fromUrl(bannerUrl));
                         components.addFirst(banner);

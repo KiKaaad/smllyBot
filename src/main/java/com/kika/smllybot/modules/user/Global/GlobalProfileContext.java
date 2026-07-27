@@ -1,4 +1,4 @@
-package com.kika.smllybot.modules.user;
+package com.kika.smllybot.modules.user.Global;
 
 import com.kika.smllybot.database.sql.bank.dto.BankAccount;
 import com.kika.smllybot.database.sql.privacy.dto.PrivacyAccount;
