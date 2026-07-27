@@ -1,4 +1,4 @@
-package com.kika.smllybot.modules.tops.ui;
+package com.kika.smllybot.modules.tops.Global.ui;
 
 import com.kika.smllybot.handlers.ButtonHandler;
 import com.kika.smllybot.utils.Interaction;

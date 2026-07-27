@@ -1,9 +1,9 @@
-package com.kika.smllybot.modules.tops;
+package com.kika.smllybot.modules.tops.Global;
 
 import com.kika.smllybot.database.sql.bank.dto.BankTopAmount;
 import com.kika.smllybot.other.BaseCmd;
 import com.kika.smllybot.database.sql.bank.BankTable;
-import com.kika.smllybot.modules.tops.ui.FarmTopUI;
+import com.kika.smllybot.modules.tops.Global.ui.GlobalTopUI;
 import net.dv8tion.jda.api.components.container.Container;
 import net.dv8tion.jda.api.components.container.ContainerChildComponent;
 import net.dv8tion.jda.api.components.textdisplay.TextDisplay;
@@ -16,16 +16,16 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
-public class FarmTop extends BaseCmd {
+public class GlobalTop extends BaseCmd {
 
-    public FarmTop() {
+    public GlobalTop() {
         super(Set.of("гтоп", "gtop"));
     }
 
     @Override
-    public Container execute(MessageReceivedEvent event, String arg) {
+    public Container execute(MessageReceivedEvent event, String raw, String args) {
 
-        String[] parts = arg.trim().split("\\s+", 2);
+        String[] parts = args.trim().split("\\s+", 2);
         String subCommand = parts[0].toLowerCase();
 
         String title;
@@ -33,7 +33,7 @@ public class FarmTop extends BaseCmd {
         String suffix;
         String ownerId = event.getAuthor().getId();
         List<BankTopAmount> topEntries;
-        IFarmTop value;
+        IGlobalTop value;
 
         int limit = 1000;
 
@@ -104,9 +104,9 @@ public class FarmTop extends BaseCmd {
             topLines.add(line);
         }
 
-        FarmTopContext ctx = new FarmTopContext(topLines);
+        GlobalTopContext ctx = new GlobalTopContext(topLines);
 
-        Container response = FarmTopUI.buildFarmTop(icon, title, subCommand, limit, 0, ownerId, ctx);
+        Container response = GlobalTopUI.buildFarmTop(icon, title, subCommand, limit, 0, ownerId, ctx);
 
         event.getChannel().sendMessageComponents(response)
                 .useComponentsV2(true)

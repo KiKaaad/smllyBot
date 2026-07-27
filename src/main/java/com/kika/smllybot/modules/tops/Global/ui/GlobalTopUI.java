@@ -1,6 +1,6 @@
-package com.kika.smllybot.modules.tops.ui;
+package com.kika.smllybot.modules.tops.Global.ui;
 
-import com.kika.smllybot.modules.tops.FarmTopContext;
+import com.kika.smllybot.modules.tops.Global.GlobalTopContext;
 import net.dv8tion.jda.api.components.actionrow.ActionRow;
 import net.dv8tion.jda.api.components.buttons.Button;
 import net.dv8tion.jda.api.components.container.Container;
@@ -11,7 +11,7 @@ import net.dv8tion.jda.api.components.textdisplay.TextDisplay;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FarmTopUI {
+public class GlobalTopUI {
 
     public static final int ITEMS_PER_PAGE = 15;
 
@@ -21,7 +21,7 @@ public class FarmTopUI {
                                          int limit,
                                          int page,
                                          String ownerId,
-                                         FarmTopContext ctx) {
+                                         GlobalTopContext ctx) {
         List<ContainerChildComponent> components = new ArrayList<>(40);
 
         ContainerChildComponent main = TextDisplay.of("# \\%s Глобальный топ по %s".formatted(emoji, title));

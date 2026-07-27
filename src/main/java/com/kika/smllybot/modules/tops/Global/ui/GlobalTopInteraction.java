@@ -1,10 +1,10 @@
-package com.kika.smllybot.modules.tops.ui;
+package com.kika.smllybot.modules.tops.Global.ui;
 
 import com.kika.smllybot.database.sql.bank.BankTable;
 import com.kika.smllybot.database.sql.bank.dto.BankTopAmount;
 import com.kika.smllybot.handlers.ButtonHandler;
-import com.kika.smllybot.modules.tops.FarmTopContext;
-import com.kika.smllybot.modules.tops.IFarmTop;
+import com.kika.smllybot.modules.tops.Global.GlobalTopContext;
+import com.kika.smllybot.modules.tops.Global.IGlobalTop;
 import com.kika.smllybot.other.BaseCmd;
 import com.kika.smllybot.utils.Interaction;
 import net.dv8tion.jda.api.components.container.Container;
@@ -32,7 +32,7 @@ public class GlobalTopInteraction extends BaseCmd implements ButtonHandler {
         String icon;
         String suffix;
         List<BankTopAmount> topEntries;
-        IFarmTop value;
+        IGlobalTop value;
 
         switch (subCommand) {
             case "коины" -> {
@@ -66,9 +66,9 @@ public class GlobalTopInteraction extends BaseCmd implements ButtonHandler {
             topFarmLines.add("%s **%s** — %s %s".formatted(placeEmoji, entry.name(), formattedValue, suffix));
         }
 
-        FarmTopContext ctx = new FarmTopContext(topFarmLines);
+        GlobalTopContext ctx = new GlobalTopContext(topFarmLines);
 
-        Container updatedResponse = FarmTopUI.buildFarmTop(
+        Container updatedResponse = GlobalTopUI.buildFarmTop(
                 icon, title,
                 subCommand,
                 limit, targetPage,
