@@ -1,27 +1,34 @@
 package com.kika.smllybot.database.sql;
 
+import com.kika.smllybot.Config;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import io.github.cdimascio.dotenv.Dotenv;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 
 public class DatabaseManager {
-    private static final HikariDataSource ds;
 
-    static {
-        Dotenv dotenv = Dotenv.load();
+    private static HikariDataSource ds;
+
+    public static void init() {
+        if (ds != null) {
+            return;
+        }
+
+        String host = Config.getInstance().getString("database.host");
+        int port = Config.getInstance().getInt("database.port");
+        String name = Config.getInstance().getString("database.name");
+        String user = Config.getInstance().getString("database.user");
+        String password = Config.getInstance().getString("database.password");
+
         HikariConfig config = new HikariConfig();
 
-        String url = String.format("jdbc:postgresql://%s:%s/%s",
-                dotenv.get("DB_HOST"),
-                dotenv.get("DB_PORT"),
-                dotenv.get("DB_NAME"));
+        String url = String.format("jdbc:postgresql://%s:%d/%s", host, port, name);
 
         config.setJdbcUrl(url);
-        config.setUsername(dotenv.get("DB_USER"));
-        config.setPassword(dotenv.get("DB_PASS"));
+        config.setUsername(user);
+        config.setPassword(password);
 
         config.setMaximumPoolSize(10);
         config.setMinimumIdle(2);
@@ -35,9 +42,9 @@ public class DatabaseManager {
     }
 
     public static Connection getConnection() throws SQLException {
+        if (ds == null) {
+            throw new IllegalStateException();
+        }
         return ds.getConnection();
     }
-
-    private DatabaseManager() {}
 }
-

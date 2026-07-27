@@ -14,7 +14,7 @@ public class GlobalHelp extends BaseCmd {
     }
 
     @Override
-    public Container execute(MessageReceivedEvent event, String args) {
+    public Container execute(MessageReceivedEvent event, String raw, String args) {
 
         if (args.isEmpty()) {
             Container response = GlobalHelpUI.defaultHelp();
@@ -43,14 +43,13 @@ public class GlobalHelp extends BaseCmd {
                         .useComponentsV2(true)
                         .queue();
             }
-            case "статбот" -> {
+            case "статистика" -> {
                 Container response = GlobalHelpUI.statBot();
 
                 event.getChannel().sendMessageComponents(response)
                         .useComponentsV2(true)
                         .queue();
             }
-            default -> System.out.println("?? subCommand GlobalHelp");
         }
 
         return null;
