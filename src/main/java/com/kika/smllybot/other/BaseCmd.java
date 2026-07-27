@@ -12,7 +12,7 @@ public abstract class BaseCmd {
 
     public Set<String> getAliases() { return aliases; }
 
-    public Container execute(MessageReceivedEvent event, String args) {
+    public Container execute(MessageReceivedEvent event, String raw, String args) {
         return null;
     }
 }
