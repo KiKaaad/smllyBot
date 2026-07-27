@@ -20,9 +20,8 @@ import java.util.List;
 
 import static com.kika.smllybot.Main.OWNER;
 import static com.kika.smllybot.Main.VERSION;
-import static com.kika.smllybot.listeners.MessageCounter.messageCount;
 
-public abstract class StatisticUI {
+public class StatisticUI {
 
     public static Container buildStatistic(StatisticContext ctx) {
         List<ContainerChildComponent> components = new ArrayList<>(12);
@@ -69,7 +68,7 @@ public abstract class StatisticUI {
         ContainerChildComponent headerOther = TextDisplay.of("## \\🌃 Прочая статистика");
         ContainerChildComponent servers = TextDisplay.of("Серверов: **%d**".formatted(ctx.serversCount()));
         ContainerChildComponent users = TextDisplay.of("Пользователей (в кэше / бд): **%d** / **%d** | Учтено сообщений: **%d**"
-                .formatted(ctx.userCount(), UserTable.getTotalUsers().Total(), messageCount));
+                .formatted(ctx.userCount(), UserTable.getTotalUsers().Total(), -1));
         ContainerChildComponent shards = TextDisplay.of("Количество шардов: **%d**".formatted(ctx.shardTotal()));
         ContainerChildComponent version = TextDisplay.of("Версия JDA **%s** | Версия бота **%s**"
                 .formatted(ctx.jdaVersion(), VERSION));

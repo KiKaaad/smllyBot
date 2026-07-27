@@ -41,7 +41,7 @@ public abstract class FarmUI {
                 .formatted(ctx.starMultiplier(), ctx.multiplierText()));
 
         if (ctx.baseReward() < 0) components.add(main0Minus);
-        if (ctx.baseReward() > 0) components.add(main0Base);
+        if (ctx.baseReward() > 0 && ctx.baseReward() <= 150) components.add(main0Base);
         if (ctx.baseReward() > 150 && ctx.baseReward() <= 500) components.add(main0Bonus);
         if (ctx.baseReward() > 501) components.add(main0BonusPlus);
         components.add(separator);

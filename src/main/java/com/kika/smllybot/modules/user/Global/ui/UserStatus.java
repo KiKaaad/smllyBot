@@ -1,4 +1,4 @@
-package com.kika.smllybot.modules.user.ui;
+package com.kika.smllybot.modules.user.Global.ui;
 
 import net.dv8tion.jda.api.entities.Member;
 

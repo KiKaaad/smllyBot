@@ -1,5 +1,6 @@
 package com.kika.smllybot.modules.economy;
 
+import com.kika.smllybot.Config;
 import com.kika.smllybot.database.sql.bank.BankTable;
 import com.kika.smllybot.database.sql.bank.dto.BankAccount;
 import com.kika.smllybot.database.sql.user.UserTable;
@@ -21,21 +22,36 @@ public class Farm extends BaseCmd {
     }
 
     private static int baseReward() {
-        int roll = ThreadLocalRandom.current().nextInt(0, 1000);
 
-        // Шанс 0.1% потерять ирис-коины
-        if (roll < 1) return ThreadLocalRandom.current().nextInt(-51, 0);
-        // Шанс 0.5%
-        if (roll < 5) return ThreadLocalRandom.current().nextInt(1000, 2001);
-        // Шанс 5%
-        if (roll < 55) return ThreadLocalRandom.current().nextInt(200, 501);
+        int minLoss = Config.getInstance().getInt("economy.min_loss");
+        int maxLoss = Config.getInstance().getInt("economy.max_loss");
+        int min = Config.getInstance().getInt("economy.min");
+        int max = Config.getInstance().getInt("economy.max");
+        int minMini = Config.getInstance().getInt("economy.min_mini");
+        int maxMini = Config.getInstance().getInt("economy.max_mini");
+        int minLarge = Config.getInstance().getInt("economy.min_mini");
+        int maxLarge = Config.getInstance().getInt("economy.max_large");
+        double chanceLossReward = Config.getInstance().getFloat("economy.chances.loss_reward");
+        double chanceMiniReward = Config.getInstance().getFloat("economy.chances.mini_reward");
+        double chanceLargeReward = Config.getInstance().getFloat("economy.chances.large_reward");
 
-        // Шанс 94.5%
-        return ThreadLocalRandom.current().nextInt(5, 51);
+        double currentSum = 0.0;
+
+        double roll = ThreadLocalRandom.current().nextDouble(0.0, 100.0);
+
+        // +1 Так как верхняя граница не учитывается. То есть если верхняя граница 100, максимум выпадет 99, мяу
+        currentSum += chanceLossReward;
+        if (roll < currentSum) return ThreadLocalRandom.current().nextInt(maxLoss, minLoss + 1);
+        currentSum += chanceMiniReward;
+        if (roll < currentSum) return ThreadLocalRandom.current().nextInt(minLarge, maxLarge + 1);
+        currentSum += chanceLargeReward;
+        if (roll < currentSum) return ThreadLocalRandom.current().nextInt(minMini, maxMini + 1);
+
+        return ThreadLocalRandom.current().nextInt(min, max);
     }
 
     @Override
-    public Container execute(MessageReceivedEvent event, String arg) {
+    public Container execute(MessageReceivedEvent event, String raw, String args) {
 
         long discordId = event.getAuthor().getIdLong();
         String name = event.getAuthor().getEffectiveName();

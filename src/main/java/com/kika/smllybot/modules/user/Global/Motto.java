@@ -1,4 +1,4 @@
-package com.kika.smllybot.modules.user;
+package com.kika.smllybot.modules.user.Global;
 
 import com.kika.smllybot.Main;
 import com.kika.smllybot.database.sql.bank.BankTable;
@@ -8,8 +8,8 @@ import com.kika.smllybot.database.sql.privacy.dto.PrivacyAccount;
 import com.kika.smllybot.database.sql.user.UserTable;
 import com.kika.smllybot.database.sql.user.dto.UserAccount;
 import com.kika.smllybot.handlers.ButtonHandler;
-import com.kika.smllybot.modules.user.ui.GlobalProfileUI;
-import com.kika.smllybot.modules.user.ui.MottoUI;
+import com.kika.smllybot.modules.user.Global.ui.GlobalProfileUI;
+import com.kika.smllybot.modules.user.Global.ui.MottoUI;
 import com.kika.smllybot.other.BaseCmd;
 import com.kika.smllybot.utils.Interaction;
 import com.kika.smllybot.utils.PrefixUtil;
@@ -25,7 +25,7 @@ public class Motto extends BaseCmd implements ButtonHandler {
     public Motto() { super(Set.of("+девиз", "-девиз", "motto", "девиз")); }
 
     @Override
-    public Container execute(MessageReceivedEvent event, String args) {
+    public Container execute(MessageReceivedEvent event, String raw, String args) {
 
         String rawMessage = event.getMessage().getContentRaw();
         String commandWord = PrefixUtil.getCommandBody(rawMessage, Main.PREFIXES).split("\\s+")[0].toLowerCase();
@@ -58,10 +58,13 @@ public class Motto extends BaseCmd implements ButtonHandler {
             return response;
         }
 
-        String aboutMeText = args.trim();
+        String[] parts = raw.split("\\s+");
+        if (parts.length > 1) {
+            String motto = parts[1];
+            UserTable.updateMotto(discordId, motto);
+            response(event, "✅ Описание обновлено");
+        }
 
-        UserTable.updateMotto(discordId, aboutMeText);
-        response(event, "✅ Описание обновлено");
         return null;
     }
 

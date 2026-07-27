@@ -19,7 +19,7 @@ public class Statistic extends BaseCmd {
         }
 
         @Override
-        public Container execute(MessageReceivedEvent event, String arg) {
+        public Container execute(MessageReceivedEvent event, String raw, String args) {
                 int shardTotal = JDA.ShardInfo.SINGLE.getShardTotal();
                 var jdaVersion = JDAInfo.VERSION;
                 var serversCount = (long) event.getJDA().getGuilds().size();
