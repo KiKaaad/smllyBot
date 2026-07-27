@@ -20,7 +20,7 @@ public class UserTable {
 
         String sql = """
             CREATE TABLE IF NOT EXISTS users (
-                id SERIAL PRIMARY KEY,
+                id BIGINT PRIMARY KEY,
                 role VARCHAR,
                 name VARCHAR,
                 discord_id BIGINT UNIQUE NOT NULL,
@@ -34,7 +34,7 @@ public class UserTable {
             stmt.execute(sql);
             log.info("✅ Таблица USERS проверена / создана");
         } catch (SQLException e) {
-            log.error("❌ Ошибка создания таблицы USERS: ");
+            log.error("❌ Ошибка создания таблицы USERS: ", e);
         }
     }
 
@@ -94,7 +94,7 @@ public class UserTable {
                 log.info("✅ Данные пользователя {} обновлены.", discordId);
             }
         } catch (SQLException e) {
-            log.error("❌ Возникла ошибка при обновлении девиза (discordId {}): ", discordId);
+            log.error("❌ Возникла ошибка при обновлении девиза (discordId {}): ", discordId, e);
         }
     }
 
@@ -121,7 +121,7 @@ public class UserTable {
                 }
             }
         } catch (SQLException e) {
-            log.error("❌ Ошибка обновления или записи юзернейма (discordId: {}): ",discordId);
+            log.error("❌ Ошибка записи юзернейма (discordId: {}): ", discordId, e);
         }
     }
 
@@ -141,6 +141,26 @@ public class UserTable {
             log.error("❌ Ошибка при попытке достать количество юзеров из таблицы USERS: ");
         }
         return new UsersTotal(0);
+    }
+
+    public static long getUserId(long discordId) {
+        String sql = "SELECT id FROM users WHERE discord_id = ?";
+
+        try (Connection conn = DatabaseManager.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setLong(1, discordId);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                long userId = 0;
+                if (rs.next()) userId = rs.getLong("id");
+
+                return userId;
+            }
+        } catch (SQLException e) {
+            log.error("❌ Ошибка при попытке достать айди пользователя: ", e);
+        }
+        return 0;
     }
 
     private static UserAccount mapUser(ResultSet rs) throws SQLException {

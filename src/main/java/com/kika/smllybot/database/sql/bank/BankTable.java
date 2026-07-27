@@ -23,7 +23,7 @@ public class BankTable {
 
         String sql = """
                 CREATE TABLE IF NOT EXISTS bank (
-                id INT PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+                id BIGINT PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
                 name VARCHAR(32),
                 star INT DEFAULT 0,
                 iris BIGINT DEFAULT 0,
@@ -37,7 +37,7 @@ public class BankTable {
             stmt.execute(sql);
             log.info("✅ Таблица BANK успешно проверена / создана");
         } catch (SQLException e) {
-            log.error("❌ Ошибка создания таблицы BANK: ");
+            log.error("❌ Ошибка создания таблицы BANK: ", e);
         }
     }
 
@@ -87,7 +87,7 @@ public class BankTable {
                 log.info("ℹ️ Коины пользователя {} обновлены на {}", internalId, irisCoin);
             }
         } catch (SQLException e) {
-            log.error("❌ Ошибка при добавлении коинов: {}", e.getMessage(), e);
+            log.error("❌ Ошибка при добавлении коинов: ", e);
         }
     }
 
@@ -98,7 +98,7 @@ public class BankTable {
             pstmt.setLong(1, internalId);
             pstmt.executeUpdate();
         } catch (SQLException e) {
-            log.error("❌ Ошибка обновления времени фармы: {}", e.getMessage(), e);
+            log.error("❌ Ошибка обновления времени фармы: ", e);
         }
     }
 

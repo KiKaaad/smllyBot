@@ -18,7 +18,7 @@ public class PrivacyTable {
 
         String sql = """
                 CREATE TABLE IF NOT EXISTS privacy (
-                id INTEGER PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+                id BIGINT PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
                 bag BOOLEAN DEFAULT false,
                 activity BOOLEAN DEFAULT false,
                 last_activity BOOLEAN DEFAULT false
@@ -74,14 +74,17 @@ public class PrivacyTable {
         return null;
     }
 
+    // Обновление приватности мешка
     public static void updateBagPrivacy(long internalId, boolean visible) {
         executePrivacyUpdate("UPDATE privacy SET bag = ? WHERE id = ?", internalId, visible);
     }
 
+    // Обновление приватности активности (статистика сообщений)
     public static void updateActivityPrivacy(long internalId, boolean visible) {
         executePrivacyUpdate("UPDATE privacy SET activity = ? WHERE id = ?", internalId, visible);
     }
 
+    // Обновление приватности последней активности
     public static void updateLastActivityPrivacy(long internalId, boolean visible) {
         executePrivacyUpdate("UPDATE privacy SET last_activity = ? WHERE id = ?", internalId, visible);
     }
@@ -93,7 +96,7 @@ public class PrivacyTable {
             pstmt.setLong(2, internalId);
             pstmt.executeUpdate();
         } catch (SQLException e) {
-            log.error("❌ Ошибка обновления приватности (internalId: {}): ", internalId);
+            log.error("❌ Ошибка обновления приватности (internalId: {}): ", internalId, e);
         }
     }
 
