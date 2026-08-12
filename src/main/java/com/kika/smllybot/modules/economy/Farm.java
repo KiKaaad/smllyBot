@@ -3,8 +3,8 @@ package com.kika.smllybot.modules.economy;
 import com.kika.smllybot.Config;
 import com.kika.smllybot.database.sql.bank.BankTable;
 import com.kika.smllybot.database.sql.bank.dto.BankAccount;
-import com.kika.smllybot.database.sql.user.UserTable;
-import com.kika.smllybot.database.sql.user.dto.UserAccount;
+import com.kika.smllybot.database.sql.users.UsersTable;
+import com.kika.smllybot.database.sql.users.dto.UserAccount;
 import com.kika.smllybot.modules.economy.ui.FarmUI;
 import com.kika.smllybot.other.BaseCmd;
 import com.kika.smllybot.utils.TimeUtil;
@@ -56,9 +56,8 @@ public class Farm extends BaseCmd {
         long discordId = event.getAuthor().getIdLong();
         String name = event.getAuthor().getEffectiveName();
 
-        UserAccount user = UserTable.getOrCreateUser(discordId, name);
-        assert user != null;
-        BankAccount bank = BankTable.getOrCreateBank(user.internalId(), name);
+        UserAccount user = UsersTable.getOrCreateUser(discordId, name);
+        BankAccount bank = BankTable.getOrCreateBank(user.id(), name);
 
         // Расчет фармы с момента, когда последний раз команда использована
         // Разница = Время сейчас - время в бд
@@ -103,8 +102,8 @@ public class Farm extends BaseCmd {
         if (baseReward < 0) starMultiplier = 1;
         long finalReward = (long) (baseReward * multiplier * starMultiplier);
 
-        BankTable.addIrisCoin(user.internalId(), finalReward);
-        BankTable.updateLastFarm(user.internalId());
+        BankTable.addIrisCoin(user.id(), finalReward);
+        BankTable.updateLastFarm(user.id());
 
         FarmContext ctx = new FarmContext(
                 baseReward,

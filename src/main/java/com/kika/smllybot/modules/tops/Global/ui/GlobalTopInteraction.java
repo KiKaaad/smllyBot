@@ -18,6 +18,10 @@ import java.util.Set;
 public class GlobalTopInteraction extends BaseCmd implements ButtonHandler {
 
     public GlobalTopInteraction() { super(Set.of("gtop")); }
+    @Override
+    public String getButtonPrefix() {
+        return "gtop";
+    }
 
     @Override
     public void onButton(ButtonInteractionEvent event, String[] args) {

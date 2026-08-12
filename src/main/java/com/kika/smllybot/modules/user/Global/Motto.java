@@ -5,8 +5,8 @@ import com.kika.smllybot.database.sql.bank.BankTable;
 import com.kika.smllybot.database.sql.bank.dto.BankAccount;
 import com.kika.smllybot.database.sql.privacy.PrivacyTable;
 import com.kika.smllybot.database.sql.privacy.dto.PrivacyAccount;
-import com.kika.smllybot.database.sql.user.UserTable;
-import com.kika.smllybot.database.sql.user.dto.UserAccount;
+import com.kika.smllybot.database.sql.users.UsersTable;
+import com.kika.smllybot.database.sql.users.dto.UserAccount;
 import com.kika.smllybot.handlers.ButtonHandler;
 import com.kika.smllybot.modules.user.Global.ui.GlobalProfileUI;
 import com.kika.smllybot.modules.user.Global.ui.MottoUI;
@@ -23,25 +23,27 @@ import java.util.Set;
 public class Motto extends BaseCmd implements ButtonHandler {
 
     public Motto() { super(Set.of("+девиз", "-девиз", "motto", "девиз")); }
+    @Override
+    public String getButtonPrefix() {
+        return "motto";
+    }
 
     @Override
     public Container execute(MessageReceivedEvent event, String raw, String args) {
 
-        String rawMessage = event.getMessage().getContentRaw();
-        String commandWord = PrefixUtil.getCommandBody(rawMessage, Main.PREFIXES).split("\\s+")[0].toLowerCase();
+        String command = PrefixUtil.getCommandBody(raw, Main.PREFIXES).split("\\s+")[0].toLowerCase();
 
-        char action = commandWord.charAt(0);
+        char action = command.charAt(0);
 
         long discordId = event.getAuthor().getIdLong();
         String username = event.getAuthor().getEffectiveName();
 
         // Удалить девиз
         if (action == '-') {
-            UserTable.updateMotto(discordId, null);
-            UserAccount dbUser = UserTable.getOrCreateUser(discordId, username);
-            assert dbUser != null;
+            UsersTable.setMotto(discordId, null);
+            UserAccount dbUser = UsersTable.getOrCreateUser(discordId, username);
             Container response = MottoUI.buildMotto(
-                    event.getAuthor(), dbUser, "❌ Описание удалено", false);
+                    event.getAuthor(), dbUser, "\\❌ Описание удалено", false);
 
             event.getChannel().sendMessageComponents(response).useComponentsV2(true).queue();
             return response;
@@ -49,8 +51,7 @@ public class Motto extends BaseCmd implements ButtonHandler {
 
         // Показать девиз
         if (args.isEmpty()) {
-            UserAccount dbUser = UserTable.getOrCreateUser(discordId, username);
-            assert dbUser != null;
+            UserAccount dbUser = UsersTable.getOrCreateUser(discordId, username);
             Container response = MottoUI.buildMotto(
                     event.getAuthor(), dbUser, "Ваш текущий девиз", false);
 
@@ -61,8 +62,8 @@ public class Motto extends BaseCmd implements ButtonHandler {
         String[] parts = raw.split("\\s+");
         if (parts.length > 1) {
             String motto = parts[1];
-            UserTable.updateMotto(discordId, motto);
-            response(event, "✅ Описание обновлено");
+            UsersTable.setMotto(discordId, motto);
+            response(event, "\\✅ Описание обновлено");
         }
 
         return null;
@@ -71,7 +72,7 @@ public class Motto extends BaseCmd implements ButtonHandler {
     private void response(MessageReceivedEvent event, String title) {
         long userId = event.getAuthor().getIdLong();
         String username = event.getAuthor().getEffectiveName();
-        UserAccount dbUser = UserTable.getOrCreateUser(userId, username);
+        UserAccount dbUser = UsersTable.getOrCreateUser(userId, username);
 
         assert dbUser != null;
         Container response = MottoUI.buildMotto(event.getAuthor(), dbUser, title, true);
@@ -88,16 +89,16 @@ public class Motto extends BaseCmd implements ButtonHandler {
         if (event.getComponentId().startsWith("motto:back:")) {
             User user = event.getUser();
 
-            UserAccount userAccount = UserTable.getOrCreateUser(user.getIdLong(), user.getEffectiveName());
-            BankAccount bank = BankTable.getOrCreateBank(userAccount.internalId(), user.getEffectiveName());
-            PrivacyAccount privacy = PrivacyTable.getOrCreatePrivacy(userAccount.internalId());
+            UserAccount userAccount = UsersTable.getOrCreateUser(user.getIdLong(), user.getEffectiveName());
+            BankAccount bank = BankTable.getOrCreateBank(userAccount.id(), user.getEffectiveName());
+            PrivacyAccount privacy = PrivacyTable.getOrCreatePrivacy(userAccount.id());
 
             GlobalProfileContext ctx = new GlobalProfileContext(
                     user, user, event.getMember(), userAccount, bank, privacy);
 
-            Container profile = GlobalProfileUI.buildProfile(ctx);
+            Container response = GlobalProfileUI.buildProfile(ctx);
 
-            event.editComponents(profile)
+            event.editComponents(response)
                     .useComponentsV2(true)
                     .queue();
         }

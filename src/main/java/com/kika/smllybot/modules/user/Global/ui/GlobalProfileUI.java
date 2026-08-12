@@ -22,13 +22,13 @@ public class GlobalProfileUI {
     public static Container buildProfile(GlobalProfileContext ctx) {
         List<ContainerChildComponent> components = new ArrayList<>(18);
 
-        TotalStatisticUser userStat = StatisticTable.getTotalUserStatistic(ctx.user().internalId());
+        TotalStatisticUser userStat = StatisticTable.getTotalUserStatistic(ctx.user().id());
 
         String invisible = "-# Скрыто (видно только вам)";
 
         boolean isOwner = ctx.target().getIdLong() == ctx.viewer().getIdLong();
 
-        String idUser = Formatter.germanNum(ctx.user().internalId());
+        String idUser = Formatter.germanNum(ctx.user().id());
         long discordId = ctx.user().discordId();
 
         // Красивое отображение ирис-коинов: 123.456.789
@@ -57,7 +57,7 @@ public class GlobalProfileUI {
         // Главная секция
         Section main = Section.of(
                 Thumbnail.fromUrl(avatarUrl),
-                TextDisplay.of("# \\🗿 Это %s%s".formatted(ctx.target().getEffectiveName(), status)),
+                TextDisplay.of("# \\🗿 Это %s %s".formatted(ctx.target().getEffectiveName(), status)),
                 TextDisplay.of("### Девиз:"),
                 TextDisplay.of(motto)
         );

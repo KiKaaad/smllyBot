@@ -13,6 +13,11 @@ import org.jetbrains.annotations.NotNull;
 public class GlobalTopPageModal implements ButtonHandler {
 
     @Override
+    public String getButtonPrefix() {
+        return "chetatam";
+    }
+
+    @Override
     public void onButton(@NotNull ButtonInteractionEvent event, String[] parts) {
 
         if (!Interaction.checkOwner(event, parts)) return;

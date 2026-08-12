@@ -4,8 +4,8 @@ import com.kika.smllybot.database.sql.bank.BankTable;
 import com.kika.smllybot.database.sql.bank.dto.BankAccount;
 import com.kika.smllybot.database.sql.privacy.PrivacyTable;
 import com.kika.smllybot.database.sql.privacy.dto.PrivacyAccount;
-import com.kika.smllybot.database.sql.user.UserTable;
-import com.kika.smllybot.database.sql.user.dto.UserAccount;
+import com.kika.smllybot.database.sql.users.UsersTable;
+import com.kika.smllybot.database.sql.users.dto.UserAccount;
 import com.kika.smllybot.handlers.ButtonHandler;
 import com.kika.smllybot.handlers.ModalHandler;
 import com.kika.smllybot.modules.user.Global.GlobalProfileContext;
@@ -30,10 +30,17 @@ import java.util.Set;
 public class GlobalProfileModal extends BaseCmd implements ButtonHandler, ModalHandler {
 
     public GlobalProfileModal() { super(Set.of("profile")); }
+    @Override
+    public String getButtonPrefix() {
+        return "profile";
+    }
+    @Override
+    public String getModalPrefix() {
+        return "profile";
+    }
 
     @Override
     public void onButton(@NotNull ButtonInteractionEvent event, String[] parts) {
-
         if (!Interaction.checkOwner(event, parts)) return;
 
         if (parts.length > 1 && parts[1].equals("modal")) {
@@ -66,11 +73,11 @@ public class GlobalProfileModal extends BaseCmd implements ButtonHandler, ModalH
             long discordId = event.getUser().getIdLong();
             String username = event.getUser().getName();
 
-            UserTable.updateMotto(discordId, newAboutMe);
+            UsersTable.setMotto(discordId, newAboutMe);
 
-            UserAccount user = UserTable.getOrCreateUser(discordId, username);
-            BankAccount bank = BankTable.getOrCreateBank(user.internalId(), username);
-            PrivacyAccount privacy = PrivacyTable.getOrCreatePrivacy(user.internalId());
+            UserAccount user = UsersTable.getOrCreateUser(discordId, username);
+            BankAccount bank = BankTable.getOrCreateBank(user.id(), username);
+            PrivacyAccount privacy = PrivacyTable.getOrCreatePrivacy(user.id());
 
             GlobalProfileContext ctx = new GlobalProfileContext(
                     event.getUser(),

@@ -4,8 +4,8 @@ import com.kika.smllybot.database.sql.bank.BankTable;
 import com.kika.smllybot.database.sql.bank.dto.BankAccount;
 import com.kika.smllybot.database.sql.privacy.PrivacyTable;
 import com.kika.smllybot.database.sql.privacy.dto.PrivacyAccount;
-import com.kika.smllybot.database.sql.user.UserTable;
-import com.kika.smllybot.database.sql.user.dto.UserAccount;
+import com.kika.smllybot.database.sql.users.UsersTable;
+import com.kika.smllybot.database.sql.users.dto.UserAccount;
 import com.kika.smllybot.handlers.ButtonHandler;
 import com.kika.smllybot.handlers.ModalHandler;
 import com.kika.smllybot.modules.user.Global.GlobalProfileContext;
@@ -30,11 +30,19 @@ import java.util.Set;
 public class GlobalProfilePrivate extends BaseCmd implements ButtonHandler, ModalHandler {
 
     public GlobalProfilePrivate() { super(Set.of("private")); }
+    @Override
+    public String getButtonPrefix() {
+        return "private";
+    }
+    @Override
+    public String getModalPrefix() {
+        return "private";
+    }
 
     @Override
     public void onButton(@NotNull ButtonInteractionEvent event, String[] parts) {
-        UserAccount user = UserTable.getOrCreateUser(event.getUser().getIdLong(), event.getUser().getName());
-        PrivacyAccount privacy = PrivacyTable.getOrCreatePrivacy(user.internalId());
+        UserAccount user = UsersTable.getOrCreateUser(event.getUser().getIdLong(), event.getUser().getName());
+        PrivacyAccount privacy = PrivacyTable.getOrCreatePrivacy(user.id());
 
         if (!Interaction.checkOwner(event, parts)) return;
 
@@ -78,19 +86,19 @@ public class GlobalProfilePrivate extends BaseCmd implements ButtonHandler, Moda
             long discordId = event.getUser().getIdLong();
             String username = event.getUser().getName();
 
-            UserAccount user = UserTable.getOrCreateUser(discordId, username);
+            UserAccount user = UsersTable.getOrCreateUser(discordId, username);
 
             ModalMapping bagMapping = event.getValue("BagSettings");
-            PrivacyTable.updateBagPrivacy(user.internalId(), bagMapping.getAsString().equals("true"));
+            PrivacyTable.updateBagPrivacy(user.id(), bagMapping.getAsString().equals("true"));
 
             ModalMapping activityMapping = event.getValue("ActivitySettings");
-            PrivacyTable.updateActivityPrivacy(user.internalId(), activityMapping.getAsString().equals("true"));
+            PrivacyTable.updateActivityPrivacy(user.id(), activityMapping.getAsString().equals("true"));
 
             ModalMapping lastActivityMapping = event.getValue("LastActivitySettings");
-            PrivacyTable.updateLastActivityPrivacy(user.internalId(), lastActivityMapping.getAsString().equals("true"));
+            PrivacyTable.updateLastActivityPrivacy(user.id(), lastActivityMapping.getAsString().equals("true"));
 
-            BankAccount bank = BankTable.getOrCreateBank(user.internalId(), username);
-            PrivacyAccount privacy = PrivacyTable.getOrCreatePrivacy(user.internalId());
+            BankAccount bank = BankTable.getOrCreateBank(user.id(), username);
+            PrivacyAccount privacy = PrivacyTable.getOrCreatePrivacy(user.id());
 
             GlobalProfileContext ctx = new GlobalProfileContext(
                     event.getUser(),
@@ -120,8 +128,6 @@ public class GlobalProfilePrivate extends BaseCmd implements ButtonHandler, Moda
                                 .queue();
                     }
             );
-
-
         }
     }
 

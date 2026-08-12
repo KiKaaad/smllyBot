@@ -1,6 +1,6 @@
 package com.kika.smllybot.modules.user.Global.ui;
 
-import com.kika.smllybot.database.sql.user.dto.UserAccount;
+import com.kika.smllybot.database.sql.users.dto.UserAccount;
 import net.dv8tion.jda.api.components.buttons.Button;
 import net.dv8tion.jda.api.components.container.Container;
 import net.dv8tion.jda.api.components.section.Section;
