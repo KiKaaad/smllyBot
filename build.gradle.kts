@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "kikaaad.smlly"
-version = "0.5.5-beta-pw"
+version = "0.5.21-beta-pw"
 
 java {
     toolchain {
@@ -33,6 +33,7 @@ tasks.processResources {
 }
 
 dependencies {
+    implementation("org.springframework:spring-jdbc:7.0.8")
     implementation("com.electronwill.night-config:toml:3.9.0")
     implementation("com.zaxxer:HikariCP:7.1.0")
     implementation("org.postgresql:postgresql:42.7.11")

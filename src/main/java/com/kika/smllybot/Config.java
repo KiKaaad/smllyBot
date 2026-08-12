@@ -1,6 +1,7 @@
 package com.kika.smllybot;
 
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
+import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,6 +59,22 @@ public class Config {
 
     public List<?> getList(String path) {
         return config.getOrElse(path, Collections.emptyList());
+    }
+
+    public MemberCachePolicy getMemberCachePolicy(String path) {
+        String policyType = getString(path).toUpperCase().trim();
+
+        return switch (policyType) {
+            case "ALL" -> MemberCachePolicy.ALL;
+            case "ONLINE" -> MemberCachePolicy.ONLINE;
+            case "VOICE" -> MemberCachePolicy.VOICE;
+            case "OWNER" -> MemberCachePolicy.OWNER;
+            case "NONE" -> MemberCachePolicy.NONE;
+            default -> {
+                log.warn("🟡 Неизвестная политика кэширования пользователей ({}), используется дефолтная", policyType);
+                yield MemberCachePolicy.DEFAULT;
+            }
+        };
     }
 
     public void close() {
