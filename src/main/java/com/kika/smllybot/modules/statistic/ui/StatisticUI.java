@@ -1,6 +1,6 @@
 package com.kika.smllybot.modules.statistic.ui;
 
-import com.kika.smllybot.database.sql.user.UserTable;
+import com.kika.smllybot.database.sql.users.UsersTable;
 import com.kika.smllybot.modules.statistic.StatisticContext;
 import com.kika.smllybot.utils.Formatter;
 import com.sun.management.OperatingSystemMXBean;
@@ -68,7 +68,7 @@ public class StatisticUI {
         ContainerChildComponent headerOther = TextDisplay.of("## \\🌃 Прочая статистика");
         ContainerChildComponent servers = TextDisplay.of("Серверов: **%d**".formatted(ctx.serversCount()));
         ContainerChildComponent users = TextDisplay.of("Пользователей (в кэше / бд): **%d** / **%d** | Учтено сообщений: **%d**"
-                .formatted(ctx.userCount(), UserTable.getTotalUsers().Total(), -1));
+                .formatted(ctx.userCount(), UsersTable.getTotalUsers(), -1));
         ContainerChildComponent shards = TextDisplay.of("Количество шардов: **%d**".formatted(ctx.shardTotal()));
         ContainerChildComponent version = TextDisplay.of("Версия JDA **%s** | Версия бота **%s**"
                 .formatted(ctx.jdaVersion(), VERSION));

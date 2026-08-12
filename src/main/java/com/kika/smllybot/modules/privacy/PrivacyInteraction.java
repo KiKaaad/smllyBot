@@ -2,7 +2,7 @@ package com.kika.smllybot.modules.privacy;
 
 import com.kika.smllybot.database.sql.privacy.PrivacyTable;
 import com.kika.smllybot.database.sql.privacy.dto.PrivacyAccount;
-import com.kika.smllybot.database.sql.user.UserTable;
+import com.kika.smllybot.database.sql.users.UsersTable;
 import com.kika.smllybot.handlers.ButtonHandler;
 import com.kika.smllybot.modules.privacy.ui.PrivacyUI;
 import com.kika.smllybot.other.BaseCmd;
@@ -16,13 +16,17 @@ public class PrivacyInteraction extends BaseCmd implements ButtonHandler {
     public PrivacyInteraction() {
         super(Set.of("PrivacyInteraction"));
     }
+    @Override
+    public String getButtonPrefix() {
+        return "PrivacyInteraction";
+    }
 
     @Override
     public void onButton(ButtonInteractionEvent event, String[] parts) {
 
         if (!Interaction.checkOwner(event, parts)) return;
 
-        long id = UserTable.getUserId(event.getUser().getIdLong());
+        long id = UsersTable.getUserId(event.getUser().getIdLong());
 
         switch (parts[1]) {
 

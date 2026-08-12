@@ -2,7 +2,7 @@ package com.kika.smllybot.modules.privacy;
 
 import com.kika.smllybot.database.sql.privacy.PrivacyTable;
 import com.kika.smllybot.database.sql.privacy.dto.PrivacyAccount;
-import com.kika.smllybot.database.sql.user.UserTable;
+import com.kika.smllybot.database.sql.users.UsersTable;
 import com.kika.smllybot.modules.privacy.ui.PrivacyUI;
 import com.kika.smllybot.other.BaseCmd;
 import net.dv8tion.jda.api.components.container.Container;
@@ -17,9 +17,9 @@ public class Privacy extends BaseCmd {
     @Override
     public Container execute(MessageReceivedEvent event, String raw, String args) {
 
-        UserTable.getOrCreateUser(event.getAuthor().getIdLong(), event.getAuthor().getEffectiveName());
+        UsersTable.getOrCreateUser(event.getAuthor().getIdLong(), event.getAuthor().getEffectiveName());
         long discordId = event.getAuthor().getIdLong();
-        long id = UserTable.getUserId(discordId);
+        long id = UsersTable.getUserId(discordId);
 
         PrivacyAccount privacy = PrivacyTable.getOrCreatePrivacy(id);
         PrivacyContext privacyContext = new PrivacyContext(discordId, privacy);

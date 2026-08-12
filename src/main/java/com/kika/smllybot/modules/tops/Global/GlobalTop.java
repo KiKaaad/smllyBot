@@ -78,7 +78,13 @@ public class GlobalTop extends BaseCmd {
         }
 
         if (topEntries.isEmpty()) {
-            ContainerChildComponent main = TextDisplay.of("## \\💀 Как-то тут пусто однако...");
+            ContainerChildComponent main = TextDisplay.of("""
+                    ## \\💀 Как-то тут пусто однако...
+                    ### Возможные причины:
+                    1. В топе пока что никого нет
+                    2. База данных недоступна
+                    3. Возникла ошибка при попытке достать данные
+                    """);
             Container response = Container.of(main);
 
             event.getChannel().sendMessageComponents(response)

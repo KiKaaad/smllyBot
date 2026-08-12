@@ -3,13 +3,14 @@ package com.kika.smllybot;
 import com.kika.smllybot.database.sql.DatabaseManager;
 import com.kika.smllybot.database.sql.bank.BankTable;
 import com.kika.smllybot.database.sql.privacy.PrivacyTable;
+import com.kika.smllybot.database.sql.profile.ProfileTable;
 import com.kika.smllybot.database.sql.statistic.StatisticTable;
-import com.kika.smllybot.database.sql.user.UserTable;
+import com.kika.smllybot.database.sql.users.UsersTable;
 import com.kika.smllybot.listeners.MessageCounter;
 import com.kika.smllybot.listeners.NameSave;
+import com.kika.smllybot.listeners.ReactionCounter;
 import com.kika.smllybot.modules.ping.PrefixPing;
 import com.kika.smllybot.modules.ping.SlashPing;
-import com.kika.smllybot.other.ComponentManager;
 import com.kika.smllybot.other.slashCmdInfo;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -35,7 +36,7 @@ public class Main implements EventListener {
 
     private static final Logger log = LoggerFactory.getLogger(Main.class);
     public static String[] PREFIXES;
-    public static final String VERSION = "0.5.5-beta-pw (26.07.2026)";
+    public static final String VERSION = "0.5.21-beta-pw (12.08.2026)";
     public static final String OWNER = "<@683345722611073059>";
 
     static void main() throws InterruptedException {
@@ -53,10 +54,11 @@ public class Main implements EventListener {
             log.info("✅ База данных PostgreSQL подключена!");
 
             // Создание таблиц
-            UserTable.createTable();
+            UsersTable.createTable();
             BankTable.createTable();
             PrivacyTable.createTable();
             StatisticTable.createTable();
+            ProfileTable.createTable();
 
         } catch (SQLException e) {
             log.error("❌ Не удалось подключиться к базе данных: ");
@@ -65,29 +67,28 @@ public class Main implements EventListener {
         }
 
         Manager manager = new Manager();
-        ComponentManager componentManager = new ComponentManager(manager.getCommands());
+        MemberCachePolicy memberCachePolicy = Config.getInstance().getMemberCachePolicy("jda.cache_policy");
         JDA jda = JDABuilder.createDefault(token)
                 // Cache & Intents
                 .enableIntents(GatewayIntent.MESSAGE_CONTENT)
                 .enableIntents(GatewayIntent.GUILD_MEMBERS)
                 .enableIntents(GatewayIntent.GUILD_PRESENCES)
-                .setMemberCachePolicy(MemberCachePolicy.ALL)
-                .setChunkingFilter(ChunkingFilter.ALL)
+                .setMemberCachePolicy(memberCachePolicy)
+                .setChunkingFilter(ChunkingFilter.NONE)
                 .enableCache(CacheFlag.ONLINE_STATUS)
                 .setActivity(Activity.streaming("100 фактов о фембоях", "https://www.youtube.com/watch?v=o97WByHtOZM"))
 
                 // Listeners
                 .addEventListeners(new Main())
                 .addEventListeners(new NameSave())
+                .addEventListeners(new MessageCounter())
+                .addEventListeners(new ReactionCounter())
 
                 // Ping
                 .addEventListeners(new PrefixPing(), new SlashPing())
 
-                .addEventListeners(new MessageCounter())
-
                 // Managers
                 .addEventListeners(manager)
-                .addEventListeners(componentManager)
                 .build();
 
         jda.awaitReady();
@@ -120,7 +121,8 @@ public class Main implements EventListener {
                     🌃 Серверов: {}
                     💀 Пользователей: {}
                     ✅ Успешно запущено
-                    """, jdaVersion, jdaGithub, String.join("][", PREFIXES), VERSION, botName, botId, jdaShardTotal, serversCount, userCount);
+                    """, jdaVersion, jdaGithub, String.join("][", PREFIXES),
+                    VERSION, botName, botId, jdaShardTotal, serversCount, userCount);
         }
     }
 
