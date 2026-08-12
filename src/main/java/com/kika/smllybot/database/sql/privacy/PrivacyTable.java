@@ -69,7 +69,7 @@ public class PrivacyTable {
             }
 
         } catch (SQLException e) {
-            log.error("❌ Ошибка PRIVACY (internalId: {}): ", internalId, e);
+            log.error("❌ Ошибка PRIVACY (id: {}): ", internalId, e);
         }
         return null;
     }
@@ -96,7 +96,7 @@ public class PrivacyTable {
             pstmt.setLong(2, internalId);
             pstmt.executeUpdate();
         } catch (SQLException e) {
-            log.error("❌ Ошибка обновления приватности (internalId: {}): ", internalId, e);
+            log.error("❌ Ошибка обновления приватности (id: {}): ", internalId, e);
         }
     }
 

@@ -18,19 +18,19 @@ public class StatisticTable {
 
         String sql = """
             CREATE TABLE IF NOT EXISTS statistic (
-                id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-                guild BIGINT NOT NULL,
-                date DATE DEFAULT CURRENT_TIMESTAMP,
-                message_count INT,
+                id              BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+                guild           BIGINT NOT NULL,
+                date            DATE DEFAULT CURRENT_TIMESTAMP,
+                message_count   INT,
                 PRIMARY KEY (id, guild, date)
             );
             """;
 
-        try (Connection conn = DatabaseManager.getConnection();
-             Statement stmt = conn.createStatement()) {
-            stmt.execute(sql);
+        try {
+            DatabaseManager.getQuery().execute(sql);
+
             log.info("✅ Таблица STATISTIC проверена / создана");
-        } catch (SQLException e) {
+        } catch (Exception e) {
             log.error("❌ Ошибка создания таблицы STATISTIC: ", e);
         }
     }
@@ -44,14 +44,9 @@ public class StatisticTable {
                 DO UPDATE SET message_count = statistic.message_count + 1;
                 """;
 
-        try (Connection conn = DatabaseManager.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setLong(1, id);
-            pstmt.setLong(2, guildId);
-            pstmt.executeUpdate();
-
-        } catch (SQLException e) {
+        try {
+            DatabaseManager.getQuery().update(sql, id, guildId);
+        } catch (Exception e) {
             log.error("❌ Ошибка при попытке обновить статистику пользователя: ", e);
         }
     }
@@ -86,5 +81,30 @@ public class StatisticTable {
             log.error("❌ Ошибка при получении статистики: ", e);
         }
         return null;
+    }
+
+    public static TotalStatisticUser getTotalStatisticUserGuild(long id, long guildId) {
+        String sql = """
+            SELECT
+            SUM(CASE WHEN date = CURRENT_DATE THEN message_count ELSE 0 END) as total_day,
+            SUM(CASE WHEN date >= CURRENT_DATE - INTERVAL '7 days' THEN message_count ELSE 0 END) as total_week,
+            SUM(CASE WHEN date >= CURRENT_DATE - INTERVAL '1 month' THEN message_count ELSE 0 END) as total_month,
+            SUM(CASE WHEN date >= CURRENT_DATE - INTERVAL '1 year' THEN message_count ELSE 0 END) as total
+            FROM statistic
+            WHERE id = ? AND guild = ?;
+            """;
+
+        try {
+            return DatabaseManager.getQuery().queryForObject(sql, (rs, rowNum) -> new TotalStatisticUser(
+                    rs.getLong("total_day"),
+                    rs.getLong("total_week"),
+                    rs.getLong("total_month"),
+                    rs.getLong("total")
+            ), id, guildId);
+        } catch (Exception e) {
+            log.error("❌ Ошибка при получении статистики с учетом гильдии: ", e);
+        }
+
+        return new TotalStatisticUser(-1, -1, -1, -1);
     }
 }

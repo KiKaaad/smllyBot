@@ -4,9 +4,9 @@ import com.kika.smllybot.database.sql.DatabaseManager;
 import com.kika.smllybot.database.sql.bank.dto.BankAccount;
 import com.kika.smllybot.database.sql.bank.dto.BankTopAmount;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.jdbc.core.RowMapper;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
@@ -18,30 +18,37 @@ public class BankTable {
 
     private static final Logger log = LoggerFactory.getLogger(BankTable.class);
 
+    private static final RowMapper<BankAccount> BANK_MAPPER = (rs, rowNum) -> new BankAccount(
+        rs.getLong("id"),
+        rs.getString("name"),
+        rs.getInt("star"),
+        rs.getLong("iris"),
+        rs.getLong("iris_coin"),
+        rs.getObject("last_farm", Timestamp.class)
+    );
+
     public static void createTable() {
         System.setOut(new PrintStream(System.out, true, StandardCharsets.UTF_8));
 
         String sql = """
                 CREATE TABLE IF NOT EXISTS bank (
-                id BIGINT PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
-                name VARCHAR(32),
-                star INT DEFAULT 0,
-                iris BIGINT DEFAULT 0,
+                id        BIGINT PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+                name      VARCHAR(32),
+                star      INT DEFAULT 0,
+                iris      BIGINT DEFAULT 0,
                 iris_coin BIGINT DEFAULT 0,
                 last_farm TIMESTAMP DEFAULT CURRENT_TIMESTAMP - INTERVAL '4 hours'
                 );
                 """;
 
-        try (Connection conn = DatabaseManager.getConnection();
-             Statement stmt = conn.createStatement()) {
-            stmt.execute(sql);
+        try {
+            DatabaseManager.getQuery().execute(sql);
             log.info("✅ Таблица BANK успешно проверена / создана");
-        } catch (SQLException e) {
+        } catch (Exception e) {
             log.error("❌ Ошибка создания таблицы BANK: ", e);
         }
     }
 
-    @Nullable
     public static BankAccount getOrCreateBank(long internalId, String defaultName) {
         String upsertSql = """
                 INSERT INTO bank (id, name) VALUES (?, ?)
@@ -49,25 +56,9 @@ public class BankTable {
                 RETURNING id, name, star, iris, iris_coin, last_farm;
                 """;
 
-        try (Connection conn = DatabaseManager.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(upsertSql)) {
-
-            pstmt.setLong(1, internalId);
-            pstmt.setString(2, defaultName);
-
-            try (ResultSet rs = pstmt.executeQuery()) {
-                if (rs.next()) {
-                    return new BankAccount(
-                            rs.getInt("id"),
-                            rs.getString("name"),
-                            rs.getInt("star"),
-                            rs.getLong("iris"),
-                            rs.getLong("iris_coin"),
-                            rs.getTimestamp("last_farm")
-                    );
-                }
-            }
-        } catch (SQLException e) {
+        try {
+            return DatabaseManager.getQuery().queryForObject(upsertSql, BANK_MAPPER, internalId, defaultName);
+        } catch (Exception e) {
             log.error("❌ Ошибка при получении / создании BANK: ", e);
         }
         return null;
@@ -76,35 +67,25 @@ public class BankTable {
     public static void addIrisCoin(long internalId, long irisCoin) {
         String sql = "UPDATE bank SET iris_coin = iris_coin + ? WHERE id = ?";
 
-        try (Connection conn = DatabaseManager.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setLong(1, irisCoin);
-            pstmt.setLong(2, internalId);
-
-            int affectedRows = pstmt.executeUpdate();
-            if (affectedRows > 0) {
-                log.info("ℹ️ Коины пользователя {} обновлены на {}", internalId, irisCoin);
-            }
-        } catch (SQLException e) {
-            log.error("❌ Ошибка при добавлении коинов: ", e);
+        try {
+            DatabaseManager.getQuery().update(sql, irisCoin, internalId);
+            log.info("ℹ️ Коины пользователя {} обновлены на {}", internalId, irisCoin);
+        } catch (Exception e) {
+            log.error("❌ Ошибка при добавлении коинов для {}: ", internalId, e);
         }
     }
 
     public static void updateLastFarm(long internalId) {
         String sql = "UPDATE bank SET last_farm = CURRENT_TIMESTAMP WHERE id = ?";
-        try (Connection conn = DatabaseManager.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setLong(1, internalId);
-            pstmt.executeUpdate();
-        } catch (SQLException e) {
+        try {
+            DatabaseManager.getQuery().update(sql, internalId);
+        } catch (Exception e) {
             log.error("❌ Ошибка обновления времени фармы: ", e);
         }
     }
 
     @NotNull
     public static List<BankTopAmount> getTopIrisCoins(int limit) {
-        List<BankTopAmount> topList = new ArrayList<>();
         String sql = """
             SELECT b.id, u.name AS username, b.iris_coin
             FROM bank b
@@ -114,28 +95,21 @@ public class BankTable {
             LIMIT ?
             """;
 
-        try (Connection conn = DatabaseManager.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setInt(1, limit);
-            try (ResultSet rs = pstmt.executeQuery()) {
-                while (rs.next()) {
-                    topList.add(new BankTopAmount(
-                            rs.getInt("id"),
-                            rs.getString("username"),
-                            rs.getLong("iris_coin")
-                    ));
-                }
-            }
-        } catch (SQLException e) {
+        try {
+            return DatabaseManager.getQuery()
+                    .query(sql, (rs, rowNum) -> new BankTopAmount(
+                    rs.getInt("id"),
+                    rs.getString("username"),
+                    rs.getLong("iris_coin")
+            ), limit);
+        } catch (Exception e) {
             log.error("❌ Ошибка получения топа коинов: ", e);
+            return new ArrayList<>();
         }
-        return topList;
     }
 
     @NotNull
     public static List<BankTopAmount> getTopIris(int limit) {
-        List<BankTopAmount> topList = new ArrayList<>();
         String sql = """
             SELECT b.id, u.name AS username, b.iris
             FROM bank b
@@ -145,25 +119,17 @@ public class BankTable {
             LIMIT ?
             """;
 
-        try (Connection conn = DatabaseManager.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setInt(1, limit);
-            try (ResultSet rs = pstmt.executeQuery()) {
-                while (rs.next()) {
-                    topList.add(new BankTopAmount(
-                            rs.getInt("id"),
-                            rs.getString("username"),
-                            rs.getLong("iris")
-                    ));
-                }
-            }
-        } catch (SQLException e) {
+        try {
+            return DatabaseManager.getQuery().query(sql, (rs, rowNum) -> new BankTopAmount(
+                    rs.getLong("id"),
+                    rs.getString("username"),
+                    rs.getLong("iris")
+            ), limit);
+        } catch (Exception e) {
             log.error("❌ Ошибка получения топа ирисок: ", e);
+            return new ArrayList<>();
         }
-        return topList;
     }
 }
-
 
 // TODO: Сделать таблицу с транзакциями пользователя

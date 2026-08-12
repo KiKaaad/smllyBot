@@ -3,16 +3,21 @@ package com.kika.smllybot.database.sql;
 import com.kika.smllybot.Config;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 
 public class DatabaseManager {
 
-    private static HikariDataSource ds;
+    private static final Logger log = LoggerFactory.getLogger(DatabaseManager.class);
+    private static HikariDataSource dataSource;
+    private static JdbcTemplate jdbcTemplate;
 
     public static void init() {
-        if (ds != null) {
+        if (dataSource != null) {
             return;
         }
 
@@ -30,7 +35,7 @@ public class DatabaseManager {
         config.setUsername(user);
         config.setPassword(password);
 
-        config.setMaximumPoolSize(10);
+        config.setMaximumPoolSize(20);
         config.setMinimumIdle(2);
         config.setIdleTimeout(30000);
         config.setConnectionTimeout(10000);
@@ -38,13 +43,25 @@ public class DatabaseManager {
         config.addDataSourceProperty("cachePrepStmts", "true");
         config.addDataSourceProperty("prepStmtCacheSize", "250");
 
-        ds = new HikariDataSource(config);
+        dataSource = new HikariDataSource(config);
+        jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
     public static Connection getConnection() throws SQLException {
-        if (ds == null) {
+        if (dataSource == null) {
+            log.error("❌ Не удалось подключиться к базе данных. Вероятно не заполнены данные для подключение к ней");
             throw new IllegalStateException();
         }
-        return ds.getConnection();
+        return dataSource.getConnection();
     }
+
+    public static JdbcTemplate getQuery() {
+        if (jdbcTemplate == null) {
+            log.error("❌ Вызов без инициализации");
+            throw new IllegalStateException();
+        }
+
+        return jdbcTemplate;
+    }
+
 }
