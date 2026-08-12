@@ -4,8 +4,8 @@ import com.kika.smllybot.database.sql.bank.BankTable;
 import com.kika.smllybot.database.sql.bank.dto.BankAccount;
 import com.kika.smllybot.database.sql.privacy.PrivacyTable;
 import com.kika.smllybot.database.sql.privacy.dto.PrivacyAccount;
-import com.kika.smllybot.database.sql.user.UserTable;
-import com.kika.smllybot.database.sql.user.dto.UserAccount;
+import com.kika.smllybot.database.sql.users.UsersTable;
+import com.kika.smllybot.database.sql.users.dto.UserAccount;
 import com.kika.smllybot.modules.economy.ui.BagUI;
 import com.kika.smllybot.other.BaseCmd;
 import net.dv8tion.jda.api.components.container.Container;
@@ -65,9 +65,9 @@ public class Bag extends BaseCmd {
 
     public void sendBagResponse(MessageReceivedEvent event, User targetUser) {
 
-        UserAccount user = UserTable.getOrCreateUser(targetUser.getIdLong(), targetUser.getEffectiveName());
-        BankAccount bank = BankTable.getOrCreateBank(user.internalId(), targetUser.getEffectiveName());
-        PrivacyAccount privacy = PrivacyTable.getOrCreatePrivacy(user.internalId());
+        UserAccount user = UsersTable.getOrCreateUser(targetUser.getIdLong(), targetUser.getEffectiveName());
+        BankAccount bank = BankTable.getOrCreateBank(user.id(), targetUser.getEffectiveName());
+        PrivacyAccount privacy = PrivacyTable.getOrCreatePrivacy(user.id());
 
         BagContext ctx = new BagContext(
                 event.getAuthor().getIdLong(),
