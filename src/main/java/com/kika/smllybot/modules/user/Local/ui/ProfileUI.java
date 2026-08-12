@@ -1,6 +1,7 @@
 package com.kika.smllybot.modules.user.Local.ui;
 
 import com.kika.smllybot.modules.user.Local.ProfileContext;
+import com.kika.smllybot.utils.TimeUtil;
 import net.dv8tion.jda.api.components.container.Container;
 import net.dv8tion.jda.api.components.container.ContainerChildComponent;
 import net.dv8tion.jda.api.components.section.Section;
@@ -16,32 +17,37 @@ public class ProfileUI {
     public static Container buildProfile(ProfileContext ctx) {
         List<ContainerChildComponent> components = new ArrayList<>();
 
-        String avatarUrl = ctx.event().getMember().getEffectiveAvatarUrl();
-        String name = ctx.event().getMember().getEffectiveName();
+        String avatarUrl = ctx.target().getAvatarUrl();
+        String name = ctx.target().getEffectiveName();
+        String timestamp = TimeUtil.getTimestamp(ctx.profile().createdAt());
+        String timestampRelative = TimeUtil.getTimestampRelative(ctx.profile().createdAt());
 
         ContainerChildComponent header = Section.of(
                 Thumbnail.fromUrl(avatarUrl),
-                TextDisplay.of("# \\👤 Это пользователь %s".formatted(name)),
+                TextDisplay.of("# \\👤 Это %s".formatted(name)),
                 TextDisplay.of("### О себе:"),
-                TextDisplay.of("...")
+                TextDisplay.of("%s".formatted(ctx.profile().aboutMe()))
         );
         ContainerChildComponent separator = Separator.createDivider(Separator.Spacing.SMALL);
         ContainerChildComponent main = TextDisplay.of("## Основная информация:");
         ContainerChildComponent owner = TextDisplay.of("\\👑 Создатель дискорд-сервера");
-        ContainerChildComponent citizen = TextDisplay.of("\\🪪 Гражданин этого сервера %s");
-        ContainerChildComponent reputation = TextDisplay.of("Репутация: \\✨ %d | \\➕ %d");
-        ContainerChildComponent firstEntry = TextDisplay.of("Впервые появился здесь %s");
-        ContainerChildComponent activity = TextDisplay.of("Актив (д | н | м | весь): %d | %d | %d | %d");
+        ContainerChildComponent citizen = TextDisplay.of("\\🪪 Гражданин этого сервера");
+        ContainerChildComponent reputation = TextDisplay.of("Репутация: \\✨ %d | \\➕ %d"
+                .formatted(ctx.bank().star(), ctx.user().reaction()));
+        ContainerChildComponent firstEntry = TextDisplay.of("Впервые появился здесь %s (%s)"
+                .formatted(timestamp, timestampRelative));
+        ContainerChildComponent activity = TextDisplay.of("**Актив** (д | н | м | весь): %d | %d | %d | %d"
+                .formatted(ctx.statistic().day(), ctx.statistic().week(), ctx.statistic().month(), ctx.statistic().total()));
         ContainerChildComponent rewardsHeader = TextDisplay.of("## \\🏆 Награды");
         ContainerChildComponent rewards = TextDisplay.of("...");
         ContainerChildComponent footer = TextDisplay
-                .of("-# Это - **локальный** профиль. Статистика берется исключительно с этой гильдии");
+                .of("-# Это - **локальный** профиль. Часть информации выводится исключительно из этой гильдии");
 
         components.add(header);
         components.add(separator);
         components.add(main);
-        components.add(owner);
-        components.add(citizen);
+        if (ctx.member().isOwner()) components.add(owner);
+        if (ctx.guildId() == ctx.user().citizenship()) components.add(citizen);
         components.add(reputation);
         components.add(firstEntry);
         components.add(activity);
