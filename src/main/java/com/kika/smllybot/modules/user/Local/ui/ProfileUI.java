@@ -11,6 +11,7 @@ import net.dv8tion.jda.api.components.thumbnail.Thumbnail;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class ProfileUI {
 
@@ -47,7 +48,7 @@ public class ProfileUI {
         components.add(separator);
         components.add(main);
         if (ctx.member().isOwner()) components.add(owner);
-        if (ctx.guildId() == ctx.user().citizenship()) components.add(citizen);
+        if (Objects.equals(ctx.user().citizenship(), ctx.guildId())) components.add(citizen);
         components.add(reputation);
         components.add(firstEntry);
         components.add(activity);
