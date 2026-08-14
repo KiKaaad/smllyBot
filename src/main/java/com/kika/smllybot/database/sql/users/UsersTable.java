@@ -128,34 +128,28 @@ public class UsersTable {
 
     public static void plusReputation(long discordId) {
         String sql = """
-                INSERT INTO users (discord_id, reaction)
-                VALUES (?, 1)
-                ON CONFLICT (discord_id)
-                DO UPDATE SET reaction = users.reaction + 1;
+                UPDATE users
+                SET reaction = reaction + 1
+                WHERE discord_id = ?;
                 """;
-
         try {
             DatabaseManager.getQuery().update(sql, discordId);
         } catch (Exception e) {
             log.error("❌ Ошибка при попытке обновить реакции пользователя: ", e);
         }
-
     }
 
     public static void minusReputation(long discordId) {
         String sql = """
-                INSERT INTO users (discord_id, reaction)
-                VALUES (?, -1)
-                ON CONFLICT (discord_id)
-                DO UPDATE SET reaction = users.reaction - 1;
+                UPDATE users
+                SET reaction = reaction - 1
+                WHERE discord_id = ?;
                 """;
-
         try {
             DatabaseManager.getQuery().update(sql, discordId);
         } catch (Exception e) {
             log.error("❌ Ошибка при попытке обновить реакции пользователя: ", e);
         }
-
     }
 
     public static void setCitizenship(long discordId, Long guildId) {
