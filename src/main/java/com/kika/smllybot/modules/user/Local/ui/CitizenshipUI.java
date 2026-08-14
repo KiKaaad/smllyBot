@@ -47,7 +47,6 @@ public class CitizenshipUI {
             mainText = "У вас нет гражданства \\😭";
         } else {
             Guild targetGuild = ctx.guild().getJDA().getGuildById(citizenship);
-            System.out.println("Сервер: " + targetGuild);
 
             if (targetGuild != null) {
                 mainText = "Ваше гражданство оформлено в **%s**".formatted(targetGuild.getName());

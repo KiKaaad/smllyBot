@@ -1,7 +1,7 @@
 package com.kika.smllybot.modules.economy.ui;
 
 import com.kika.smllybot.modules.economy.BagContext;
-import com.kika.smllybot.utils.Formatter;
+import com.kika.smllybot.utils.NumUtil;
 import net.dv8tion.jda.api.components.container.Container;
 import net.dv8tion.jda.api.components.container.ContainerChildComponent;
 import net.dv8tion.jda.api.components.separator.Separator;
@@ -15,9 +15,9 @@ public abstract class BagUI {
     public static Container buildBug(BagContext ctx) {
         List<ContainerChildComponent> components = new ArrayList<>(5);
 
-        String irisCoin = Formatter.germanNum(ctx.bank().irisCoin());
-        String iris = Formatter.germanNum(ctx.bank().iris());
-        String star = Formatter.germanNum(ctx.bank().star());
+        String irisCoin = NumUtil.german(ctx.bank().irisCoin());
+        String iris = NumUtil.german(ctx.bank().iris());
+        String star = NumUtil.german(ctx.bank().star());
 
         ContainerChildComponent header = TextDisplay.of("# \\💰 Мешок %s".formatted(ctx.bank().name()));
         ContainerChildComponent separator = Separator.createDivider(Separator.Spacing.SMALL);

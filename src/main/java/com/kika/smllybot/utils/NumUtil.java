@@ -2,13 +2,13 @@ package com.kika.smllybot.utils;
 
 import java.util.Locale;
 
-public class Formatter {
+public class NumUtil {
 
-    public static String germanNum(long num) {
+    public static String german(long num) {
         return String.format(Locale.GERMAN, "%,d", num);
     }
 
-    public static String usNum(double num) {
+    public static String us(double num) {
         return String.format(Locale.US, "%.2f", num);
     }
 

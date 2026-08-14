@@ -4,5 +4,5 @@ import java.sql.Timestamp;
 
 public record BankAccount(
         long id, String name,
-        int star, long iris,
+        long star, long iris,
         long irisCoin, Timestamp lastFarm) {}

@@ -2,7 +2,7 @@ package com.kika.smllybot.modules.statistic.ui;
 
 import com.kika.smllybot.database.sql.users.UsersTable;
 import com.kika.smllybot.modules.statistic.StatisticContext;
-import com.kika.smllybot.utils.Formatter;
+import com.kika.smllybot.utils.NumUtil;
 import com.sun.management.OperatingSystemMXBean;
 import net.dv8tion.jda.api.components.container.Container;
 import net.dv8tion.jda.api.components.container.ContainerChildComponent;
@@ -41,13 +41,13 @@ public class StatisticUI {
 
         // Красивое форматирование: 123456 -> 123.456
         // ОЗУ
-        String RAMFriendly = Formatter.germanNum(RAM);
-        String freeRAMFriendly = Formatter.germanNum(freeRAM);
+        String RAMFriendly = NumUtil.german(RAM);
+        String freeRAMFriendly = NumUtil.german(freeRAM);
         // ЦП
-        String systemLoadFriendly = Formatter.usNum(systemLoad);
+        String systemLoadFriendly = NumUtil.us(systemLoad);
 
         double diffRAM = (double) freeRAM / RAM * 100;
-        String diffRAMFriendly = Formatter.usNum(diffRAM);
+        String diffRAMFriendly = NumUtil.us(diffRAM);
 
         String systemLoadEmoji = null;
         if (systemLoad <= 25) systemLoadEmoji = "⚡";
