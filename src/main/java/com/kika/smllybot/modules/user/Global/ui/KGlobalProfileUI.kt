@@ -95,7 +95,7 @@ class GlobalProfileUI {
                 component.add(anketaSettings)
                 component.add(separator)
                 component.add(action)
-            } else component.add(privacy)
+            }
             component.add(footer)
 
             return Container.of(component)
