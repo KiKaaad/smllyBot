@@ -9,8 +9,8 @@ import com.kika.smllybot.modules.fun.*;
 import com.kika.smllybot.modules.helper.GlobalHelp;
 import com.kika.smllybot.modules.privacy.Privacy;
 import com.kika.smllybot.modules.privacy.PrivacyInteraction;
-import com.kika.smllybot.modules.statistic.GuildStatistic;
-import com.kika.smllybot.modules.statistic.Statistic;
+import com.kika.smllybot.modules.guild.GuildInfo;
+import com.kika.smllybot.modules.statistic.StatisticBot;
 import com.kika.smllybot.modules.tops.Global.GlobalTop;
 import com.kika.smllybot.modules.tops.Global.ui.GlobalTopInteraction;
 import com.kika.smllybot.modules.user.Global.GlobalProfile;
@@ -47,8 +47,8 @@ public class Manager extends ListenerAdapter {
         reg(new Dice());
 
         // Статистика
-        reg(new Statistic());
-        reg(new GuildStatistic());
+        reg(new StatisticBot());
+        reg(new GuildInfo());
 
         // Анкета (глобальная анкета)
         reg(new GlobalProfile());

@@ -18,7 +18,7 @@ public class ProfileUI {
     public static Container buildProfile(ProfileContext ctx) {
         List<ContainerChildComponent> components = new ArrayList<>();
 
-        String avatarUrl = ctx.target().getAvatarUrl();
+        String avatarUrl = ctx.target().getEffectiveAvatarUrl();
         String name = ctx.target().getEffectiveName();
         String timestamp = TimeUtil.getTimestamp(ctx.profile().createdAt());
         String timestampRelative = TimeUtil.getTimestampRelative(ctx.profile().createdAt());

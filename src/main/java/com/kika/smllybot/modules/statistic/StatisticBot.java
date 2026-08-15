@@ -1,6 +1,6 @@
 package com.kika.smllybot.modules.statistic;
 
-import com.kika.smllybot.modules.statistic.ui.StatisticUI;
+import com.kika.smllybot.modules.statistic.ui.StatisticBotUI;
 import com.kika.smllybot.other.BaseCmd;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDAInfo;
@@ -12,9 +12,9 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import java.util.EnumSet;
 import java.util.Set;
 
-public class Statistic extends BaseCmd {
+public class StatisticBot extends BaseCmd {
 
-        public Statistic() {
+        public StatisticBot() {
                 super(Set.of("статбот", "ботстат", "statbot", "botstat"));
         }
 
@@ -37,7 +37,7 @@ public class Statistic extends BaseCmd {
                         bot
                 );
 
-                Container response = StatisticUI.buildStatistic(ctx);
+                Container response = StatisticBotUI.buildStatistic(ctx);
 
                 event.getChannel().sendMessageComponents(response)
                         .setAllowedMentions(EnumSet.noneOf(Message.MentionType.class))

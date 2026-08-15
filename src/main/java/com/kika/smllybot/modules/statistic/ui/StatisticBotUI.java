@@ -21,7 +21,7 @@ import java.util.List;
 import static com.kika.smllybot.Main.OWNER;
 import static com.kika.smllybot.Main.VERSION;
 
-public class StatisticUI {
+public class StatisticBotUI {
 
     public static Container buildStatistic(StatisticContext ctx) {
         List<ContainerChildComponent> components = new ArrayList<>(12);

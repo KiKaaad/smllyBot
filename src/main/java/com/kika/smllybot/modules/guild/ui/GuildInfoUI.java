@@ -1,6 +1,6 @@
-package com.kika.smllybot.modules.statistic.ui;
+package com.kika.smllybot.modules.guild.ui;
 
-import com.kika.smllybot.modules.statistic.GuildStatisticContext;
+import com.kika.smllybot.modules.guild.GuildInfoContext;
 import net.dv8tion.jda.api.components.container.Container;
 import net.dv8tion.jda.api.components.container.ContainerChildComponent;
 import net.dv8tion.jda.api.components.section.Section;
@@ -12,9 +12,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 // TODO: Доделать статистику гильдий
-public class GuildStatisticUI {
+public class GuildInfoUI {
 
-    public static Container buildGuildStatistic(GuildStatisticContext ctx) {
+    public static Container buildGuildStatistic(GuildInfoContext ctx) {
         List<ContainerChildComponent> components = new ArrayList<>(12);
 
         long guildId = ctx.event().getGuild().getIdLong();
