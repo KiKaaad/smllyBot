@@ -5,7 +5,7 @@ import java.util.Set;
 public class Press extends BaseFunCmd {
 
     public Press() {
-        super(Set.of("укусить"), "🫂", "прижал(а)");
+        super(Set.of("прижать"), "🫂", "прижал(а)");
     }
 
 }

@@ -13,7 +13,7 @@ public class SoftUI {
     public static Container buildSoftUI(FunContext ctx) {
         List<ContainerChildComponent> components = new ArrayList<>(3);
 
-        ContainerChildComponent main = TextDisplay.of("## \\%s | <@%d> %s <@%d> %s"
+        ContainerChildComponent main = TextDisplay.of("### \\%s | <@%d> %s <@%d> %s"
                 .formatted(ctx.emoji(), ctx.author(), ctx.action(), ctx.reply(), ctx.afterText()));
         ContainerChildComponent replica = TextDisplay.of("**С репликой:** " + ctx.replica());
 

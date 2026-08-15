@@ -5,7 +5,7 @@ import java.util.Set;
 public class Cuddle extends BaseFunCmd {
 
     public Cuddle() {
-        super(Set.of("укусить"), "😺", "потискал(а)");
+        super(Set.of("потискать"), "😺", "потискал(а)");
     }
 
 }
