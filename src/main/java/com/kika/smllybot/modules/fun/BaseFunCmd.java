@@ -31,9 +31,9 @@ public abstract class BaseFunCmd extends BaseCmd {
         String replica = null;
         if (matches.length > 1) replica = matches[1];
 
-        String[] matchesAfterText = args.split("\\n", 2);
+        String[] matchesAfterText = raw.split("\\h+", 2);
         String afterText = "";
-        if (matchesAfterText.length > 1) afterText = matchesAfterText[0].trim();
+        if (matchesAfterText.length > 1) afterText = matchesAfterText[1].trim();
 
         FunContext funContext = new FunContext(emoji, action, author, reply, afterText, replica);
 
