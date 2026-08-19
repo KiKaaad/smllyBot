@@ -15,21 +15,21 @@ public abstract class BagUI {
     public static Container buildBug(BagContext ctx) {
         List<ContainerChildComponent> components = new ArrayList<>(5);
 
-        String irisCoin = NumUtil.german(ctx.bank().irisCoin());
-        String iris = NumUtil.german(ctx.bank().iris());
-        String star = NumUtil.german(ctx.bank().star());
+        String irisCoin = NumUtil.german(ctx.bank().getIrisCoin());
+        String iris = NumUtil.german(ctx.bank().getIris());
+        String star = NumUtil.german(ctx.bank().getStar());
 
-        ContainerChildComponent header = TextDisplay.of("# \\💰 Мешок %s".formatted(ctx.bank().name()));
+        ContainerChildComponent header = TextDisplay.of("# \\💰 Мешок %s".formatted(ctx.bank().getName()));
         ContainerChildComponent separator = Separator.createDivider(Separator.Spacing.SMALL);
         ContainerChildComponent economy1 = TextDisplay.of("\\🍬 **%s** ирисок | \\⭐ **%s** звездочек".formatted(iris, star));
         ContainerChildComponent economy2 = TextDisplay.of("\\☢️ **%s** i¢".formatted(irisCoin));
         ContainerChildComponent footer = TextDisplay.of("-# Каждый день от звёздности отнимается **0.1%**");
         ContainerChildComponent privacyAuthor = TextDisplay.of("-# Скрыто (видно только вам)");
 
-        if (!ctx.privacy().bag() || ctx.author() == ctx.target().getIdLong()) {
+        if (!ctx.privacy().getBag() || ctx.author() == ctx.target().getIdLong()) {
             // Мешок ...
             components.add(header);
-            if (ctx.privacy().bag()) components.add(privacyAuthor);
+            if (ctx.privacy().getBag()) components.add(privacyAuthor);
             components.add(separator);
             // ... ирисок | ... звездочек
             components.add(economy1);

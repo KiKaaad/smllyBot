@@ -1,7 +1,7 @@
 package com.kika.smllybot.modules.user.Global.ui
 
 import com.kika.smllybot.database.sql.statistic.StatisticTable
-import com.kika.smllybot.database.sql.statistic.dto.TotalStatisticUser
+import com.kika.smllybot.database.sql.statistic.dto.StatisticAccount
 import com.kika.smllybot.modules.user.Global.GlobalProfileContext
 import com.kika.smllybot.utils.NumUtil
 import com.kika.smllybot.utils.TimeUtil
@@ -23,7 +23,7 @@ class GlobalProfileUI {
 
             val isOwner: Boolean = ctx.target.idLong == ctx.viewer.idLong
 
-            val statistic: TotalStatisticUser = StatisticTable.getTotalUserStatistic(ctx.user().id)
+            val statistic: StatisticAccount = StatisticTable.getTotalUserStatistic(ctx.user().id)
 
             val status: String = UserStatus.getEmoji(ctx.member())
 

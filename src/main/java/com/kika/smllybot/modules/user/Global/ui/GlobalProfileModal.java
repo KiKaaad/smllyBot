@@ -1,13 +1,13 @@
 package com.kika.smllybot.modules.user.Global.ui;
 
+import com.kika.smllybot.annotations.ButtonPrefix;
+import com.kika.smllybot.annotations.ModalPrefix;
 import com.kika.smllybot.database.sql.bank.BankTable;
 import com.kika.smllybot.database.sql.bank.dto.BankAccount;
 import com.kika.smllybot.database.sql.privacy.PrivacyTable;
 import com.kika.smllybot.database.sql.privacy.dto.PrivacyAccount;
 import com.kika.smllybot.database.sql.users.UsersTable;
 import com.kika.smllybot.database.sql.users.dto.UserAccount;
-import com.kika.smllybot.handlers.ButtonHandler;
-import com.kika.smllybot.handlers.ModalHandler;
 import com.kika.smllybot.modules.user.Global.GlobalProfileContext;
 import com.kika.smllybot.other.BaseCmd;
 import com.kika.smllybot.utils.Interaction;
@@ -27,19 +27,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-public class GlobalProfileModal extends BaseCmd implements ButtonHandler, ModalHandler {
+public class GlobalProfileModal extends BaseCmd {
 
     public GlobalProfileModal() { super(Set.of("profile")); }
-    @Override
-    public String getButtonPrefix() {
-        return "profile";
-    }
-    @Override
-    public String getModalPrefix() {
-        return "profile";
-    }
 
-    @Override
+    @ButtonPrefix(prefix = "profile")
     public void onButton(@NotNull ButtonInteractionEvent event, String[] parts) {
         if (!Interaction.checkOwner(event, parts)) return;
 
@@ -62,7 +54,7 @@ public class GlobalProfileModal extends BaseCmd implements ButtonHandler, ModalH
         }
     }
 
-    @Override
+    @ModalPrefix(prefix = "profile")
     public void onModal(ModalInteractionEvent event, String[] parts) {
         if (parts.length > 1 && parts[1].equals("submit")) {
 
@@ -76,8 +68,8 @@ public class GlobalProfileModal extends BaseCmd implements ButtonHandler, ModalH
             UsersTable.setMotto(discordId, newAboutMe);
 
             UserAccount user = UsersTable.getOrCreateUser(discordId, username);
-            BankAccount bank = BankTable.getOrCreateBank(user.id(), username);
-            PrivacyAccount privacy = PrivacyTable.getOrCreatePrivacy(user.id());
+            BankAccount bank = BankTable.getOrCreateBank(user.getId(), username);
+            PrivacyAccount privacy = PrivacyTable.getOrCreatePrivacy(user.getId());
 
             GlobalProfileContext ctx = new GlobalProfileContext(
                     event.getUser(),

@@ -20,17 +20,17 @@ public class PrivacyUI {
         Button buttonBag;
         Button buttonActivity;
         Button buttonLastActivity;
-        if (!ctx.privacy().bag()) {
+        if (!ctx.privacy().getBag()) {
             buttonBag = Button.success("PrivacyInteraction:bag:off:" + ctx.discordId(), "✅");
         } else {
             buttonBag = Button.danger("PrivacyInteraction:bag:on:" + ctx.discordId(), "❌");
         }
-        if (!ctx.privacy().activity()) {
+        if (!ctx.privacy().getActivity()) {
             buttonActivity = Button.success("PrivacyInteraction:activity:off:" + ctx.discordId(), "✅");
         } else {
             buttonActivity = Button.danger("PrivacyInteraction:activity:on:" + ctx.discordId(), "❌");
         }
-        if (!ctx.privacy().lastActivity()) {
+        if (!ctx.privacy().getLastActivity()) {
             buttonLastActivity = Button.success("PrivacyInteraction:lastActivity:off:" + ctx.discordId(), "✅");
         } else {
             buttonLastActivity = Button.danger("PrivacyInteraction:lastActivity:on:" + ctx.discordId(), "❌");

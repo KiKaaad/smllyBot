@@ -20,25 +20,25 @@ public class ProfileUI {
 
         String avatarUrl = ctx.target().getEffectiveAvatarUrl();
         String name = ctx.target().getEffectiveName();
-        String timestamp = TimeUtil.getTimestamp(ctx.profile().createdAt());
-        String timestampRelative = TimeUtil.getTimestampRelative(ctx.profile().createdAt());
+        String timestamp = TimeUtil.getTimestamp(ctx.profile().getCreatedAt());
+        String timestampRelative = TimeUtil.getTimestampRelative(ctx.profile().getCreatedAt());
 
         ContainerChildComponent header = Section.of(
                 Thumbnail.fromUrl(avatarUrl),
                 TextDisplay.of("# \\👤 Это %s".formatted(name)),
                 TextDisplay.of("### О себе:"),
-                TextDisplay.of("%s".formatted(ctx.profile().aboutMe()))
+                TextDisplay.of("%s".formatted(ctx.profile().getAboutMe()))
         );
         ContainerChildComponent separator = Separator.createDivider(Separator.Spacing.SMALL);
         ContainerChildComponent main = TextDisplay.of("## Основная информация:");
         ContainerChildComponent owner = TextDisplay.of("\\👑 Создатель дискорд-сервера");
         ContainerChildComponent citizen = TextDisplay.of("\\🪪 Гражданин этого сервера");
         ContainerChildComponent reputation = TextDisplay.of("Репутация: \\✨ %d | \\➕ %d"
-                .formatted(ctx.bank().star(), ctx.user().reaction()));
+                .formatted(ctx.bank().getStar(), ctx.user().getReaction()));
         ContainerChildComponent firstEntry = TextDisplay.of("Впервые появился здесь %s (%s)"
                 .formatted(timestamp, timestampRelative));
         ContainerChildComponent activity = TextDisplay.of("**Актив** (д | н | м | весь): %d | %d | %d | %d"
-                .formatted(ctx.statistic().day(), ctx.statistic().week(), ctx.statistic().month(), ctx.statistic().total()));
+                .formatted(ctx.statistic().getDay(), ctx.statistic().getWeek(), ctx.statistic().getMonth(), ctx.statistic().getTotal()));
         ContainerChildComponent rewardsHeader = TextDisplay.of("## \\🏆 Награды");
         ContainerChildComponent rewards = TextDisplay.of("...");
         ContainerChildComponent footer = TextDisplay
@@ -48,7 +48,7 @@ public class ProfileUI {
         components.add(separator);
         components.add(main);
         if (ctx.member().isOwner()) components.add(owner);
-        if (Objects.equals(ctx.user().citizenship(), ctx.guildId())) components.add(citizen);
+        if (Objects.equals(ctx.user().getCitizenship(), ctx.guildId())) components.add(citizen);
         components.add(reputation);
         components.add(firstEntry);
         components.add(activity);

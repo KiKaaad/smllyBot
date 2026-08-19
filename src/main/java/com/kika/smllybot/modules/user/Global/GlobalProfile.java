@@ -1,11 +1,6 @@
 package com.kika.smllybot.modules.user.Global;
 
-import com.kika.smllybot.database.sql.bank.BankTable;
-import com.kika.smllybot.database.sql.bank.dto.BankAccount;
-import com.kika.smllybot.database.sql.privacy.PrivacyTable;
-import com.kika.smllybot.database.sql.privacy.dto.PrivacyAccount;
-import com.kika.smllybot.database.sql.users.UsersTable;
-import com.kika.smllybot.database.sql.users.dto.UserAccount;
+import com.kika.smllybot.database.sql.Repository;
 import com.kika.smllybot.modules.user.Global.ui.GlobalProfileUI;
 import com.kika.smllybot.other.BaseCmd;
 import net.dv8tion.jda.api.components.container.Container;
@@ -73,20 +68,19 @@ public class GlobalProfile extends BaseCmd {
     }
 
     private void sendAnketaResponse(MessageReceivedEvent event, User targetUser) {
+        long discordId = targetUser.getIdLong();
+        String name = targetUser.getName();
 
         var targetMember = event.isFromGuild() ? event.getGuild().getMember(targetUser) : null;
-
-        UserAccount user = UsersTable.getOrCreateUser(targetUser.getIdLong(), targetUser.getName());
-        BankAccount bank = BankTable.getOrCreateBank(user.id(), targetUser.getName());
-        PrivacyAccount privacy = PrivacyTable.getOrCreatePrivacy(user.id());
+        Repository repo = new Repository();
 
         GlobalProfileContext ctx = new GlobalProfileContext(
                 targetUser,
                 event.getAuthor(),
                 targetMember,
-                user,
-                bank,
-                privacy
+                repo.getUser(discordId, name),
+                repo.getBank(discordId, name),
+                repo.getPrivacy(discordId, name)
         );
 
         targetUser.retrieveProfile().queue(

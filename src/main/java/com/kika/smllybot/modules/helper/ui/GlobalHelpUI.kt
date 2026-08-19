@@ -18,7 +18,8 @@ class GlobalHelpUI {
             val header: ContainerChildComponent = TextDisplay.of("# \\ℹ️ Справочная информация")
             val mainInfo: ContainerChildComponent = TextDisplay.of(
                 """
-                Здесь содержится вся информация о боте которая может быть полезна вам
+                Здесь содержится вся информация о боте которая может быть полезна вам.
+                На сервере поддержки также можно предложить свои идеи для бота.
                 """.trimIndent()
             )
             val buttons: ContainerChildComponent = ActionRow.of(

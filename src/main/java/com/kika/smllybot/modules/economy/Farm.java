@@ -1,10 +1,8 @@
 package com.kika.smllybot.modules.economy;
 
 import com.kika.smllybot.Config;
+import com.kika.smllybot.database.sql.Repository;
 import com.kika.smllybot.database.sql.bank.BankTable;
-import com.kika.smllybot.database.sql.bank.dto.BankAccount;
-import com.kika.smllybot.database.sql.users.UsersTable;
-import com.kika.smllybot.database.sql.users.dto.UserAccount;
 import com.kika.smllybot.modules.economy.ui.FarmUI;
 import com.kika.smllybot.other.BaseCmd;
 import com.kika.smllybot.utils.TimeUtil;
@@ -52,17 +50,15 @@ public class Farm extends BaseCmd {
 
     @Override
     public Container execute(MessageReceivedEvent event, String raw, String args) {
-
+        Repository repo = new Repository();
         long discordId = event.getAuthor().getIdLong();
         String name = event.getAuthor().getEffectiveName();
 
-        UserAccount user = UsersTable.getOrCreateUser(discordId, name);
-        BankAccount bank = BankTable.getOrCreateBank(user.id(), name);
+        var bank = repo.getBank(discordId, name);
 
         // Расчет фармы с момента, когда последний раз команда использована
         // Разница = Время сейчас - время в бд
-        assert bank != null;
-        long waitMillis = System.currentTimeMillis() - bank.lastFarm().getTime();
+        long waitMillis = System.currentTimeMillis() - bank.getLastFarm().getTime();
         long minWait = 4 * 60 * 60 * 1000L;     // Часы в минуты в секунды в миллисекунды
         long maxWait = 24 * 60 * 60 * 1000L;    // Absolute cinema
 
@@ -81,7 +77,7 @@ public class Farm extends BaseCmd {
             return response;
         }
 
-        long star = bank.star();
+        long star = bank.getStar();
 
         double multiplier;
         // Чтобы получить максимальный множитель, нужно иметь 10.000 звездочек
@@ -102,8 +98,8 @@ public class Farm extends BaseCmd {
         if (baseReward < 0) starMultiplier = 1;
         long finalReward = (long) (baseReward * multiplier * starMultiplier);
 
-        BankTable.addIrisCoin(user.id(), finalReward);
-        BankTable.updateLastFarm(user.id());
+        BankTable.addIrisCoin(bank.getId(), finalReward);
+        BankTable.updateLastFarm(bank.getId());
 
         FarmContext ctx = new FarmContext(
                 baseReward,

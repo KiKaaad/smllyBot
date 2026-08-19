@@ -5,7 +5,7 @@ import com.kika.smllybot.database.sql.bank.dto.BankAccount;
 import com.kika.smllybot.database.sql.profile.ProfileTable;
 import com.kika.smllybot.database.sql.profile.dto.ProfileAccount;
 import com.kika.smllybot.database.sql.statistic.StatisticTable;
-import com.kika.smllybot.database.sql.statistic.dto.TotalStatisticUser;
+import com.kika.smllybot.database.sql.statistic.dto.StatisticAccount;
 import com.kika.smllybot.database.sql.users.UsersTable;
 import com.kika.smllybot.database.sql.users.dto.UserAccount;
 import com.kika.smllybot.modules.user.Local.ui.ProfileUI;
@@ -51,7 +51,7 @@ public class Profile extends BaseCmd {
                 event.getAuthor().getEffectiveName());
         BankAccount bank = BankTable.getOrCreateBank(id, event.getAuthor().getEffectiveName());
         ProfileAccount profileAccount = ProfileTable.getOrCreateProfile(id, guildId, author, dateTime);
-        TotalStatisticUser statistic = StatisticTable.getTotalStatisticUserGuild(id, guildId);
+        StatisticAccount statistic = StatisticTable.getTotalStatisticUserGuild(id, guildId);
         ProfileContext context = new ProfileContext(target,
                 event.getAuthor(), event.getMember(), profileAccount, statistic, userAccount, bank, event.getGuild().getIdLong());
 

@@ -1,11 +1,6 @@
 package com.kika.smllybot.modules.economy;
 
-import com.kika.smllybot.database.sql.bank.BankTable;
-import com.kika.smllybot.database.sql.bank.dto.BankAccount;
-import com.kika.smllybot.database.sql.privacy.PrivacyTable;
-import com.kika.smllybot.database.sql.privacy.dto.PrivacyAccount;
-import com.kika.smllybot.database.sql.users.UsersTable;
-import com.kika.smllybot.database.sql.users.dto.UserAccount;
+import com.kika.smllybot.database.sql.Repository;
 import com.kika.smllybot.modules.economy.ui.BagUI;
 import com.kika.smllybot.other.BaseCmd;
 import net.dv8tion.jda.api.components.container.Container;
@@ -64,16 +59,15 @@ public class Bag extends BaseCmd {
     }
 
     public void sendBagResponse(MessageReceivedEvent event, User targetUser) {
-
-        UserAccount user = UsersTable.getOrCreateUser(targetUser.getIdLong(), targetUser.getEffectiveName());
-        BankAccount bank = BankTable.getOrCreateBank(user.id(), targetUser.getEffectiveName());
-        PrivacyAccount privacy = PrivacyTable.getOrCreatePrivacy(user.id());
+        long discordId = targetUser.getIdLong();
+        String name = targetUser.getEffectiveName();
+        Repository repo = new Repository();
 
         BagContext ctx = new BagContext(
                 event.getAuthor().getIdLong(),
                 targetUser,
-                bank,
-                privacy
+                repo.getBank(discordId, name),
+                repo.getPrivacy(discordId, name)
         );
 
         Container response = BagUI.buildBug(ctx);

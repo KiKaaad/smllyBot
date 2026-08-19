@@ -11,7 +11,7 @@ import net.dv8tion.jda.api.entities.User;
 public class MottoUI {
 
     public static Container buildMotto(User user, UserAccount dbUser, String title, boolean showHeader) {
-        String mottoDisplay = dbUser.motto() == null ? "Пользователь не указал описание." : dbUser.motto();
+        String mottoDisplay = dbUser.getMotto() == null ? "Пользователь не указал описание." : dbUser.getMotto();
 
         Section topSection = Section.of(
                 Button.primary("motto:back:" + user.getId(), "◀️ Назад"),
