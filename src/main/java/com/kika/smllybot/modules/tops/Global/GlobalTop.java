@@ -1,19 +1,21 @@
 package com.kika.smllybot.modules.tops.Global;
 
-import com.kika.smllybot.database.sql.bank.dto.BankTopAmount;
-import com.kika.smllybot.other.BaseCmd;
+import com.kika.smllybot.annotations.ButtonPrefix;
+import com.kika.smllybot.annotations.ModalPrefix;
 import com.kika.smllybot.database.sql.bank.BankTable;
+import com.kika.smllybot.database.sql.bank.dto.BankTopAmount;
 import com.kika.smllybot.modules.tops.Global.ui.GlobalTopUI;
+import com.kika.smllybot.other.BaseCmd;
 import net.dv8tion.jda.api.components.container.Container;
-import net.dv8tion.jda.api.components.container.ContainerChildComponent;
-import net.dv8tion.jda.api.components.textdisplay.TextDisplay;
-import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.components.label.Label;
+import net.dv8tion.jda.api.components.textinput.TextInput;
+import net.dv8tion.jda.api.components.textinput.TextInputStyle;
+import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.modals.Modal;
 
-import java.time.Duration;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 
 public class GlobalTop extends BaseCmd {
@@ -25,98 +27,104 @@ public class GlobalTop extends BaseCmd {
     @Override
     public Container execute(MessageReceivedEvent event, String raw, String args) {
 
-        String[] parts = args.trim().split("\\s+", 2);
-        String subCommand = parts[0].toLowerCase();
+        String[] parts = raw.trim().split("\\h+", 2);
+        String value = parts[1];
+        long owner = event.getAuthor().getIdLong();
 
-        String title;
-        String icon;
-        String suffix;
-        String ownerId = event.getAuthor().getId();
-        List<BankTopAmount> topEntries;
-        IGlobalTop value;
-
-        int limit = 1000;
-
-        if (parts.length > 2) {
-
-            try {
-                int parsedLimit = Integer.parseInt(parts[2].trim());
-
-                if (parsedLimit >= 1 && parsedLimit <= 100) {
-                    limit = parsedLimit;
-                } else {
-                    event.getChannel().sendMessage("🟡 Упс! Число вне диапазона **от 1 до 100**")
-                            .delay(Duration.ofSeconds(5))
-                            .flatMap(Message::delete)
-                            .queue();
-                    return null;
-                }
-            } catch (NumberFormatException e) {
-                return null;
-            }
-
-        }
-
-        switch (subCommand) {
-            case "коины" -> {
-                title = "ирис-коинам";
-                icon = "☢️";
-                suffix = " i¢";
-                topEntries = BankTable.getTopIrisCoins(limit);
-                value = BankTopAmount::amount;
-            }
+        switch (value) {
             case "ириски" -> {
-                title = "ирискам";
-                icon = "🍬";
-                suffix = " шт.";
-                topEntries = BankTable.getTopIris(limit);
-                value = BankTopAmount::amount;
+                List<BankTopAmount> topAmount = BankTable.getTopIris();
+                GlobalTopContext ctx = new GlobalTopContext(topAmount, "iris", owner);
+                var response = GlobalTopUI.build(ctx, 1);
+
+                event.getChannel().sendMessageComponents(response).useComponentsV2(true).queue();
+            }
+            case "коины" -> {
+                List<BankTopAmount> topAmount = BankTable.getTopIrisCoins();
+                GlobalTopContext ctx = new GlobalTopContext(topAmount, "coin", owner);
+                var response = GlobalTopUI.build(ctx, 1);
+
+                event.getChannel().sendMessageComponents(response).useComponentsV2(true).queue();
             }
             default -> {
                 return null;
             }
         }
 
-        if (topEntries.isEmpty()) {
-            ContainerChildComponent main = TextDisplay.of("""
-                    ## \\💀 Как-то тут пусто однако...
-                    ### Возможные причины:
-                    1. В топе пока что никого нет
-                    2. База данных недоступна
-                    3. Возникла ошибка при попытке достать данные
-                    """);
-            Container response = Container.of(main);
+        return null;
+    }
 
-            event.getChannel().sendMessageComponents(response)
-                    .useComponentsV2(true)
-                    .queue();
-            return response;
+    @ButtonPrefix(prefix = "gtop")
+    public void onButton(ButtonInteractionEvent event, String[] args) {
+        String[] parts = event.getComponentId().split(":");
+        long owner = event.getUser().getIdLong();
+
+        // Сначала модалочка
+        if (parts[1].equals("select")) {
+            String type = parts[2];
+
+            TextInput pageInput = TextInput.create("page_num", TextInputStyle.SHORT)
+                    .setPlaceholder("Введите страницу")
+                    .setMinLength(1)
+                    .setMaxLength(4)
+                    .setRequired(true)
+                    .build();
+
+            Modal modal = Modal.create("gtop_modal:" + type + ":" + owner, "🔍 Перейти на страницу")
+                    .addComponents(Label.of("Страница", pageInput))
+                    .build();
+
+            event.replyModal(modal).queue();
+            return;
         }
 
-        List<String> topLines = new ArrayList<>();
-        for (int i = 0; i < topEntries.size(); i++) {
-            BankTopAmount entry = topEntries.get(i);
+        Container response;
+        // И уже потом парсим в инт, а то все сломается
+        int page = Integer.parseInt(parts[1]);
 
-            String formattedValue = String.format(Locale.GERMAN, "%,d", value.extract(entry));
-
-            String placeEmoji = switch (i) {
-                case 0 -> "1. \\🥇";
-                case 1 -> "2. \\🥈";
-                case 2 -> "3. \\🥉";
-                default -> (i + 1) + ".";
-            };
-
-            String line = "%s **%s** — %s%s".formatted(placeEmoji, entry.name(), formattedValue, suffix);
-            topLines.add(line);
+        switch (parts[2]) {
+            case "coin" -> {
+                List<BankTopAmount> topAmount = BankTable.getTopIrisCoins();
+                GlobalTopContext ctx = new GlobalTopContext(topAmount, "coin", owner);
+                response = GlobalTopUI.build(ctx, page);
+            }
+            case "iris" -> {
+                List<BankTopAmount> topAmount = BankTable.getTopIris();
+                GlobalTopContext ctx = new GlobalTopContext(topAmount, "iris", owner);
+                response = GlobalTopUI.build(ctx, page);
+            }
+            default -> {
+                return;
+            }
         }
 
-        GlobalTopContext ctx = new GlobalTopContext(topLines);
+        event.editComponents(response).useComponentsV2(true).queue();
+    }
 
-        Container response = GlobalTopUI.buildFarmTop(icon, title, subCommand, limit, 0, ownerId, ctx);
+    @ModalPrefix(prefix = "gtop_modal")
+    public void onModal(ModalInteractionEvent event, String[] args) {
+        String[] parts = event.getModalId().split(":");
+        String type = parts[1];
+        long owner = Long.parseLong(parts[2]);
 
-        event.getChannel().sendMessageComponents(response)
-                .useComponentsV2(true)
-                .queue();
-        return response;
+        String inputPage = event.getValue("page_num").getAsString();
+        int targetPage = 1;
+
+        try {
+            targetPage = Integer.parseInt(inputPage.trim());
+        } catch (NumberFormatException ignored) {}
+
+        Container response = buildResponse(type, targetPage, owner);
+
+        event.editComponents(response).useComponentsV2(true).queue();
+    }
+
+    private Container buildResponse(String type, int page, long owner) {
+        List<BankTopAmount> topAmount = type.equals("coin")
+                ? BankTable.getTopIrisCoins()
+                : BankTable.getTopIris();
+
+        GlobalTopContext ctx = new GlobalTopContext(topAmount, type, owner);
+        return GlobalTopUI.build(ctx, page);
     }
 }
