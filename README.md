@@ -4,6 +4,7 @@
 [![CodeFactor](https://www.codefactor.io/repository/github/kikaaad/smllybot/badge)](https://www.codefactor.io/repository/github/kikaaad/smllybot)
 ![Версия](https://img.shields.io/badge/Version-0.5.37-orange)
 ![Java](https://img.shields.io/badge/Java-25-orange)
+![Java](https://img.shields.io/badge/Kotlin-v2.4.0-blue)
 ![Стадия](https://img.shields.io/badge/Стадия%20беты-101010)\
 Этот бот — аналог [Iris | Чат-менеджер](https://teletype.in/@iris_cm) для дискорда и все команды будут практически полностью индентичны
 

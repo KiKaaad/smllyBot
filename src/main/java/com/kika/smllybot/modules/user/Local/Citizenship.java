@@ -1,6 +1,7 @@
 package com.kika.smllybot.modules.user.Local;
 
 import com.kika.smllybot.Main;
+import com.kika.smllybot.annotations.ButtonPrefix;
 import com.kika.smllybot.database.sql.users.UsersTable;
 import com.kika.smllybot.database.sql.users.dto.UserAccount;
 import com.kika.smllybot.modules.user.Local.ui.CitizenshipUI;
@@ -8,6 +9,7 @@ import com.kika.smllybot.other.BaseCmd;
 import com.kika.smllybot.utils.PrefixUtil;
 import net.dv8tion.jda.api.components.container.Container;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 import java.util.Set;
@@ -79,6 +81,21 @@ public class Citizenship extends BaseCmd {
         }
 
         return null;
+    }
+
+    @ButtonPrefix(prefix = "citizenship")
+    public void onButton(ButtonInteractionEvent event, String[] args) {
+        long discordId = event.getUser().getIdLong();
+
+        String[] parts = event.getComponentId().split(":");
+
+        if (parts[1].equals("yes")) {
+            UsersTable.setCitizenship(discordId, null);
+
+            var response = CitizenshipUI.deleteCitizenshipSuccess();
+
+            event.editComponents(response).useComponentsV2(true).queue();
+        }
     }
 
 }

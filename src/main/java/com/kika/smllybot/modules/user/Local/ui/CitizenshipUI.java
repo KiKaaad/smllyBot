@@ -39,7 +39,7 @@ public class CitizenshipUI {
         String timeRelative = TimeUtil.getTimestampRelative(ctx.user().getCitizenshipData());
 
         ContainerChildComponent header = Section.of(
-                Button.danger("citizenship:yes:discordId", "Подтвердить"),
+                Button.danger("citizenship:yes:" + ctx.member().getIdLong(), "Подтвердить"),
                 TextDisplay.of("## \\❌ Вы уверены, что хотите удалить гражданство?")
         );
 
@@ -58,6 +58,12 @@ public class CitizenshipUI {
         components.add(footer);
 
         return Container.of(components);
+    }
+
+    public static Container deleteCitizenshipSuccess() {
+        return Container.of(
+                TextDisplay.of("## \\🔥 Ваше гражданство удалено! Теперь вы вольны")
+        );
     }
 
     public static Container buildError() {
