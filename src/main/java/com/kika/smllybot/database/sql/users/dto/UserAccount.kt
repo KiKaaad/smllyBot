@@ -1,13 +1,15 @@
-package com.kika.smllybot.database.sql.users.dto;
+package com.kika.smllybot.database.sql.users.dto
 
-import java.time.OffsetDateTime;
+import java.time.OffsetDateTime
 
-public record UserAccount(long id, long discordId,
-                          String role,
-                          String name,
-                          String motto,
-                          OffsetDateTime createdAt,
-                          int reaction,
-                          Long citizenship,
-                          OffsetDateTime citizenshipData
-) {}
+data class UserAccount(
+    val id: Long,
+    val discordId: Long,
+    val role: String?,
+    val name: String,
+    val motto: String?,
+    val createdAt: OffsetDateTime,
+    val reaction: Int,
+    val citizenship: Long?,
+    val citizenshipData: OffsetDateTime?
+)

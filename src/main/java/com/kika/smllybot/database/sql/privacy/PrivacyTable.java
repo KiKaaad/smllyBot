@@ -34,7 +34,7 @@ public class PrivacyTable {
         }
     }
 
-    public static PrivacyAccount getOrCreatePrivacy(long internalId) {
+    public static PrivacyAccount getOrCreatePrivacy(long id) {
         String selectSql = "SELECT id, bag, activity, last_activity FROM privacy WHERE id = ?";
         String insertSql = """
             INSERT INTO privacy (id) VALUES (?)
@@ -44,7 +44,7 @@ public class PrivacyTable {
 
         try (Connection conn = DatabaseManager.getConnection()) {
             try (PreparedStatement pstmt = conn.prepareStatement(selectSql)) {
-                pstmt.setLong(1, internalId);
+                pstmt.setLong(1, id);
                 try (ResultSet rs = pstmt.executeQuery()) {
                     if (rs.next()) {
                         return mapPrivacy(rs);
@@ -53,7 +53,7 @@ public class PrivacyTable {
             }
 
             try (PreparedStatement pstmt = conn.prepareStatement(insertSql)) {
-                pstmt.setLong(1, internalId);
+                pstmt.setLong(1, id);
                 try (ResultSet rs = pstmt.executeQuery()) {
                     if (rs.next()) {
                         return mapPrivacy(rs);
@@ -62,14 +62,14 @@ public class PrivacyTable {
             }
 
             try (PreparedStatement pstmt = conn.prepareStatement(selectSql)) {
-                pstmt.setLong(1, internalId);
+                pstmt.setLong(1, id);
                 try (ResultSet rs = pstmt.executeQuery()) {
                     if (rs.next()) return mapPrivacy(rs);
                 }
             }
 
         } catch (SQLException e) {
-            log.error("❌ Ошибка PRIVACY (id: {}): ", internalId, e);
+            log.error("❌ Ошибка PRIVACY (id: {}): ", id, e);
         }
         return null;
     }

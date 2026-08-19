@@ -10,7 +10,7 @@ import org.springframework.jdbc.core.RowMapper;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
-import java.sql.*;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -85,23 +85,21 @@ public class BankTable {
     }
 
     @NotNull
-    public static List<BankTopAmount> getTopIrisCoins(int limit) {
+    public static List<BankTopAmount> getTopIrisCoins() {
         String sql = """
             SELECT b.id, u.name AS username, b.iris_coin
             FROM bank b
             JOIN users u ON b.id = u.id
             WHERE b.iris_coin > 0
             ORDER BY b.iris_coin DESC
-            LIMIT ?
             """;
 
         try {
-            return DatabaseManager.getQuery()
-                    .query(sql, (rs, rowNum) -> new BankTopAmount(
+            return DatabaseManager.getQuery().query(sql, (rs, rowNum) -> new BankTopAmount(
                     rs.getInt("id"),
                     rs.getString("username"),
                     rs.getLong("iris_coin")
-            ), limit);
+            ));
         } catch (Exception e) {
             log.error("❌ Ошибка получения топа коинов: ", e);
             return new ArrayList<>();
@@ -109,14 +107,13 @@ public class BankTable {
     }
 
     @NotNull
-    public static List<BankTopAmount> getTopIris(int limit) {
+    public static List<BankTopAmount> getTopIris() {
         String sql = """
             SELECT b.id, u.name AS username, b.iris
             FROM bank b
             JOIN users u ON b.id = u.id
             WHERE b.iris > 0
             ORDER BY b.iris DESC
-            LIMIT ?
             """;
 
         try {
@@ -124,12 +121,10 @@ public class BankTable {
                     rs.getLong("id"),
                     rs.getString("username"),
                     rs.getLong("iris")
-            ), limit);
+            ));
         } catch (Exception e) {
             log.error("❌ Ошибка получения топа ирисок: ", e);
             return new ArrayList<>();
         }
     }
 }
-
-// TODO: Сделать таблицу с транзакциями пользователя

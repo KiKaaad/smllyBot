@@ -36,7 +36,7 @@ public class Main implements EventListener {
 
     private static final Logger log = LoggerFactory.getLogger(Main.class);
     public static String[] PREFIXES;
-    public static final String VERSION = "0.5.21-beta-pw (12.08.2026)";
+    public static final String VERSION = "0.5.37-beta-pw (20.08.2026)";
     public static final String OWNER = "<@683345722611073059>";
 
     static void main() throws InterruptedException {
@@ -115,7 +115,7 @@ public class Main implements EventListener {
                     Информация бота:
                     ℹ️ Префиксы: {}
                     💾 Версия: {}
-                    📎 Гитхаб: https://github.com/KiKaaad/smllyBotDiscordJDA
+                    📎 Гитхаб: https://github.com/KiKaaad/smllyBot
                     🌚 Работает на боте: {} | 🆔 ID: {}
                     🔗 Шардов всего (1 шард = 0 - 2.500 серверов): {}
                     🌃 Серверов: {}

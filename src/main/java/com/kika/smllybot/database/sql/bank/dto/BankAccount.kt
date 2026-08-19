@@ -1,8 +1,12 @@
-package com.kika.smllybot.database.sql.bank.dto;
+package com.kika.smllybot.database.sql.bank.dto
 
-import java.sql.Timestamp;
+import java.sql.Timestamp
 
-public record BankAccount(
-        long id, String name,
-        long star, long iris,
-        long irisCoin, Timestamp lastFarm) {}
+data class BankAccount(
+    val id: Long,
+    val name: String,
+    val star: Long,
+    val iris: Long,
+    val irisCoin: Long,
+    val lastFarm: Timestamp
+)

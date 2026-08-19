@@ -1,13 +1,16 @@
 package com.kika.smllybot.database.sql.statistic;
 
 import com.kika.smllybot.database.sql.DatabaseManager;
-import com.kika.smllybot.database.sql.statistic.dto.TotalStatisticUser;
+import com.kika.smllybot.database.sql.statistic.dto.StatisticAccount;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class StatisticTable {
 
@@ -51,7 +54,7 @@ public class StatisticTable {
         }
     }
 
-    public static TotalStatisticUser getTotalUserStatistic(long id) {
+    public static StatisticAccount getTotalUserStatistic(long id) {
         String sql = """
             SELECT
             SUM(CASE WHEN date = CURRENT_DATE THEN message_count ELSE 0 END) as total_day,
@@ -69,7 +72,7 @@ public class StatisticTable {
 
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
-                    return new TotalStatisticUser(
+                    return new StatisticAccount(
                             rs.getLong("total_day"),
                             rs.getLong("total_week"),
                             rs.getLong("total_month"),
@@ -83,7 +86,7 @@ public class StatisticTable {
         return null;
     }
 
-    public static TotalStatisticUser getTotalStatisticUserGuild(long id, long guildId) {
+    public static StatisticAccount getTotalStatisticUserGuild(long id, long guildId) {
         String sql = """
             SELECT
             SUM(CASE WHEN date = CURRENT_DATE THEN message_count ELSE 0 END) as total_day,
@@ -95,7 +98,7 @@ public class StatisticTable {
             """;
 
         try {
-            return DatabaseManager.getQuery().queryForObject(sql, (rs, rowNum) -> new TotalStatisticUser(
+            return DatabaseManager.getQuery().queryForObject(sql, (rs, rowNum) -> new StatisticAccount(
                     rs.getLong("total_day"),
                     rs.getLong("total_week"),
                     rs.getLong("total_month"),
@@ -105,6 +108,6 @@ public class StatisticTable {
             log.error("❌ Ошибка при получении статистики с учетом гильдии: ", e);
         }
 
-        return new TotalStatisticUser(-1, -1, -1, -1);
+        return new StatisticAccount(-1, -1, -1, -1);
     }
 }

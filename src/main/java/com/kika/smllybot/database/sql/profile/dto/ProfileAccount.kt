@@ -1,11 +1,11 @@
-package com.kika.smllybot.database.sql.profile.dto;
+package com.kika.smllybot.database.sql.profile.dto
 
-import java.time.OffsetDateTime;
+import java.time.OffsetDateTime
 
-public record ProfileAccount(
-        long id,
-        long guildId,
-        String name,
-        String aboutMe,
-        OffsetDateTime createdAt
-) {}
+data class ProfileAccount(
+    val id: Long,
+    val guildId: Long,
+    val name: String,
+    val aboutMe: String?,
+    val createdAt: OffsetDateTime
+)

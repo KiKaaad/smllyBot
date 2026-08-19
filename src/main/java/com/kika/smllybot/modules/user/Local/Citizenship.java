@@ -32,9 +32,20 @@ public class Citizenship extends BaseCmd {
         UserAccount user = UsersTable.getOrCreateUser(discordId, name);
 
         if (action == '-') {
-            UsersTable.setCitizenship(discordId, null);
+            if (user.getCitizenship() == null) {
+                var response = CitizenshipUI.buildError();
 
-            var response = CitizenshipUI.buildDeleteCitizenship();
+                event.getChannel().sendMessageComponents(response)
+                        .useComponentsV2(true)
+                        .queue();
+
+                return null;
+            }
+
+            CitizenshipContext context = new CitizenshipContext("",
+                    event.getMember(), guild, user);
+
+            var response = CitizenshipUI.buildDeleteCitizenship(context);
 
             event.getChannel().sendMessageComponents(response)
                     .useComponentsV2(true)
