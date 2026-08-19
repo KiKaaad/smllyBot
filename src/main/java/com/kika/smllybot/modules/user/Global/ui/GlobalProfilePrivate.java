@@ -1,13 +1,13 @@
 package com.kika.smllybot.modules.user.Global.ui;
 
+import com.kika.smllybot.annotations.ButtonPrefix;
+import com.kika.smllybot.annotations.ModalPrefix;
 import com.kika.smllybot.database.sql.bank.BankTable;
 import com.kika.smllybot.database.sql.bank.dto.BankAccount;
 import com.kika.smllybot.database.sql.privacy.PrivacyTable;
 import com.kika.smllybot.database.sql.privacy.dto.PrivacyAccount;
 import com.kika.smllybot.database.sql.users.UsersTable;
 import com.kika.smllybot.database.sql.users.dto.UserAccount;
-import com.kika.smllybot.handlers.ButtonHandler;
-import com.kika.smllybot.handlers.ModalHandler;
 import com.kika.smllybot.modules.user.Global.GlobalProfileContext;
 import com.kika.smllybot.other.BaseCmd;
 import com.kika.smllybot.utils.Interaction;
@@ -27,22 +27,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-public class GlobalProfilePrivate extends BaseCmd implements ButtonHandler, ModalHandler {
+public class GlobalProfilePrivate extends BaseCmd {
 
     public GlobalProfilePrivate() { super(Set.of("private")); }
-    @Override
-    public String getButtonPrefix() {
-        return "private";
-    }
-    @Override
-    public String getModalPrefix() {
-        return "private";
-    }
 
-    @Override
+    @ButtonPrefix(prefix = "private")
     public void onButton(@NotNull ButtonInteractionEvent event, String[] parts) {
         UserAccount user = UsersTable.getOrCreateUser(event.getUser().getIdLong(), event.getUser().getName());
-        PrivacyAccount privacy = PrivacyTable.getOrCreatePrivacy(user.id());
+        PrivacyAccount privacy = PrivacyTable.getOrCreatePrivacy(user.getId());
 
         if (!Interaction.checkOwner(event, parts)) return;
 
@@ -52,19 +44,19 @@ public class GlobalProfilePrivate extends BaseCmd implements ButtonHandler, Moda
             RadioGroup bagSettings = RadioGroup.create("BagSettings")
                     .addOption("Все", "false")
                     .addOption("Никто", "true")
-                    .setSelectedValue("%s".formatted(privacy.bag()))
+                    .setSelectedValue("%s".formatted(privacy.getBag()))
                     .setRequired(true)
                     .build();
             RadioGroup activity = RadioGroup.create("ActivitySettings")
                     .addOption("Все", "false")
                     .addOption("Никто", "true")
-                    .setSelectedValue("%s".formatted(privacy.activity()))
+                    .setSelectedValue("%s".formatted(privacy.getActivity()))
                     .setRequired(true)
                     .build();
             RadioGroup activityTime = RadioGroup.create("LastActivitySettings")
                     .addOption("Все", "false")
                     .addOption("Никто", "true")
-                    .setSelectedValue("%s".formatted(privacy.lastActivity()))
+                    .setSelectedValue("%s".formatted(privacy.getLastActivity()))
                     .setRequired(true)
                     .build();
 
@@ -80,7 +72,7 @@ public class GlobalProfilePrivate extends BaseCmd implements ButtonHandler, Moda
         }
     }
 
-    @Override
+    @ModalPrefix(prefix = "private")
     public void onModal(ModalInteractionEvent event, String[] parts) {
         if (parts[1].equals("submit")) {
             long discordId = event.getUser().getIdLong();
@@ -89,16 +81,16 @@ public class GlobalProfilePrivate extends BaseCmd implements ButtonHandler, Moda
             UserAccount user = UsersTable.getOrCreateUser(discordId, username);
 
             ModalMapping bagMapping = event.getValue("BagSettings");
-            PrivacyTable.updateBagPrivacy(user.id(), bagMapping.getAsString().equals("true"));
+            PrivacyTable.updateBagPrivacy(user.getId(), bagMapping.getAsString().equals("true"));
 
             ModalMapping activityMapping = event.getValue("ActivitySettings");
-            PrivacyTable.updateActivityPrivacy(user.id(), activityMapping.getAsString().equals("true"));
+            PrivacyTable.updateActivityPrivacy(user.getId(), activityMapping.getAsString().equals("true"));
 
             ModalMapping lastActivityMapping = event.getValue("LastActivitySettings");
-            PrivacyTable.updateLastActivityPrivacy(user.id(), lastActivityMapping.getAsString().equals("true"));
+            PrivacyTable.updateLastActivityPrivacy(user.getId(), lastActivityMapping.getAsString().equals("true"));
 
-            BankAccount bank = BankTable.getOrCreateBank(user.id(), username);
-            PrivacyAccount privacy = PrivacyTable.getOrCreatePrivacy(user.id());
+            BankAccount bank = BankTable.getOrCreateBank(user.getId(), username);
+            PrivacyAccount privacy = PrivacyTable.getOrCreatePrivacy(user.getId());
 
             GlobalProfileContext ctx = new GlobalProfileContext(
                     event.getUser(),

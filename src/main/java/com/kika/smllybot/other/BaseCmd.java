@@ -8,9 +8,13 @@ import java.util.Set;
 public abstract class BaseCmd {
     private final Set<String> aliases;
 
-    protected BaseCmd(Set<String> aliases) { this.aliases = aliases; }
+    protected BaseCmd(Set<String> aliases) {
+        this.aliases = aliases;
+    }
 
-    public Set<String> getAliases() { return aliases; }
+    public Set<String> getAliases() {
+        return aliases;
+    }
 
     public Container execute(MessageReceivedEvent event, String raw, String args) {
         return null;

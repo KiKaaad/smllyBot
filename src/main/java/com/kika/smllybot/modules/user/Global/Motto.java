@@ -1,13 +1,13 @@
 package com.kika.smllybot.modules.user.Global;
 
 import com.kika.smllybot.Main;
+import com.kika.smllybot.annotations.ButtonPrefix;
 import com.kika.smllybot.database.sql.bank.BankTable;
 import com.kika.smllybot.database.sql.bank.dto.BankAccount;
 import com.kika.smllybot.database.sql.privacy.PrivacyTable;
 import com.kika.smllybot.database.sql.privacy.dto.PrivacyAccount;
 import com.kika.smllybot.database.sql.users.UsersTable;
 import com.kika.smllybot.database.sql.users.dto.UserAccount;
-import com.kika.smllybot.handlers.ButtonHandler;
 import com.kika.smllybot.modules.user.Global.ui.GlobalProfileUI;
 import com.kika.smllybot.modules.user.Global.ui.MottoUI;
 import com.kika.smllybot.other.BaseCmd;
@@ -20,13 +20,9 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 import java.util.Set;
 
-public class Motto extends BaseCmd implements ButtonHandler {
+public class Motto extends BaseCmd {
 
     public Motto() { super(Set.of("+девиз", "-девиз", "motto", "девиз")); }
-    @Override
-    public String getButtonPrefix() {
-        return "motto";
-    }
 
     @Override
     public Container execute(MessageReceivedEvent event, String raw, String args) {
@@ -82,7 +78,7 @@ public class Motto extends BaseCmd implements ButtonHandler {
                 .queue();
     }
 
-    @Override
+    @ButtonPrefix(prefix = "motto")
     public void onButton(ButtonInteractionEvent event, String[] args) {
         if (!Interaction.checkOwner(event, args)) return;
 
@@ -90,8 +86,8 @@ public class Motto extends BaseCmd implements ButtonHandler {
             User user = event.getUser();
 
             UserAccount userAccount = UsersTable.getOrCreateUser(user.getIdLong(), user.getEffectiveName());
-            BankAccount bank = BankTable.getOrCreateBank(userAccount.id(), user.getEffectiveName());
-            PrivacyAccount privacy = PrivacyTable.getOrCreatePrivacy(userAccount.id());
+            BankAccount bank = BankTable.getOrCreateBank(userAccount.getId(), user.getEffectiveName());
+            PrivacyAccount privacy = PrivacyTable.getOrCreatePrivacy(userAccount.getId());
 
             GlobalProfileContext ctx = new GlobalProfileContext(
                     user, user, event.getMember(), userAccount, bank, privacy);

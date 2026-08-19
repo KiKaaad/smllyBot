@@ -1,18 +1,19 @@
 package com.kika.smllybot;
 
-import com.kika.smllybot.handlers.ButtonHandler;
-import com.kika.smllybot.handlers.ModalHandler;
+import com.kika.smllybot.annotations.ButtonPrefix;
+import com.kika.smllybot.annotations.ModalPrefix;
+import com.kika.smllybot.annotations.RegisteredButton;
+import com.kika.smllybot.annotations.RegisteredModal;
 import com.kika.smllybot.modules.economy.Bag;
 import com.kika.smllybot.modules.economy.Dice;
 import com.kika.smllybot.modules.economy.Farm;
 import com.kika.smllybot.modules.fun.*;
+import com.kika.smllybot.modules.guild.GuildInfo;
 import com.kika.smllybot.modules.helper.GlobalHelp;
 import com.kika.smllybot.modules.privacy.Privacy;
 import com.kika.smllybot.modules.privacy.PrivacyInteraction;
-import com.kika.smllybot.modules.guild.GuildInfo;
 import com.kika.smllybot.modules.statistic.StatisticBot;
 import com.kika.smllybot.modules.tops.Global.GlobalTop;
-import com.kika.smllybot.modules.tops.Global.ui.GlobalTopInteraction;
 import com.kika.smllybot.modules.user.Global.GlobalProfile;
 import com.kika.smllybot.modules.user.Global.Motto;
 import com.kika.smllybot.modules.user.Global.ui.GlobalProfileModal;
@@ -26,46 +27,52 @@ import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
-// !!! Регистрация кнопок ведется с учетом названия одного из алиасов
-// Условно aboutMe:back:123456789 - Первым обязательно идет алиас aboutme
 public class Manager extends ListenerAdapter {
 
+    private static final Logger log = LoggerFactory.getLogger(Manager.class);
     private final Map<String, BaseCmd> commands = new HashMap<>();
-    private final Map<String, ButtonHandler> button = new HashMap<>();
-    private final Map<String, ModalHandler> modal = new HashMap<>();
+    private final Map<String, RegisteredButton> button = new HashMap<>();
+    private final Map<String, RegisteredModal> modal = new HashMap<>();
 
     public Manager() {
         // Экономика
         reg(new GlobalTop());
-        reg(new GlobalTopInteraction());
         reg(new Farm());
         reg(new Bag());
         reg(new Dice());
+        log.info("✅ Модуль экономики загружен");
 
         // Статистика
         reg(new StatisticBot());
         reg(new GuildInfo());
+        log.info("✅ Модуль статистики загружен");
 
         // Анкета (глобальная анкета)
         reg(new GlobalProfile());
         reg(new GlobalProfileModal());
         reg(new Motto());
         reg(new GlobalProfilePrivate());
+        log.info("✅ Модуль глобальных профилей загружен");
 
         // Профиль (локальная анкета)
         reg(new Profile());
         reg(new AboutMe());
         reg(new Citizenship());
+        log.info("✅ Модуль локальных профилей загружен");
 
         // Интерактивные команды
         reg(new Hug(), new Bite(), new Burn(), new Cuddle(), new Five(), new Fuck(), new Five(), new Fuckin(),
                 new Furryfication(), new GigaHit(), new Hit(), new Hold(), new Kick(), new Kill(), new Kiss(),
                 new Lick(), new Pat(), new Press(), new Shoot(), new Slap(), new SlapBack(), new Spank(),
                 new Tickle(), new Tie(), new Suck(), new Inseminate());
+        log.info("✅ Интерактивные команды загружены");
 
         // Другое
         reg(new GlobalHelp());
@@ -80,12 +87,27 @@ public class Manager extends ListenerAdapter {
                 commands.put(alias.toLowerCase(), cmd);
             }
             // Регистрация кнопочек
-            if (cmd instanceof ButtonHandler buttonHandler) {
-                button.put(buttonHandler.getButtonPrefix().toLowerCase(), buttonHandler);
+            for (Method method : cmd.getClass().getDeclaredMethods()) {
+                if (method.isAnnotationPresent(ButtonPrefix.class)) {
+                    ButtonPrefix annotation = method.getAnnotation(ButtonPrefix.class);
+                    String prefix = annotation.prefix().toLowerCase();
+                    log.info("📌 Зарегистрирована кнопка '{}' -> Метод: {} (параметров: {})",
+                            prefix, method.toGenericString(), method.getParameterCount());
+                    method.setAccessible(true);
+
+                    button.put(prefix, new RegisteredButton(cmd, method));
+                }
             }
             // Регистрация модальных окон
-            if (cmd instanceof ModalHandler modalHandler) {
-                modal.put(modalHandler.getModalPrefix().toLowerCase(), modalHandler);
+            for (Method method : cmd.getClass().getDeclaredMethods()) {
+                if (method.isAnnotationPresent(ModalPrefix.class)) {
+                    ModalPrefix annotation = method.getAnnotation(ModalPrefix.class);
+                    String prefix = annotation.prefix().toLowerCase();
+                    log.debug("🪛 Получен префикс модального окна: " + prefix);
+                    method.setAccessible(true);
+
+                    modal.put(prefix, new RegisteredModal(cmd, method));
+                }
             }
         }
     }
@@ -97,10 +119,13 @@ public class Manager extends ListenerAdapter {
 
         String prefix = parts[0].toLowerCase();
 
-        ButtonHandler handler = button.get(prefix);
+        log.debug("🪛 Raw button id: {} | Ожидаемый префикс: {}", event.getComponentId(), prefix);
+        log.debug("🪛 Доступные кнопки в памяти: {}", button.keySet());
+
+        RegisteredButton handler = button.get(prefix);
 
         if (handler != null) {
-            handler.onButton(event, parts);
+            handler.invoke(event, parts);
         }
     }
 
@@ -112,9 +137,11 @@ public class Manager extends ListenerAdapter {
 
         String prefix = parts[0].toLowerCase();
 
-        ModalHandler handler = modal.get(prefix);
+        RegisteredModal handler = modal.get(prefix);
 
-        if (handler != null) handler.onModal(event, parts);
+        if (handler != null) {
+            handler.invoke(event, parts);
+        }
     }
 
     @Override

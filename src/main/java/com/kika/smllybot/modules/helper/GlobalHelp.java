@@ -1,6 +1,6 @@
 package com.kika.smllybot.modules.helper;
 
-import com.kika.smllybot.handlers.ButtonHandler;
+import com.kika.smllybot.annotations.ButtonPrefix;
 import com.kika.smllybot.modules.helper.ui.GlobalHelpUI;
 import com.kika.smllybot.other.BaseCmd;
 import com.kika.smllybot.utils.Interaction;
@@ -10,14 +10,10 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 import java.util.Set;
 
-public class GlobalHelp extends BaseCmd implements ButtonHandler {
+public class GlobalHelp extends BaseCmd {
 
     public GlobalHelp() {
         super(Set.of("хелпа", "хелп", "хелпер"));
-    }
-    @Override
-    public String getButtonPrefix() {
-        return "help";
     }
 
     @Override
@@ -40,7 +36,7 @@ public class GlobalHelp extends BaseCmd implements ButtonHandler {
         return null;
     }
 
-    @Override
+    @ButtonPrefix(prefix = "help")
     public void onButton(ButtonInteractionEvent event, String[] args) {
         if (!Interaction.checkOwner(event, args)) return;
         String[] componentId = event.getComponentId().split(":");

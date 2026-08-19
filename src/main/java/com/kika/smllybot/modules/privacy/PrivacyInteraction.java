@@ -1,9 +1,9 @@
 package com.kika.smllybot.modules.privacy;
 
+import com.kika.smllybot.annotations.ButtonPrefix;
 import com.kika.smllybot.database.sql.privacy.PrivacyTable;
 import com.kika.smllybot.database.sql.privacy.dto.PrivacyAccount;
 import com.kika.smllybot.database.sql.users.UsersTable;
-import com.kika.smllybot.handlers.ButtonHandler;
 import com.kika.smllybot.modules.privacy.ui.PrivacyUI;
 import com.kika.smllybot.other.BaseCmd;
 import com.kika.smllybot.utils.Interaction;
@@ -11,17 +11,13 @@ import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 
 import java.util.Set;
 
-public class PrivacyInteraction extends BaseCmd implements ButtonHandler {
+public class PrivacyInteraction extends BaseCmd {
 
     public PrivacyInteraction() {
         super(Set.of("PrivacyInteraction"));
     }
-    @Override
-    public String getButtonPrefix() {
-        return "PrivacyInteraction";
-    }
 
-    @Override
+    @ButtonPrefix(prefix = "PrivacyInteraction")
     public void onButton(ButtonInteractionEvent event, String[] parts) {
 
         if (!Interaction.checkOwner(event, parts)) return;
