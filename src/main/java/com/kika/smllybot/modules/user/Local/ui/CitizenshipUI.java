@@ -13,6 +13,7 @@ import net.dv8tion.jda.api.entities.Guild;
 import java.util.ArrayList;
 import java.util.List;
 
+// TODO: Нужно переписать т.к класс громоздкий при том что не выполняет чего-то особо сложного
 public class CitizenshipUI {
 
     public static Container buildCitizenship(CitizenshipContext ctx) {
@@ -39,8 +40,8 @@ public class CitizenshipUI {
         String timeRelative = TimeUtil.getTimestampRelative(ctx.user().getCitizenshipData());
 
         ContainerChildComponent header = Section.of(
-                Button.danger("citizenship:yes:" + ctx.member().getIdLong(), "Подтвердить"),
-                TextDisplay.of("## \\❌ Вы уверены, что хотите удалить гражданство?")
+                Button.danger("citizenship:%s:".formatted(ctx.button()) + ctx.member().getIdLong(), "Подтвердить"),
+                TextDisplay.of(ctx.text())
         );
 
         if (guild.getJDA().getGuildById(citizenship) != null) {
@@ -105,6 +106,4 @@ public class CitizenshipUI {
 
         return Container.of(components);
     }
-
-
 }

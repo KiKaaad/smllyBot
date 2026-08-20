@@ -22,6 +22,7 @@ public class Citizenship extends BaseCmd {
 
     @Override
     public Container execute(MessageReceivedEvent event, String raw, String args) {
+        if (!event.isFromGuild()) return null;
 
         String command = PrefixUtil.getCommandBody(raw, Main.PREFIXES).split("\\s+")[0].toLowerCase();
         char action = command.charAt(0);
@@ -44,7 +45,8 @@ public class Citizenship extends BaseCmd {
                 return null;
             }
 
-            CitizenshipContext context = new CitizenshipContext("",
+            CitizenshipContext context = new CitizenshipContext(
+                    "## \\❌ Вы уверены, что хотите удалить гражданство?", "yesminus",
                     event.getMember(), guild, user);
 
             var response = CitizenshipUI.buildDeleteCitizenship(context);
@@ -57,9 +59,22 @@ public class Citizenship extends BaseCmd {
         }
 
         if (action == '+') {
+            if (user.getCitizenship() != null) {
+                CitizenshipContext context = new CitizenshipContext(
+                        "## \\❌ У вас уже есть гражданство. Вы хотите его сменить?", "yesplus",
+                        event.getMember(), guild, user);
+
+                var response = CitizenshipUI.buildDeleteCitizenship(context);
+
+                event.getChannel().sendMessageComponents(response)
+                        .useComponentsV2(true)
+                        .queue();
+
+                return null;
+            }
             UsersTable.setCitizenship(discordId, guildId);
 
-            CitizenshipContext context = new CitizenshipContext("## \\🛂 Гражданство оформлено",
+            CitizenshipContext context = new CitizenshipContext("## \\🛂 Гражданство оформлено", "",
                     event.getMember(), guild, user);
             var response = CitizenshipUI.buildCitizenship(context);
 
@@ -71,7 +86,7 @@ public class Citizenship extends BaseCmd {
         }
 
         if (args.isEmpty()) {
-            CitizenshipContext context = new CitizenshipContext("## \\ℹ️ Текущее гражданство",
+            CitizenshipContext context = new CitizenshipContext("## \\ℹ️ Текущее гражданство", "",
                     event.getMember(), guild, user);
 
             var response = CitizenshipUI.buildDefaultCitizenship(context);
@@ -89,10 +104,22 @@ public class Citizenship extends BaseCmd {
 
         String[] parts = event.getComponentId().split(":");
 
-        if (parts[1].equals("yes")) {
+        if (parts[1].equals("yesminus")) {
             UsersTable.setCitizenship(discordId, null);
 
             var response = CitizenshipUI.deleteCitizenshipSuccess();
+
+            event.editComponents(response).useComponentsV2(true).queue();
+            return;
+        }
+
+        if (parts[1].equals("yesplus")) {
+            UsersTable.setCitizenship(discordId, event.getGuild().getIdLong());
+            UserAccount user = UsersTable.getOrCreateUser(discordId, event.getUser().getEffectiveName());
+
+            CitizenshipContext context = new CitizenshipContext("## \\🛂 Новое гражданство оформлено", "",
+                    event.getMember(), event.getGuild(), user);
+            var response = CitizenshipUI.buildCitizenship(context);
 
             event.editComponents(response).useComponentsV2(true).queue();
         }
