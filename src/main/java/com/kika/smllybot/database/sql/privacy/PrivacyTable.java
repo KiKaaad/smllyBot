@@ -18,7 +18,7 @@ public class PrivacyTable {
 
         String sql = """
                 CREATE TABLE IF NOT EXISTS privacy (
-                id INTEGER PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+                id BIGINT PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
                 bag BOOLEAN DEFAULT false,
                 activity BOOLEAN DEFAULT false,
                 last_activity BOOLEAN DEFAULT false
@@ -34,7 +34,7 @@ public class PrivacyTable {
         }
     }
 
-    public static PrivacyAccount getOrCreatePrivacy(long internalId) {
+    public static PrivacyAccount getOrCreatePrivacy(long id) {
         String selectSql = "SELECT id, bag, activity, last_activity FROM privacy WHERE id = ?";
         String insertSql = """
             INSERT INTO privacy (id) VALUES (?)
@@ -44,7 +44,7 @@ public class PrivacyTable {
 
         try (Connection conn = DatabaseManager.getConnection()) {
             try (PreparedStatement pstmt = conn.prepareStatement(selectSql)) {
-                pstmt.setLong(1, internalId);
+                pstmt.setLong(1, id);
                 try (ResultSet rs = pstmt.executeQuery()) {
                     if (rs.next()) {
                         return mapPrivacy(rs);
@@ -53,7 +53,7 @@ public class PrivacyTable {
             }
 
             try (PreparedStatement pstmt = conn.prepareStatement(insertSql)) {
-                pstmt.setLong(1, internalId);
+                pstmt.setLong(1, id);
                 try (ResultSet rs = pstmt.executeQuery()) {
                     if (rs.next()) {
                         return mapPrivacy(rs);
@@ -62,26 +62,29 @@ public class PrivacyTable {
             }
 
             try (PreparedStatement pstmt = conn.prepareStatement(selectSql)) {
-                pstmt.setLong(1, internalId);
+                pstmt.setLong(1, id);
                 try (ResultSet rs = pstmt.executeQuery()) {
                     if (rs.next()) return mapPrivacy(rs);
                 }
             }
 
         } catch (SQLException e) {
-            log.error("❌ Ошибка PRIVACY (internalId: {}): ", internalId, e);
+            log.error("❌ Ошибка PRIVACY (id: {}): ", id, e);
         }
         return null;
     }
 
+    // Обновление приватности мешка
     public static void updateBagPrivacy(long internalId, boolean visible) {
         executePrivacyUpdate("UPDATE privacy SET bag = ? WHERE id = ?", internalId, visible);
     }
 
+    // Обновление приватности активности (статистика сообщений)
     public static void updateActivityPrivacy(long internalId, boolean visible) {
         executePrivacyUpdate("UPDATE privacy SET activity = ? WHERE id = ?", internalId, visible);
     }
 
+    // Обновление приватности последней активности
     public static void updateLastActivityPrivacy(long internalId, boolean visible) {
         executePrivacyUpdate("UPDATE privacy SET last_activity = ? WHERE id = ?", internalId, visible);
     }
@@ -93,7 +96,7 @@ public class PrivacyTable {
             pstmt.setLong(2, internalId);
             pstmt.executeUpdate();
         } catch (SQLException e) {
-            log.error("❌ Ошибка обновления приватности (internalId: {}): ", internalId);
+            log.error("❌ Ошибка обновления приватности (id: {}): ", internalId, e);
         }
     }
 
