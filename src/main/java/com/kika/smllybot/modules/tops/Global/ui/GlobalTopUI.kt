@@ -1,6 +1,7 @@
 package com.kika.smllybot.modules.tops.Global.ui
 
 import com.kika.smllybot.modules.tops.Global.GlobalTopContext
+import com.kika.smllybot.utils.NumUtil
 import net.dv8tion.jda.api.components.actionrow.ActionRow
 import net.dv8tion.jda.api.components.buttons.Button
 import net.dv8tion.jda.api.components.container.Container
@@ -68,11 +69,12 @@ class GlobalTopUI {
             component.add(header)
             pageItems.forEachIndexed { index, item ->
                 val position = skip + index + 1
-                var text = "$position. **${item.name}** — ${item.amount} i¢"
+                val amount = NumUtil.german(item.amount)
+                var text = "$position. **${item.name}** — $amount i¢"
                 when (position) {
-                    1 -> text = "1. \\🥇 **${item.name}** — ${item.amount} i¢"
-                    2 -> text = "${index + 1}. \\🥈 **${item.name}** — ${item.amount} i¢"
-                    3 -> text = "${index + 1}. \\🥉 **${item.name}** — ${item.amount} i¢"
+                    1 -> text = "1. \\🥇 **${item.name}** — $amount i¢"
+                    2 -> text = "${index + 1}. \\🥈 **${item.name}** — $amount i¢"
+                    3 -> text = "${index + 1}. \\🥉 **${item.name}** — $amount i¢"
                 }
                 val main: ContainerChildComponent = TextDisplay.of(text)
 
