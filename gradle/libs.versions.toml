@@ -7,7 +7,7 @@ io-github-cdimascio-dotenv-java = "3.2.0"
 net-dv8tion-jda = "6.5.0"
 org-jetbrains-kotlin-kotlin-stdlib-jdk8 = "2.4.0"
 org-jetbrains-kotlin-kotlin-test = "2.4.10"
-org-postgresql-postgresql = "42.7.11"
+org-postgresql-postgresql = "42.7.13"
 
 [libraries]
 ch-qos-logback-logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "ch-qos-logback-logback-classic" }
