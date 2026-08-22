@@ -1,20 +1,25 @@
 package com.kika.smllybot.modules.user.Local;
 
-import com.kika.smllybot.database.sql.bank.BankTable;
+import com.kika.smllybot.database.sql.Repository;
 import com.kika.smllybot.database.sql.bank.dto.BankAccount;
-import com.kika.smllybot.database.sql.profile.ProfileTable;
 import com.kika.smllybot.database.sql.profile.dto.ProfileAccount;
-import com.kika.smllybot.database.sql.statistic.StatisticTable;
 import com.kika.smllybot.database.sql.statistic.dto.StatisticAccount;
-import com.kika.smllybot.database.sql.users.UsersTable;
 import com.kika.smllybot.database.sql.users.dto.UserAccount;
 import com.kika.smllybot.modules.user.Local.ui.ProfileUI;
 import com.kika.smllybot.other.BaseCmd;
 import net.dv8tion.jda.api.components.container.Container;
+import net.dv8tion.jda.api.components.container.ContainerChildComponent;
+import net.dv8tion.jda.api.components.mediagallery.MediaGallery;
+import net.dv8tion.jda.api.components.mediagallery.MediaGalleryItem;
+import net.dv8tion.jda.api.components.textdisplay.TextDisplay;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
+import java.time.Duration;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 public class Profile extends BaseCmd {
@@ -23,44 +28,101 @@ public class Profile extends BaseCmd {
         super(Set.of("кто я", "профиль", "profile"));
     }
 
-    private long id;
-    private long guildId;
-    private String author;
-    private OffsetDateTime dateTime = null;
-
     @Override
     public Container execute(MessageReceivedEvent event, String raw, String args) {
+        if (event.getMember() == null) return null;
 
-        UsersTable.getOrCreateUser(event.getAuthor().getIdLong(), event.getAuthor().getEffectiveName());
+        String[] parts = raw.split("\\h+");
 
-        id = UsersTable.getUserId(event.getAuthor().getIdLong());
-        guildId = event.getGuild().getIdLong();
-        author = event.getAuthor().getEffectiveName();
+        if (event.getMessage().getReferencedMessage() != null) {
+            sendProfileResponse(event, event.getMessage().getReferencedMessage().getAuthor());
+            return null;
+        }
 
-        if (event.getMember() != null) dateTime = event.getMember().getTimeJoined();
+        if (parts.length < 2) {
+            sendProfileResponse(event, event.getAuthor());
+            return null;
+        }
 
-        ProfileTable.getOrCreateProfile(id, guildId, author, dateTime);
-        sendProfileResponse(event, event.getAuthor());
+        if (!event.getMessage().getMentions().getUsers().isEmpty()) {
+            sendProfileResponse(event, event.getMessage().getMentions().getUsers().getFirst());
+            return null;
+        }
+
+        if (parts[1].matches("\\d+")) {
+            event.getJDA().retrieveUserById(parts[1]).queue(
+                    user -> sendProfileResponse(event, user),
+                    throwable -> sendError(event, "### \\❌ Упс... Пользователь с таким ID не найден")
+            );
+            return null;
+        }
+
+        var members = event.getGuild().getMembersByName(parts[1], true);
+
+        if (members.isEmpty()) {
+            members = event.getGuild().getMembersByNickname(parts[1], true);
+        }
+
+        if (!members.isEmpty()) {
+            sendProfileResponse(event, members.getFirst().getUser());
+        } else {
+            sendError(event, "### \\❌ Упс... Пользователь с таким юзернеймом не найден");
+        }
 
         return null;
     }
 
     private void sendProfileResponse(MessageReceivedEvent event, User target) {
+        long discordId = target.getIdLong();
+        String name = target.getEffectiveName();
+        long guildId = event.getGuild().getIdLong();
+        OffsetDateTime dateTime = event.getMember().getTimeJoined();
 
-        UserAccount userAccount = UsersTable.getOrCreateUser(event.getAuthor().getIdLong(),
-                event.getAuthor().getEffectiveName());
-        BankAccount bank = BankTable.getOrCreateBank(id, event.getAuthor().getEffectiveName());
-        ProfileAccount profileAccount = ProfileTable.getOrCreateProfile(id, guildId, author, dateTime);
-        StatisticAccount statistic = StatisticTable.getTotalStatisticUserGuild(id, guildId);
-        ProfileContext context = new ProfileContext(target,
-                event.getAuthor(), event.getMember(), profileAccount, statistic, userAccount, bank, event.getGuild().getIdLong());
+        Repository repo = new Repository();
+        UserAccount user = repo.getUser(discordId, name);
+        BankAccount bank = repo.getBank(discordId, name);
+        ProfileAccount profileAccount = repo.getProfile(discordId, guildId, name, dateTime);
+        StatisticAccount statistic = repo.getStatistic(discordId, name, guildId);
+        ProfileContext context = new ProfileContext(
+                target,
+                event.getAuthor(),
+                event.getMember(),
+                profileAccount,
+                statistic,
+                user,
+                bank,
+                guildId
+        );
 
-        var response = ProfileUI.buildProfile(context);
+        target.retrieveProfile().queue(
+                profile -> {
+                    Container response = ProfileUI.buildProfile(context);
+                    List<ContainerChildComponent> components = new ArrayList<>(response.getComponents());
 
-        event.getChannel().sendMessageComponents(response)
-                .useComponentsV2(true)
-                .queue();
+                    MediaGallery banner;
+                    if (profile.getBanner() != null) {
+                        String bannerUrl = profile.getBanner().getUrl(1024);
+                        banner = MediaGallery.of(MediaGalleryItem.fromUrl(bannerUrl));
+                        components.addFirst(banner);
+                    }
+
+                    response = Container.of(components);
+
+                    event.getChannel().sendMessageComponents(response).useComponentsV2(true).queue();
+                }
+        );
 
     }
 
+    private void sendError(MessageReceivedEvent event, String text) {
+        var response = Container.of(
+                TextDisplay.of(text)
+        );
+
+        event.getChannel().sendMessageComponents(response)
+                .useComponentsV2(true)
+                .delay(Duration.ofSeconds(5))
+                .flatMap(Message::delete)
+                .queue();
+    }
 }

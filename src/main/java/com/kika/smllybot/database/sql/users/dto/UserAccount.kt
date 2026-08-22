@@ -9,7 +9,7 @@ data class UserAccount(
     val name: String,
     val motto: String?,
     val createdAt: OffsetDateTime,
-    val reaction: Int?,
+    val reaction: Long,
     val citizenship: Long?,
     val citizenshipData: OffsetDateTime?
 )
