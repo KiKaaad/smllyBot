@@ -42,6 +42,7 @@ class GlobalTopUI {
 
             val buttonPrev: Button = Button.primary("gtop:${currentPage - 1}:${ctx.value}:${ctx.owner}", "⬅️ Назад")
                 .withDisabled(currentPage <= 1)
+            val buttonIndex: Button = Button.secondary("gtop:select:${ctx.value}:${ctx.owner}", "📖 Стр. $currentPage / $pages")
             val buttonNext: Button = Button.primary("gtop:${currentPage + 1}:${ctx.value}:${ctx.owner}", "Вперед ➡️")
                 .withDisabled(currentPage >= pages)
 
@@ -51,8 +52,8 @@ class GlobalTopUI {
                     type = "ирис-коинов"
                 }
                 "iris" -> {
-                    emoji = "\\☢️"
-                    type = "ирис-коинов"
+                    emoji = "\\🍬"
+                    type = "ирисок"
                 }
             }
 
@@ -62,7 +63,7 @@ class GlobalTopUI {
             val footer: ContainerChildComponent = TextDisplay.of("## Управление топом")
             val actionRows: ContainerChildComponent = ActionRow.of(
                 buttonPrev,
-                Button.secondary("gtop:select:${ctx.value}:${ctx.owner}", "$currentPage / $pages"),
+                buttonIndex,
                 buttonNext
             )
 
