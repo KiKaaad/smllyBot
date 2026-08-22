@@ -29,9 +29,9 @@ import java.util.Set;
 
 public class GlobalProfileModal extends BaseCmd {
 
-    public GlobalProfileModal() { super(Set.of("profile")); }
+    public GlobalProfileModal() { super(Set.of("anketa")); }
 
-    @ButtonPrefix(prefix = "profile")
+    @ButtonPrefix(prefix = "anketa")
     public void onButton(@NotNull ButtonInteractionEvent event, String[] parts) {
         if (!Interaction.checkOwner(event, parts)) return;
 
@@ -44,7 +44,7 @@ public class GlobalProfileModal extends BaseCmd {
                     .setRequired(false)
                     .build();
 
-            Modal modal = Modal.create("profile:submit:" + ownerId, "🗿 Редактировать профиль")
+            Modal modal = Modal.create("anketa:submit:" + ownerId, "🗿 Редактировать профиль")
                     .addComponents(
                             Label.of("🐾 Девиз", mottoInput)
                     )
@@ -54,7 +54,7 @@ public class GlobalProfileModal extends BaseCmd {
         }
     }
 
-    @ModalPrefix(prefix = "profile")
+    @ModalPrefix(prefix = "anketa")
     public void onModal(ModalInteractionEvent event, String[] parts) {
         if (parts.length > 1 && parts[1].equals("submit")) {
 

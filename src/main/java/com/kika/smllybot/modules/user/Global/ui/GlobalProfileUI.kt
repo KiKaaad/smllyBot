@@ -60,7 +60,7 @@ class GlobalProfileUI {
             val irisCoins: ContainerChildComponent = TextDisplay.of("\\☢️ **$irisCoin** i¢")
             val anketaSettings: ContainerChildComponent = TextDisplay.of("### Настройки профиля")
             val action: ContainerChildComponent = ActionRow.of(
-                Button.primary("profile:modal:" + ctx.target.id, "ℹ️ Редактировать профиль"),
+                Button.primary("anketa:modal:" + ctx.target.id, "ℹ️ Редактировать профиль"),
                 Button.secondary("private:private:" + ctx.target.id, "🕶️ Приватность")
             )
             val footer: ContainerChildComponent = TextDisplay.of("-# **IDB** - айди внутри бота. **IDD** - айди внутри дискорд.")
