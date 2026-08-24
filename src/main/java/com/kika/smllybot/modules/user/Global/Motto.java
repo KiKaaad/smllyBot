@@ -14,10 +14,15 @@ import com.kika.smllybot.other.BaseCmd;
 import com.kika.smllybot.utils.Interaction;
 import com.kika.smllybot.utils.PrefixUtil;
 import net.dv8tion.jda.api.components.container.Container;
+import net.dv8tion.jda.api.components.container.ContainerChildComponent;
+import net.dv8tion.jda.api.components.mediagallery.MediaGallery;
+import net.dv8tion.jda.api.components.mediagallery.MediaGalleryItem;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 public class Motto extends BaseCmd {
@@ -66,16 +71,29 @@ public class Motto extends BaseCmd {
     }
 
     private void response(MessageReceivedEvent event, String title) {
-        long userId = event.getAuthor().getIdLong();
+        long discordId = event.getAuthor().getIdLong();
         String username = event.getAuthor().getEffectiveName();
-        UserAccount dbUser = UsersTable.getOrCreateUser(userId, username);
+        UserAccount dbUser = UsersTable.getOrCreateUser(discordId, username);
 
-        assert dbUser != null;
-        Container response = MottoUI.buildMotto(event.getAuthor(), dbUser, title, true);
+        event.getAuthor().retrieveProfile().queue(
+            profile -> {
+                Container response = MottoUI.buildMotto(event.getAuthor(), dbUser, title, true);;
+                List<ContainerChildComponent> components = new ArrayList<>(response.getComponents());
 
-        event.getChannel().sendMessageComponents(response)
-                .useComponentsV2(true)
-                .queue();
+                MediaGallery banner;
+                if (profile.getBanner() != null) {
+                    String bannerUrl = profile.getBanner().getUrl(1024);
+                    banner = MediaGallery.of(MediaGalleryItem.fromUrl(bannerUrl));
+                    components.addFirst(banner);
+                }
+
+                response = Container.of(components);
+
+                event.getChannel().sendMessageComponents(response)
+                        .useComponentsV2(true)
+                        .queue();
+            }
+        );
     }
 
     @ButtonPrefix(prefix = "motto")
@@ -92,11 +110,23 @@ public class Motto extends BaseCmd {
             GlobalProfileContext ctx = new GlobalProfileContext(
                     user, user, event.getMember(), userAccount, bank, privacy);
 
-            Container response = GlobalProfileUI.buildProfile(ctx);
+            event.getUser().retrieveProfile().queue(
+                profile -> {
+                    Container response = GlobalProfileUI.buildProfile(ctx);
+                    List<ContainerChildComponent> components = new ArrayList<>(response.getComponents());
 
-            event.editComponents(response)
-                    .useComponentsV2(true)
-                    .queue();
+                    MediaGallery banner;
+                    if (profile.getBanner() != null) {
+                        String bannerUrl = profile.getBanner().getUrl(1024);
+                        banner = MediaGallery.of(MediaGalleryItem.fromUrl(bannerUrl));
+                        components.addFirst(banner);
+                    }
+
+                    response = Container.of(components);
+
+                    event.editComponents(response).useComponentsV2(true).queue();
+                }
+            );
         }
     }
 
