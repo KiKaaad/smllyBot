@@ -84,23 +84,23 @@ public class GlobalProfile extends BaseCmd {
         );
 
         targetUser.retrieveProfile().queue(
-                profile -> {
-                    Container response = GlobalProfileUI.buildProfile(ctx);
-                    List<ContainerChildComponent> components = new ArrayList<>(response.getComponents());
+            profile -> {
+                Container response = GlobalProfileUI.buildProfile(ctx);
+                List<ContainerChildComponent> components = new ArrayList<>(response.getComponents());
 
-                    MediaGallery banner;
-                    if (profile.getBanner() != null) {
-                        String bannerUrl = profile.getBanner().getUrl(1024);
-                        banner = MediaGallery.of(MediaGalleryItem.fromUrl(bannerUrl));
-                        components.addFirst(banner);
-                    }
-
-                    response = Container.of(components);
-
-                    event.getChannel().sendMessageComponents(response)
-                            .useComponentsV2(true)
-                            .queue();
+                MediaGallery banner;
+                if (profile.getBanner() != null) {
+                    String bannerUrl = profile.getBanner().getUrl(1024);
+                    banner = MediaGallery.of(MediaGalleryItem.fromUrl(bannerUrl));
+                    components.addFirst(banner);
                 }
+
+                response = Container.of(components);
+
+                event.getChannel().sendMessageComponents(response)
+                        .useComponentsV2(true)
+                        .queue();
+            }
         );
     }
 
