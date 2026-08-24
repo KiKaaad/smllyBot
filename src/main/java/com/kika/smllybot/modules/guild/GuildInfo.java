@@ -17,10 +17,11 @@ public class GuildInfo extends BaseCmd {
 
     @Override
     public Container execute(MessageReceivedEvent event, String raw, String args) {
+        if (!event.isFromGuild()) return null;
 
         GuildInfoContext ctx = new GuildInfoContext(event);
 
-        Container response = GuildInfoUI.buildGuildStatistic(ctx);
+        Container response = GuildInfoUI.build(ctx);
 
         event.getChannel().sendMessageComponents(response)
                 .setAllowedMentions(EnumSet.noneOf(Message.MentionType.class))

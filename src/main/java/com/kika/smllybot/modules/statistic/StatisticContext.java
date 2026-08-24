@@ -5,7 +5,7 @@ import net.dv8tion.jda.api.entities.User;
 public record StatisticContext(
         String jdaVersion,
         int shardTotal,
-        long serversCount,
+        long serverCount,
         long userCount,
         String botAvatarUrl,
         User user

@@ -178,8 +178,8 @@ public class Manager extends ListenerAdapter {
         }
 
         if (cmd != null) {
-            String args = commandBody.substring(commandName.length()).trim();
-            cmd.execute(event, command, args);
+            String arg = commandBody.substring(commandName.length()).stripLeading().trim();
+            cmd.execute(event, command, arg);
         }
     }
 }

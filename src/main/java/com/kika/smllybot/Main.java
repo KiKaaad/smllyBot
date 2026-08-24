@@ -36,7 +36,7 @@ public class Main implements EventListener {
 
     private static final Logger log = LoggerFactory.getLogger(Main.class);
     public static String[] PREFIXES;
-    public static final String VERSION = "0.6.1-beta (22.08.2026)";
+    public static final String VERSION = "v0.6.2 beta (24.08.2026)";
     public static final String OWNER = "<@683345722611073059>";
 
     static void main() throws InterruptedException {
@@ -76,7 +76,7 @@ public class Main implements EventListener {
                 .setMemberCachePolicy(memberCachePolicy)
                 .setChunkingFilter(ChunkingFilter.NONE)
                 .enableCache(CacheFlag.ONLINE_STATUS)
-                .setActivity(Activity.streaming("100 фактов о фембоях", "https://www.youtube.com/watch?v=o97WByHtOZM"))
+                .setActivity(Activity.customStatus("🚀 %s".formatted(VERSION)))
 
                 // Listeners
                 .addEventListeners(new Main())

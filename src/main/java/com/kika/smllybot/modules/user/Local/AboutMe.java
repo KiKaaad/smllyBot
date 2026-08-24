@@ -16,12 +16,17 @@ import com.kika.smllybot.other.BaseCmd;
 import com.kika.smllybot.utils.Interaction;
 import com.kika.smllybot.utils.PrefixUtil;
 import net.dv8tion.jda.api.components.container.Container;
+import net.dv8tion.jda.api.components.container.ContainerChildComponent;
+import net.dv8tion.jda.api.components.mediagallery.MediaGallery;
+import net.dv8tion.jda.api.components.mediagallery.MediaGalleryItem;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 public class AboutMe extends BaseCmd {
@@ -34,6 +39,7 @@ public class AboutMe extends BaseCmd {
 
     @Override
     public Container execute(MessageReceivedEvent event, String raw, String args) {
+        if (!event.isFromGuild()) return null;
 
         String command = PrefixUtil.getCommandBody(raw, Main.PREFIXES).split("\\s+")[0].toLowerCase();
         char action = command.charAt(0);
@@ -95,7 +101,7 @@ public class AboutMe extends BaseCmd {
         var guildId = event.getGuild().getIdLong();
 
         UserAccount users = UsersTable.getOrCreateUser(discordId, name);
-        ProfileAccount profile = ProfileTable.getOrCreateProfile(users.getId(),
+        ProfileAccount profileAccount = ProfileTable.getOrCreateProfile(users.getId(),
                 guildId, users.getName(), event.getMember().getTimeJoined());
 
         if (args.length > 1 && args[1].equalsIgnoreCase("back")) {
@@ -105,13 +111,26 @@ public class AboutMe extends BaseCmd {
             BankAccount bank = BankTable.getOrCreateBank(userAccount.getId(), user.getEffectiveName());
             StatisticAccount statistic = StatisticTable.getTotalStatisticUserGuild(userAccount.getId(), guildId);
             ProfileContext context = new ProfileContext(user, user, event.getMember(),
-                    profile, statistic, userAccount, bank, event.getGuild().getIdLong());
+                    profileAccount, statistic, userAccount, bank, event.getGuild().getIdLong());
 
-            var response = ProfileUI.buildProfile(context);
+            event.getUser().retrieveProfile().queue(
+                profile -> {
+                    var response = ProfileUI.buildProfile(context);
+                    List<ContainerChildComponent> components = new ArrayList<>(response.getComponents());
 
-            event.editComponents(response)
-                    .useComponentsV2(true)
-                    .queue();
+                    MediaGallery banner;
+                    if (profile.getBanner() != null) {
+                        String bannerUrl = profile.getBanner().getUrl(1024);
+                        banner = MediaGallery.of(MediaGalleryItem.fromUrl(bannerUrl));
+                        components.addFirst(banner);
+                    }
+
+                    response = Container.of(components);
+
+                    event.editComponents(response).useComponentsV2(true).queue();
+                }
+            );
+
         }
     }
 }

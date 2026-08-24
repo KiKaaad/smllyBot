@@ -49,7 +49,7 @@ public class BankTable {
         }
     }
 
-    public static BankAccount getOrCreateBank(long internalId, String defaultName) {
+    public static BankAccount getOrCreateBank(long id, String defaultName) {
         String upsertSql = """
                 INSERT INTO bank (id, name) VALUES (?, ?)
                 ON CONFLICT (id) DO UPDATE SET id = EXCLUDED.id
@@ -57,28 +57,28 @@ public class BankTable {
                 """;
 
         try {
-            return DatabaseManager.getQuery().queryForObject(upsertSql, BANK_MAPPER, internalId, defaultName);
+            return DatabaseManager.getQuery().queryForObject(upsertSql, BANK_MAPPER, id, defaultName);
         } catch (Exception e) {
             log.error("❌ Ошибка при получении / создании BANK: ", e);
         }
         return null;
     }
 
-    public static void addIrisCoin(long internalId, long irisCoin) {
+    public static void addIrisCoin(long id, long irisCoin) {
         String sql = "UPDATE bank SET iris_coin = iris_coin + ? WHERE id = ?";
 
         try {
-            DatabaseManager.getQuery().update(sql, irisCoin, internalId);
-            log.info("ℹ️ Коины пользователя {} обновлены на {}", internalId, irisCoin);
+            DatabaseManager.getQuery().update(sql, irisCoin, id);
+            log.info("ℹ️ Коины пользователя {} обновлены на {}", id, irisCoin);
         } catch (Exception e) {
-            log.error("❌ Ошибка при добавлении коинов для {}: ", internalId, e);
+            log.error("❌ Ошибка при добавлении коинов для {}: ", id, e);
         }
     }
 
-    public static void updateLastFarm(long internalId) {
+    public static void updateLastFarm(long id) {
         String sql = "UPDATE bank SET last_farm = CURRENT_TIMESTAMP WHERE id = ?";
         try {
-            DatabaseManager.getQuery().update(sql, internalId);
+            DatabaseManager.getQuery().update(sql, id);
         } catch (Exception e) {
             log.error("❌ Ошибка обновления времени фармы: ", e);
         }
