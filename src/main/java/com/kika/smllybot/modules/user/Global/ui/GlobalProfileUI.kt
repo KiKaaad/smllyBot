@@ -23,15 +23,20 @@ class GlobalProfileUI {
 
             val isOwner: Boolean = ctx.target.idLong == ctx.viewer.idLong
 
-            val statistic: StatisticAccount = StatisticTable.getTotalUserStatistic(ctx.user().id)
+            val statistic: StatisticAccount = StatisticTable.getTotalUserStatistic(ctx.user.id)
 
             val status: String = UserStatus.getEmoji(ctx.member())
 
-            val discordCreated: String = TimeUtil.getTimestamp(ctx.target().timeCreated)
-            val discordCreatedRelative: String = TimeUtil.getTimestampRelative(ctx.target().timeCreated)
-            val botCreated: String = TimeUtil.getTimestamp(ctx.user().createdAt)
-            val botCreatedRelative: String = TimeUtil.getTimestampRelative(ctx.user().createdAt)
+            val discordCreated: String = TimeUtil.getTimestamp(ctx.target.timeCreated)
+            val discordCreatedRelative: String = TimeUtil.getTimestampRelative(ctx.target.timeCreated)
+            val botCreated: String = TimeUtil.getTimestamp(ctx.user.createdAt)
+            val botCreatedRelative: String = TimeUtil.getTimestampRelative(ctx.user.createdAt)
             val citizenshipData: String
+
+            val day = NumUtil.german(statistic.day)
+            val week = NumUtil.german(statistic.week)
+            val month = NumUtil.german(statistic.month)
+            val total = NumUtil.german(statistic.total)
 
             val iris: String = NumUtil.german(ctx.bank.iris)
             val stars: String = NumUtil.german(ctx.bank.star)
@@ -50,11 +55,11 @@ class GlobalProfileUI {
             val separator: ContainerChildComponent = Separator.createDivider(Separator.Spacing.SMALL)
 
             val headerMid: ContainerChildComponent = TextDisplay.of("## \\👀 Краткая информация:")
-            val activity: ContainerChildComponent = TextDisplay.of("\\📊 Активность (день | нед | мес | всего): ${statistic.day} | ${statistic.week} | ${statistic.month} | ${statistic.total}")
+            val activity: ContainerChildComponent = TextDisplay.of("\\📊 Активность (день | нед | мес | всего): $day | $week | $month | $total")
             val dataDiscord: ContainerChildComponent = TextDisplay.of("\\🕐 Во вселенной дискорд с $discordCreated ($discordCreatedRelative)")
             val dataBot: ContainerChildComponent = TextDisplay.of("\\⌛ Во вселенной бота с $botCreated ($botCreatedRelative)")
-            val idb: ContainerChildComponent = TextDisplay.of("IDB `${ctx.user().id}`")
-            val idd: ContainerChildComponent = TextDisplay.of("IDD `${ctx.target().idLong}`")
+            val idb: ContainerChildComponent = TextDisplay.of("IDB `${ctx.user.id}`")
+            val idd: ContainerChildComponent = TextDisplay.of("IDD `${ctx.target.idLong}`")
             val headerEconomy: ContainerChildComponent = TextDisplay.of("### \\💰 Мешок")
             val irisAndStars: ContainerChildComponent = TextDisplay.of("\\🍬 **$iris** | \\⭐ **$stars**")
             val irisCoins: ContainerChildComponent = TextDisplay.of("\\☢️ **$irisCoin** i¢")
