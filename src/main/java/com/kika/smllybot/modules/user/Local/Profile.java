@@ -25,42 +25,42 @@ import java.util.Set;
 public class Profile extends BaseCmd {
 
     public Profile() {
-        super(Set.of("кто я", "профиль", "profile"));
+        super(Set.of("кто я", "кто ты", "профиль", "profile"));
     }
 
     @Override
     public Container execute(MessageReceivedEvent event, String raw, String args) {
         if (event.getMember() == null) return null;
 
-        String[] parts = raw.split("\\h+");
-
         if (event.getMessage().getReferencedMessage() != null) {
             sendProfileResponse(event, event.getMessage().getReferencedMessage().getAuthor());
             return null;
         }
 
-        if (parts.length < 2) {
+        if (args.isBlank()) {
             sendProfileResponse(event, event.getAuthor());
             return null;
         }
+
+        String[] parts = args.trim().split("\\h+");
 
         if (!event.getMessage().getMentions().getUsers().isEmpty()) {
             sendProfileResponse(event, event.getMessage().getMentions().getUsers().getFirst());
             return null;
         }
 
-        if (parts[1].matches("\\d+")) {
-            event.getJDA().retrieveUserById(parts[1]).queue(
+        if (parts[0].matches("\\d+")) {
+            event.getJDA().retrieveUserById(parts[0]).queue(
                     user -> sendProfileResponse(event, user),
                     throwable -> sendError(event, "### \\❌ Упс... Пользователь с таким ID не найден")
             );
             return null;
         }
 
-        var members = event.getGuild().getMembersByName(parts[1], true);
+        var members = event.getGuild().getMembersByName(parts[0], true);
 
         if (members.isEmpty()) {
-            members = event.getGuild().getMembersByNickname(parts[1], true);
+            members = event.getGuild().getMembersByNickname(parts[0], true);
         }
 
         if (!members.isEmpty()) {
