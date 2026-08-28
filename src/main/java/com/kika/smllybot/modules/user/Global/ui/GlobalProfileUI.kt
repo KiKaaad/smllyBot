@@ -47,7 +47,7 @@ class GlobalProfileUI {
 
             val main: Section = Section.of(
                 Thumbnail.fromUrl(ctx.target().getEffectiveAvatarUrl()),
-                TextDisplay.of("# Это ${ctx.target().effectiveName} $status"),
+                TextDisplay.of("# Это ${ctx.target().effectiveName.replace("@", "\\@")} $status"),
                 TextDisplay.of("### Девиз:"),
                 TextDisplay.of(motto)
             )

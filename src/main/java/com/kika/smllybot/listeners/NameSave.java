@@ -10,7 +10,7 @@ public class NameSave extends ListenerAdapter {
     @Override
     public void onUserUpdateName(@NotNull UserUpdateNameEvent event) {
         long id = event.getUser().getIdLong();
-        String username = event.getNewName();
+        String username = event.getUser().getName();
 
         UsersTable.setUsername(id, username);
     }

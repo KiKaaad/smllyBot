@@ -61,7 +61,7 @@ public class ProfileTable {
             return DatabaseManager.getQuery().queryForObject(selectSql, PROFILE_MAPPER, id, guildId);
         } catch (EmptyResultDataAccessException e) {
             try {
-                return DatabaseManager.getQuery().queryForObject(insertSql, PROFILE_MAPPER, id, guildId, name, dateTime);
+                return DatabaseManager.getQuery().queryForObject(insertSql, PROFILE_MAPPER, id, guildId, name.replace("@", "\\@"), dateTime);
             } catch (Exception ex) {
                 log.error("❌ Ошибка при создании профиля (id {}, guild {}): ", id, guildId, ex);
                 return null;

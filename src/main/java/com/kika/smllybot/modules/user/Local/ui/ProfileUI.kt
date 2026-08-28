@@ -33,7 +33,7 @@ class ProfileUI {
 
             val header: ContainerChildComponent = Section.of(
                 Thumbnail.fromUrl(avatarUrl),
-                TextDisplay.of("# \\👤 Это $name"),
+                TextDisplay.of("# \\👤 Это ${name.replace("@", "\\@")}"),
                 TextDisplay.of("### О себе:"),
                 TextDisplay.of("${ctx.profile.aboutMe}")
             )

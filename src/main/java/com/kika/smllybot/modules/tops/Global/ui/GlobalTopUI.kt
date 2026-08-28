@@ -71,7 +71,7 @@ class GlobalTopUI {
             pageItems.forEachIndexed { index, item ->
                 val position = skip + index + 1
                 val amount = NumUtil.german(item.amount)
-                var text = "$position. **${item.name}** — $amount i¢"
+                var text = "$position. **${item.name.replace("@", "\\@")}** — $amount i¢"
                 when (position) {
                     1 -> text = "1. \\🥇 **${item.name}** — $amount i¢"
                     2 -> text = "${index + 1}. \\🥈 **${item.name}** — $amount i¢"
