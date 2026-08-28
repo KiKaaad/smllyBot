@@ -42,7 +42,7 @@ class GlobalProfileUI {
             val stars: String = NumUtil.german(ctx.bank.star)
             val irisCoin: String = NumUtil.german(ctx.bank.irisCoin)
 
-            var motto: String? = ctx.user.motto
+            var motto: String? = ctx.user.motto?.replace("@", "\\@")
             if (motto.isNullOrBlank()) motto = "Пользователь не указал описание."
 
             val main: Section = Section.of(
