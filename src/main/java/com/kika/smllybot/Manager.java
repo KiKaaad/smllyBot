@@ -23,6 +23,7 @@ import com.kika.smllybot.modules.user.Local.Citizenship;
 import com.kika.smllybot.modules.user.Local.Profile;
 import com.kika.smllybot.modules.user.Local.ui.ProfileModal;
 import com.kika.smllybot.other.BaseCmd;
+import com.kika.smllybot.utils.Interaction;
 import com.kika.smllybot.utils.PrefixUtil;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
@@ -117,6 +118,7 @@ public class Manager extends ListenerAdapter {
     @Override
     public void onButtonInteraction(ButtonInteractionEvent event) {
         String[] parts = event.getComponentId().split(":");
+        Interaction.checkOwner(event, parts);
         if (parts.length == 0) return;
 
         String prefix = parts[0].toLowerCase();

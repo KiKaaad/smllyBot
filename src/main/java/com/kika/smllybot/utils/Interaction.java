@@ -7,8 +7,6 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class Interaction {
 
-    //  Ожидается формат: action:subAction:ownerId
-
     private enum DenyReason {
         MISTER_FISH("\\❌ Но но но мистер фиш"),
         HANDS_OFF("\\❌ Руки прочь!"),

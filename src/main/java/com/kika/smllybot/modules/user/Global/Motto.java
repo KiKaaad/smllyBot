@@ -60,9 +60,9 @@ public class Motto extends BaseCmd {
             return response;
         }
 
-        String[] parts = raw.split("\\s+");
+        String[] parts = raw.split("\\n+");
         if (parts.length > 1) {
-            String motto = parts[1];
+            String motto = parts[1].replace("@", "\\@");
             UsersTable.setMotto(discordId, motto);
             response(event, "\\✅ Описание обновлено");
         }
@@ -77,7 +77,7 @@ public class Motto extends BaseCmd {
 
         event.getAuthor().retrieveProfile().queue(
             profile -> {
-                Container response = MottoUI.buildMotto(event.getAuthor(), dbUser, title, true);;
+                Container response = MottoUI.buildMotto(event.getAuthor(), dbUser, title, true);
                 List<ContainerChildComponent> components = new ArrayList<>(response.getComponents());
 
                 MediaGallery banner;

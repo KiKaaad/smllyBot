@@ -41,7 +41,7 @@ class GuildInfoUI {
             }
 
             ctx.event.guild.banner?.let { guildBanner ->
-                val bannerUrl = guildBanner.getUrl(1024)
+                val bannerUrl = guildBanner.getUrl(2048)
                 val banner = MediaGallery.of(MediaGalleryItem.fromUrl(bannerUrl))
                 components.addFirst(banner)
             }

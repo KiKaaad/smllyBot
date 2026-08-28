@@ -19,6 +19,7 @@ import net.dv8tion.jda.api.components.container.Container;
 import net.dv8tion.jda.api.components.container.ContainerChildComponent;
 import net.dv8tion.jda.api.components.mediagallery.MediaGallery;
 import net.dv8tion.jda.api.components.mediagallery.MediaGalleryItem;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -26,6 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 
@@ -64,8 +66,7 @@ public class AboutMe extends BaseCmd {
         }
 
         if (args.isEmpty()) {
-            ProfileAccount profile = ProfileTable.getOrCreateProfile(user.getId(),
-                    guildId, user.getName(), event.getMember().getTimeJoined());
+            ProfileAccount profile = ProfileTable.getOrCreateProfile(discordId, guildId, name, event.getMember().getTimeJoined());
             AboutMeContext context = new AboutMeContext("## Текущее о себе", profile.getAboutMe(), discordId);
 
             var response = AboutMeUI.buildAboutMe(context);
@@ -76,7 +77,8 @@ public class AboutMe extends BaseCmd {
 
         String[] parts = raw.split("\\n+");
         if (parts.length > 1) {
-            String aboutMe = parts[1];
+            ProfileTable.getOrCreateProfile(user.getId(), guildId, name, event.getMember().getTimeJoined());
+            String aboutMe = parts[1].replace("@", "\\@");
             ProfileTable.setAboutMe(user.getId(), guildId, aboutMe);
 
             AboutMeContext context = new AboutMeContext("## \\✅ О себе обновлено", aboutMe, discordId);
@@ -127,7 +129,8 @@ public class AboutMe extends BaseCmd {
 
                     response = Container.of(components);
 
-                    event.editComponents(response).useComponentsV2(true).queue();
+                    event.editComponents(response).useComponentsV2(true)
+                            .queue();
                 }
             );
 
