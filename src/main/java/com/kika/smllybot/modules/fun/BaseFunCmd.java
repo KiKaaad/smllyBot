@@ -29,13 +29,13 @@ public abstract class BaseFunCmd extends BaseCmd {
 
         String[] matches = raw.split("\\n", 2);
         String replica = null;
-        if (matches.length > 1) replica = matches[1];
+        if (matches.length > 1) replica = matches[1].replace("@", "\\@");
 
         String[] matchesAfterText = raw.split("\\h+", 2);
         String afterText = "";
         if (matchesAfterText.length > 1) afterText = matchesAfterText[1].trim();
 
-        FunContext funContext = new FunContext(emoji, action, author, reply, afterText, replica);
+        FunContext funContext = new FunContext(emoji, action, author, reply, afterText.replace("@", "\\@"), replica);
 
         var response = SoftUI.buildSoftUI(funContext);
 

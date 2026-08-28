@@ -30,12 +30,13 @@ class ProfileUI {
             val week = NumUtil.german(ctx.statistic.week)
             val month = NumUtil.german(ctx.statistic.month)
             val total = NumUtil.german(ctx.statistic.total)
+            val aboutMe = ctx.profile.aboutMe?.replace("@", "\\@") ?: "Пользователь не указал описание"
 
             val header: ContainerChildComponent = Section.of(
                 Thumbnail.fromUrl(avatarUrl),
-                TextDisplay.of("# \\👤 Это $name"),
+                TextDisplay.of("# \\👤 Это ${name.replace("@", "\\@")}"),
                 TextDisplay.of("### О себе:"),
-                TextDisplay.of("${ctx.profile.aboutMe}")
+                TextDisplay.of(aboutMe)
             )
             val separator: ContainerChildComponent = Separator.createDivider(Separator.Spacing.SMALL)
             val main: ContainerChildComponent = TextDisplay.of("## Основная информация:")

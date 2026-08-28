@@ -68,7 +68,7 @@ public class UsersTable {
             return DatabaseManager.getQuery().queryForObject(selectSql, USER_MAPPER, discordId);
         } catch (EmptyResultDataAccessException e) {
             try {
-                return DatabaseManager.getQuery().queryForObject(insertSql, USER_MAPPER, discordId, name);
+                return DatabaseManager.getQuery().queryForObject(insertSql, USER_MAPPER, discordId, name.replace("@", "\\@"));
             } catch (Exception ex) {
                 log.error("❌ Ошибка при попытке создать юзера ", ex);
                 return null;
@@ -94,7 +94,7 @@ public class UsersTable {
         String sql = "UPDATE users SET name = ? WHERE discord_id = ?";
 
         try {
-            DatabaseManager.getQuery().update(sql, currentName, discordId);
+            DatabaseManager.getQuery().update(sql, currentName.replace("@", "\\@"), discordId);
             log.info("✅ Имя пользователя обновлено");
         } catch (Exception e) {
             log.info("❌ Ошибка записи имени пользователя");

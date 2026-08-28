@@ -19,7 +19,7 @@ public abstract class BagUI {
         String iris = NumUtil.german(ctx.bank().getIris());
         String star = NumUtil.german(ctx.bank().getStar());
 
-        ContainerChildComponent header = TextDisplay.of("# \\💰 Мешок %s".formatted(ctx.bank().getName()));
+        ContainerChildComponent header = TextDisplay.of("# \\💰 Мешок %s".formatted(ctx.bank().getName().replace("@", "\\@")));
         ContainerChildComponent separator = Separator.createDivider(Separator.Spacing.SMALL);
         ContainerChildComponent economy1 = TextDisplay.of("\\🍬 **%s** ирисок | \\⭐ **%s** звездочек".formatted(iris, star));
         ContainerChildComponent economy2 = TextDisplay.of("\\☢️ **%s** i¢".formatted(irisCoin));

@@ -42,12 +42,12 @@ class GlobalProfileUI {
             val stars: String = NumUtil.german(ctx.bank.star)
             val irisCoin: String = NumUtil.german(ctx.bank.irisCoin)
 
-            var motto: String? = ctx.user.motto
+            var motto: String? = ctx.user.motto?.replace("@", "\\@")
             if (motto.isNullOrBlank()) motto = "Пользователь не указал описание."
 
             val main: Section = Section.of(
                 Thumbnail.fromUrl(ctx.target().getEffectiveAvatarUrl()),
-                TextDisplay.of("# Это ${ctx.target().effectiveName} $status"),
+                TextDisplay.of("# Это ${ctx.target().effectiveName.replace("@", "\\@")} $status"),
                 TextDisplay.of("### Девиз:"),
                 TextDisplay.of(motto)
             )

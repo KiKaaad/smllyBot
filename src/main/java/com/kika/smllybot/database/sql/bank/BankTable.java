@@ -57,7 +57,7 @@ public class BankTable {
                 """;
 
         try {
-            return DatabaseManager.getQuery().queryForObject(upsertSql, BANK_MAPPER, id, defaultName);
+            return DatabaseManager.getQuery().queryForObject(upsertSql, BANK_MAPPER, id, defaultName.replace("@", "\\@"));
         } catch (Exception e) {
             log.error("❌ Ошибка при получении / создании BANK: ", e);
         }
