@@ -52,6 +52,7 @@ public class DatabaseManager {
             log.error("❌ Не удалось подключиться к базе данных. Вероятно не заполнены данные для подключение к ней");
             throw new IllegalStateException();
         }
+
         return dataSource.getConnection();
     }
 
