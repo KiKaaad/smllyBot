@@ -69,7 +69,7 @@ public class GlobalProfile extends BaseCmd {
 
     private void sendAnketaResponse(MessageReceivedEvent event, User targetUser) {
         long discordId = targetUser.getIdLong();
-        String name = targetUser.getName();
+        String name = targetUser.getEffectiveName();
 
         var targetMember = event.isFromGuild() ? event.getGuild().getMember(targetUser) : null;
         Repository repo = new Repository();

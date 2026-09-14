@@ -73,7 +73,6 @@ class ProfileUI {
                 components.add(buttonsHeader)
                 components.add(button)
             }
-            components.add(separator)
             components.add(footer)
 
             return Container.of(components)

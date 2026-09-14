@@ -26,7 +26,7 @@ public class ReactionCounter extends ListenerAdapter {
 
         if (reactorId != authorId) {
             log.info("ℹ️ Пользователю {} поставили реакцию", authorId);
-            UsersTable.plusReputation(authorId);
+            UsersTable.plusReaction(authorId);
         }
     }
 
@@ -36,14 +36,14 @@ public class ReactionCounter extends ListenerAdapter {
         if (event.getUser().isBot()) return;
 
         event.getChannel().retrieveMessageById(event.getMessageIdLong()).queue(
-                message -> {
-                    long authorId = message.getAuthor().getIdLong();
+            message -> {
+                long authorId = message.getAuthor().getIdLong();
 
-                    if (authorId != reactorId && authorId != 0) {
-                        log.info("ℹ️ Пользователю {} убрали реакцию", authorId);
-                        UsersTable.minusReputation(authorId);
-                    }
+                if (authorId != reactorId && authorId != 0) {
+                    log.info("ℹ️ Пользователю {} убрали реакцию", authorId);
+                    UsersTable.minusReaction(authorId);
                 }
+            }
         );
     }
 }

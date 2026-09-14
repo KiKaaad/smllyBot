@@ -41,9 +41,9 @@ public class Farm extends BaseCmd {
         currentSum += chanceLossReward;
         if (roll < currentSum) return ThreadLocalRandom.current().nextInt(maxLoss, minLoss + 1);
         currentSum += chanceMiniReward;
-        if (roll < currentSum) return ThreadLocalRandom.current().nextInt(minLarge, maxLarge + 1);
-        currentSum += chanceLargeReward;
         if (roll < currentSum) return ThreadLocalRandom.current().nextInt(minMini, maxMini + 1);
+        currentSum += chanceLargeReward;
+        if (roll < currentSum) return ThreadLocalRandom.current().nextInt(minLarge, maxLarge + 1);
 
         return ThreadLocalRandom.current().nextInt(min, max);
     }

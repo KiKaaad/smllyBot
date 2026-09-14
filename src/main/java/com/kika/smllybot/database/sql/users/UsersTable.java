@@ -126,7 +126,7 @@ public class UsersTable {
         return 0;
     }
 
-    public static void plusReputation(long discordId) {
+    public static void plusReaction(long discordId) {
         String sql = """
                 UPDATE users
                 SET reaction = reaction + 1
@@ -139,7 +139,7 @@ public class UsersTable {
         }
     }
 
-    public static void minusReputation(long discordId) {
+    public static void minusReaction(long discordId) {
         String sql = """
                 UPDATE users
                 SET reaction = reaction - 1

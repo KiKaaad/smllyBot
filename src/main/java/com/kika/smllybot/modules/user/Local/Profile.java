@@ -76,7 +76,7 @@ public class Profile extends BaseCmd {
         long discordId = target.getIdLong();
         String name = target.getEffectiveName();
         long guildId = event.getGuild().getIdLong();
-        OffsetDateTime dateTime = event.getMember().getTimeJoined();
+        OffsetDateTime dateTime = event.getGuild().getMemberById(target.getIdLong()).getTimeJoined();
 
         Repository repo = new Repository();
         UserAccount user = repo.getUser(discordId, name);
