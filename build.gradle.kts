@@ -33,7 +33,7 @@ tasks.processResources {
 }
 
 dependencies {
-    implementation("org.springframework:spring-jdbc:7.0.8")
+    implementation("org.springframework:spring-jdbc:7.0.9")
     implementation("com.electronwill.night-config:toml:3.9.0")
     implementation("com.zaxxer:HikariCP:7.1.0")
     implementation("org.postgresql:postgresql:42.7.13")
