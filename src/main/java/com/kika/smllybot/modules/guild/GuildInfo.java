@@ -1,5 +1,7 @@
 package com.kika.smllybot.modules.guild;
 
+import com.kika.smllybot.database.sql.Repository;
+import com.kika.smllybot.database.sql.guild.dto.GuildFull;
 import com.kika.smllybot.modules.guild.ui.GuildInfoUI;
 import com.kika.smllybot.other.BaseCmd;
 import net.dv8tion.jda.api.components.container.Container;
@@ -18,8 +20,13 @@ public class GuildInfo extends BaseCmd {
     @Override
     public Container execute(MessageReceivedEvent event, String raw, String args) {
         if (!event.isFromGuild()) return null;
+        long guildId = event.getGuild().getIdLong();
+        String guildName = event.getGuild().getName();
 
-        GuildInfoContext ctx = new GuildInfoContext(event);
+        Repository repo = new Repository();
+        GuildFull guild = repo.getGuild(guildId, guildName);
+
+        GuildInfoContext ctx = new GuildInfoContext(guild, event);
 
         Container response = GuildInfoUI.build(ctx);
 
