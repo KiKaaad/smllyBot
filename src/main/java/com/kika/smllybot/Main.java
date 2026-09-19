@@ -2,6 +2,7 @@ package com.kika.smllybot;
 
 import com.kika.smllybot.database.sql.DatabaseManager;
 import com.kika.smllybot.database.sql.bank.BankTable;
+import com.kika.smllybot.database.sql.guild.GuildTable;
 import com.kika.smllybot.database.sql.privacy.PrivacyTable;
 import com.kika.smllybot.database.sql.profile.ProfileTable;
 import com.kika.smllybot.database.sql.statistic.StatisticTable;
@@ -12,6 +13,7 @@ import com.kika.smllybot.listeners.ReactionCounter;
 import com.kika.smllybot.modules.ping.PrefixPing;
 import com.kika.smllybot.modules.ping.SlashPing;
 import com.kika.smllybot.other.slashCmdInfo;
+import com.kika.smllybot.schedule.Stars;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.JDAInfo;
@@ -42,6 +44,7 @@ public class Main implements EventListener {
     static void main() throws InterruptedException {
         Config.getInstance().load();
         DatabaseManager.init();
+        Stars.minusStarsScheduler();
 
         String token = Config.getInstance().getString("main.token");
 
@@ -59,6 +62,7 @@ public class Main implements EventListener {
             PrivacyTable.createTable();
             StatisticTable.createTable();
             ProfileTable.createTable();
+            GuildTable.createTable();
 
         } catch (SQLException e) {
             log.error("❌ Не удалось подключиться к базе данных: ");
