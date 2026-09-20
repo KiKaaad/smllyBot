@@ -43,13 +43,19 @@ public class TimeUtil {
         return TimeFormat.RELATIVE.atTimestamp(time.toInstant().toEpochMilli()).toString();
     }
 
-    @Deprecated
-    public static String getBotTimestamp(String date) {
-        if (date == null || date.isBlank()) return "Неизвестно";
+    public static OffsetDateTime calculateUntil(long rawTime, String type) {
+        OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC);
 
-        LocalDateTime dateTime = LocalDateTime.parse(date, DATE_TIME_FORMATTER);
-        long millis = dateTime.toInstant(ZoneOffset.UTC).toEpochMilli();
-        return TimeFormat.DATE_TIME_SHORT.atTimestamp(millis).toString();
+        return switch (type.toLowerCase().trim()) {
+            case "год", "года", "лет", "г", "л" -> now.plusYears(rawTime);
+            case "месяц", "месяца", "месяцев", "мес" -> now.plusMonths(rawTime);
+            case "неделю", "недели", "недель", "нед" -> now.plusWeeks(rawTime);
+            case "день", "дня", "дней", "д" -> now.plusDays(rawTime);
+            case "час", "часа", "часов", "ч" -> now.plusHours(rawTime);
+            case "минуту", "минуты", "минут", "м" -> now.plusMinutes(rawTime);
+            case "секунду", "секунды", "секунд", "с" -> now.plusSeconds(rawTime);
+            default -> null;
+        };
     }
 
 }
