@@ -1,7 +1,7 @@
 package com.kika.smllybot.modules.guild;
 
 import com.kika.smllybot.database.sql.Repository;
-import com.kika.smllybot.database.sql.guild.dto.GuildFull;
+import com.kika.smllybot.database.sql.guild.dto.GuildData;
 import com.kika.smllybot.modules.guild.ui.GuildInfoUI;
 import com.kika.smllybot.other.BaseCmd;
 import net.dv8tion.jda.api.components.container.Container;
@@ -24,7 +24,7 @@ public class GuildInfo extends BaseCmd {
         String guildName = event.getGuild().getName();
 
         Repository repo = new Repository();
-        GuildFull guild = repo.getGuild(guildId, guildName);
+        GuildData guild = repo.getGuild(guildId, guildName);
 
         GuildInfoContext ctx = new GuildInfoContext(guild, event);
 

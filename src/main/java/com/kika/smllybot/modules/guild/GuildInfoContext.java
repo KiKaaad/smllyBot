@@ -1,9 +1,9 @@
 package com.kika.smllybot.modules.guild;
 
-import com.kika.smllybot.database.sql.guild.dto.GuildFull;
+import com.kika.smllybot.database.sql.guild.dto.GuildData;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 public record GuildInfoContext(
-        GuildFull guild,
+        GuildData guild,
         MessageReceivedEvent event
 ) {}
