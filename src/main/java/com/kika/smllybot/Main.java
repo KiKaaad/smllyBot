@@ -3,6 +3,7 @@ package com.kika.smllybot;
 import com.kika.smllybot.database.sql.DatabaseManager;
 import com.kika.smllybot.database.sql.bank.BankTable;
 import com.kika.smllybot.database.sql.guild.GuildTable;
+import com.kika.smllybot.database.sql.mute.MuteTableKt;
 import com.kika.smllybot.database.sql.privacy.PrivacyTable;
 import com.kika.smllybot.database.sql.profile.ProfileTable;
 import com.kika.smllybot.database.sql.statistic.StatisticTable;
@@ -63,6 +64,7 @@ public class Main implements EventListener {
             StatisticTable.createTable();
             ProfileTable.createTable();
             GuildTable.createTable();
+            MuteTableKt.createTable();
 
         } catch (SQLException e) {
             log.error("❌ Не удалось подключиться к базе данных: ");

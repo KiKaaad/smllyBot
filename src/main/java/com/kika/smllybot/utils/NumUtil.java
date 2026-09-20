@@ -12,8 +12,4 @@ public class NumUtil {
         return String.format(Locale.GERMAN, "%.2f", num);
     }
 
-    public static String us(double num) {
-        return String.format(Locale.US, "%.2f", num);
-    }
-
 }

@@ -3,7 +3,7 @@ package com.kika.smllybot.database.sql
 import com.kika.smllybot.database.sql.bank.BankTable
 import com.kika.smllybot.database.sql.bank.dto.BankAccount
 import com.kika.smllybot.database.sql.guild.GuildTable
-import com.kika.smllybot.database.sql.guild.dto.GuildFull
+import com.kika.smllybot.database.sql.guild.dto.GuildData
 import com.kika.smllybot.database.sql.privacy.PrivacyTable
 import com.kika.smllybot.database.sql.privacy.dto.PrivacyAccount
 import com.kika.smllybot.database.sql.profile.ProfileTable
@@ -67,8 +67,8 @@ class Repository {
         return statistic
     }
 
-    fun getGuild(guildId: Long, guildName: String): GuildFull {
-        val guild: GuildFull = GuildTable.getOrCreateGuild(guildId, guildName)
+    fun getGuild(guildId: Long, guildName: String): GuildData {
+        val guild: GuildData = GuildTable.getOrCreateGuild(guildId, guildName)
 
         return guild
     }

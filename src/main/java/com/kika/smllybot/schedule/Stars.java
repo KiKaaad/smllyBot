@@ -11,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 public class Stars {
 
     private static final Logger log = LoggerFactory.getLogger(Stars.class);
+
     public static void minusStarsScheduler() {
         ScheduledExecutorService schedule = Executors.newScheduledThreadPool(1);
 

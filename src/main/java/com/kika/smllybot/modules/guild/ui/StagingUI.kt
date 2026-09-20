@@ -51,7 +51,7 @@ class StagingUI {
         fun buildError(): Container {
             val components: MutableList<ContainerChildComponent?> = ArrayList(12)
 
-            val main = TextDisplay.of("# \\❌ Возникла ошибка")
+            val main = TextDisplay.of("# \\❌ Недостаточно прав")
             val text = TextDisplay.of("Похоже, вы не имеете прав администратора")
 
             components.add(main)
