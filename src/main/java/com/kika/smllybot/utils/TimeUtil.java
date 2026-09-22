@@ -54,6 +54,7 @@ public class TimeUtil {
             case "час", "часа", "часов", "ч" -> now.plusHours(rawTime);
             case "минуту", "минуты", "минут", "м" -> now.plusMinutes(rawTime);
             case "секунду", "секунды", "секунд", "с" -> now.plusSeconds(rawTime);
+            case null -> null;
             default -> null;
         };
     }
