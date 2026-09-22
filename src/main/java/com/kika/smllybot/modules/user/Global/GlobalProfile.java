@@ -1,6 +1,7 @@
 package com.kika.smllybot.modules.user.Global;
 
 import com.kika.smllybot.database.sql.Repository;
+import com.kika.smllybot.handler.ErrorThrow;
 import com.kika.smllybot.modules.user.Global.ui.GlobalProfileUI;
 import com.kika.smllybot.other.BaseCmd;
 import net.dv8tion.jda.api.components.container.Container;
@@ -48,7 +49,7 @@ public class GlobalProfile extends BaseCmd {
         if (arg.matches("\\d+")) {
             event.getJDA().retrieveUserById(arg).queue(
                     targetUser -> sendAnketaResponse(event, targetUser),
-                    throwable -> sendError(event, "### \\❌ Упс... Пользователь с таким ID не найден")
+                    throwable -> ErrorThrow.userNotFound(event, arg)
             );
             return null;
         }
@@ -62,7 +63,7 @@ public class GlobalProfile extends BaseCmd {
         if (!members.isEmpty()) {
             sendAnketaResponse(event, members.getFirst().getUser());
         } else {
-            sendError(event, "### \\❌ Упс... Пользователь с таким юзернеймом не найден");
+            ErrorThrow.userNotFound(event, arg);
         }
         return null;
     }
@@ -102,16 +103,6 @@ public class GlobalProfile extends BaseCmd {
                         .queue();
             }
         );
-    }
-
-    private void sendError(MessageReceivedEvent event, String e) {
-        ContainerChildComponent main = TextDisplay.of(e);
-
-        event.getChannel().sendMessageComponents(Container.of(main))
-                .useComponentsV2(true)
-                .delay(Duration.ofSeconds(5))
-                .flatMap(Message::delete)
-                .queue();
     }
 
 }

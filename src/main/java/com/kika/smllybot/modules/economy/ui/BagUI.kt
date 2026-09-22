@@ -12,7 +12,7 @@ class BagUI {
     companion object {
         @JvmStatic
         fun buildBug(ctx: BagContext): Container {
-            val components: MutableList<ContainerChildComponent?> = ArrayList(5)
+            val components: MutableList<ContainerChildComponent?> = ArrayList(10)
 
             val irisCoin = NumUtil.german(ctx.bank.irisCoin)
             val iris = NumUtil.german(ctx.bank.iris)
