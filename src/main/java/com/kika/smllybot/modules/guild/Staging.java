@@ -3,16 +3,14 @@ package com.kika.smllybot.modules.guild;
 import com.kika.smllybot.annotations.ButtonPrefix;
 import com.kika.smllybot.database.sql.Repository;
 import com.kika.smllybot.database.sql.guild.GuildTable;
-import com.kika.smllybot.modules.guild.ui.GuildInfoUI;
+import com.kika.smllybot.handler.ErrorThrow;
 import com.kika.smllybot.modules.guild.ui.StagingUI;
 import com.kika.smllybot.other.BaseCmd;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.components.container.Container;
-import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
-import java.time.Duration;
 import java.util.Set;
 
 public class Staging extends BaseCmd {
@@ -25,13 +23,7 @@ public class Staging extends BaseCmd {
     public Container execute(MessageReceivedEvent event, String raw, String args) {
         if (!event.isFromGuild()) return null;
         if (event.getMember() == null || !event.getMember().hasPermission(Permission.ADMINISTRATOR)) {
-            var response = StagingUI.buildError();
-
-            event.getChannel().sendMessageComponents(response)
-                    .useComponentsV2(true)
-                    .delay(Duration.ofSeconds(5))
-                    .flatMap(Message::delete)
-                    .queue();
+            ErrorThrow.noAccessPermission(event,  Permission.ADMINISTRATOR);
 
             return null;
         }

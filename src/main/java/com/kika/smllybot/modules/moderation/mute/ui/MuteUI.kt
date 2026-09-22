@@ -26,22 +26,5 @@ class MuteUI {
 
             return Container.of(components)
         }
-
-        @JvmStatic
-        fun buildError(): Container {
-            val components: MutableList<ContainerChildComponent?> = ArrayList(12)
-
-            val header = TextDisplay.of("# \\❌ Недостаточно прав")
-            val separator = Separator.createDivider(Separator.Spacing.SMALL)
-            val main = TextDisplay.of("Требуется право выдавать таймауты")
-            val footer = TextDisplay.of("-# `Permission.MODERATE_MEMBERS`")
-
-            components.add(header)
-            components.add(separator)
-            components.add(main)
-            components.add(footer)
-
-            return Container.of(components)
-        }
     }
 }

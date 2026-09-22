@@ -15,6 +15,7 @@ import com.kika.smllybot.modules.moderation.mute.Mute;
 import com.kika.smllybot.modules.privacy.Privacy;
 import com.kika.smllybot.modules.privacy.PrivacyInteraction;
 import com.kika.smllybot.modules.statistic.StatisticBot;
+import com.kika.smllybot.modules.testing.TestErrors;
 import com.kika.smllybot.modules.tops.Global.GlobalTop;
 import com.kika.smllybot.modules.user.Global.GlobalProfile;
 import com.kika.smllybot.modules.user.Global.Motto;
@@ -86,6 +87,7 @@ public class Manager extends ListenerAdapter {
         log.info("✅ Интерактивные команды загружены");
 
         // Другое
+        reg(new TestErrors());
         reg(new GlobalHelp());
         reg(new Privacy());
         reg(new PrivacyInteraction());
