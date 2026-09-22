@@ -1,6 +1,6 @@
 plugins {
     java
-    kotlin("jvm") version "2.4.10"
+    kotlin("jvm") version "2.4.20"
     id("com.gradleup.shadow") version "9.6.1"
 }
 
@@ -45,7 +45,7 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:1.6.3")
     implementation("ch.qos.logback:logback-core:1.6.3")
     implementation("com.google.code.gson:gson:2.14.0")
-    implementation("net.dv8tion:JDA:6.6.0")
+    implementation("net.dv8tion:JDA:6.7.0")
     implementation("club.minnced:jda-ktx:0.15.0")
     implementation(libs.org.jetbrains.kotlin.kotlin.stdlib.jdk8)
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.11.0")
