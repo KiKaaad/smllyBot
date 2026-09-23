@@ -1,5 +1,7 @@
 package com.kika.smllybot.modules.moderation.mute;
 
+import com.kika.smllybot.database.sql.guild.GuildTable;
+import com.kika.smllybot.database.sql.guild.dto.GuildData;
 import com.kika.smllybot.database.sql.mute.MuteTable;
 import com.kika.smllybot.database.sql.mute.dto.MuteCreateData;
 import com.kika.smllybot.handler.ErrorThrow;
@@ -8,13 +10,18 @@ import com.kika.smllybot.other.BaseCmd;
 import com.kika.smllybot.utils.TimeUtil;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.components.container.Container;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.OffsetDateTime;
 import java.util.Set;
 
 public class Mute extends BaseCmd {
+
+    private static final Logger log = LoggerFactory.getLogger(Mute.class);
 
     public Mute() {
         super(Set.of("мут", "мьют"));
@@ -23,102 +30,142 @@ public class Mute extends BaseCmd {
     @Override
     public Container execute(MessageReceivedEvent event, String raw, String args) {
         if (!event.isFromGuild()) return null;
-        if (!event.getMember().hasPermission(Permission.MODERATE_MEMBERS)) {
-            ErrorThrow.noAccessPermission(event, Permission.MODERATE_MEMBERS);
-
+        GuildData guildData = GuildTable.getOrCreateGuild(event.getGuild().getIdLong(), event.getGuild().getName());
+        if (!guildData.getStaging()) {
+            ErrorThrow.onlyOnStaging(event);
             return null;
         }
 
-        long author = event.getAuthor().getIdLong();
-        long guildId = event.getGuild().getIdLong();
+        Guild guild = event.getGuild();
+        Member moderator = event.getMember();
+
+        // Проверка прав модератора и бота
+        if (moderator == null || !moderator.hasPermission(Permission.MODERATE_MEMBERS)) {
+            ErrorThrow.noAccessPermission(event, Permission.MODERATE_MEMBERS);
+            return null;
+        }
+
+        if (!guild.getSelfMember().hasPermission(Permission.MODERATE_MEMBERS)) {
+            log.error("❌ У бота нет права MODERATE_MEMBERS для выдачи мутов.");
+            return null;
+        }
 
         String[] matches = raw.trim().split("\\n", 2);
-
         String firstLine = matches[0].trim();
-        String[] parts = firstLine.split("\\h+", 4);
+        String[] parts = firstLine.split("\\h+");
 
+        String reason = (matches.length >= 2 && !matches[1].isBlank()) ? matches[1].trim() : null;
+
+        // Ответом на сообщение
         if (event.getMessage().getReferencedMessage() != null) {
-            long discordId = event.getMessage().getReferencedMessage().getAuthor().getIdLong();
-            long untilRaw;
-            Member member = event.getMessage().getReferencedMessage().getMember();
+            Member target = event.getMessage().getReferencedMessage().getMember();
+            if (target == null) {
+                log.error("❌ Не удалось получить участника из отвеченного сообщения.");
+                return null;
+            }
 
-            OffsetDateTime until;
-            
-            if (parts.length > 1 && !parts[1].isBlank()) {
-                untilRaw = Long.parseLong(parts[1]);
-                until = TimeUtil.calculateUntil(untilRaw, parts[2]);
-            } else {
+            if (parts.length < 3) {
                 ErrorThrow.timeOverhead(event);
                 return null;
             }
 
-            String reason = null;
-            if (matches.length >= 2 && !matches[1].isBlank()) reason = matches[1];
+            mute(event, target, moderator, parts[1], parts[2], reason);
+            return null;
+        }
 
-            MuteCreateData data = new MuteCreateData(
-                    "TIMEOUT",
-                    guildId,
-                    discordId,
-                    author,
-                    reason,
-                    until
-            );
-            MuteTable.createMute(data);
+        // Упоминание -> @username
+        if (!event.getMessage().getMentions().getMembers().isEmpty()) {
+            Member target = event.getMessage().getMentions().getMembers().getFirst();
 
-            member.timeoutUntil(until).reason(reason).queue();
+            if (parts.length < 4) {
+                ErrorThrow.timeOverhead(event);
+                return null;
+            }
 
-            var response = MuteUI.build(discordId, author, until, reason);
-            event.getChannel().sendMessageComponents(response).useComponentsV2(true).queue();
+            mute(event, target, moderator, parts[2], parts[3], reason);
+            return null;
+        }
 
+        if (parts.length < 2) {
             return null;
         }
 
         String arg = parts[1];
 
-        if (!event.getMessage().getMentions().getUsers().isEmpty()) {
-            long discordId = event.getMessage().getMentions().getUsers().getFirst().getIdLong();
-
-            OffsetDateTime until = TimeUtil.calculateUntil(Long.parseLong(parts[2]), parts[3]);
-
-            String reason = null;
-            if (matches.length > 1 && !matches[1].isBlank()) reason = matches[1];
-
-            MuteCreateData data = new MuteCreateData(
-                    "TIMEOUT",
-                    guildId,
-                    discordId,
-                    author,
-                    reason,
-                    until
+        // ID -> 12345678910121314
+        if (arg.matches("\\d+")) {
+            long targetId = Long.parseLong(arg);
+            guild.retrieveMemberById(targetId).queue(
+                    target -> {
+                        if (parts.length < 4) {
+                            ErrorThrow.timeOverhead(event);
+                            return;
+                        }
+                        mute(event, target, moderator, parts[2], parts[3], reason);
+                    },
+                    failure -> log.error("❌ Участник с ID " + arg + " не найден на сервере.")
             );
-            MuteTable.createMute(data);
-
-            var response = MuteUI.build(discordId, author, until, reason);
-            event.getChannel().sendMessageComponents(response).useComponentsV2(true).queue();
-
             return null;
         }
 
-//        if (arg.matches("\\d+")) {
-//            event.getJDA().retrieveUserById(arg).queue(
-//                    targetUser -> sendAnketaResponse(event, targetUser),
-//                    throwable -> sendError(event, "### \\❌ Упс... Пользователь с таким ID не найден")
-//            );
-//            return null;
-//        }
+        // Никнейм -> kefichik.
+        var members = guild.getMembersByName(arg, true);
+        if (members.isEmpty()) {
+            members = guild.getMembersByNickname(arg, true);
+        }
 
-//        var members = event.getGuild().getMembersByName(arg, true);
-//
-//        if (members.isEmpty()) {
-//            members = event.getGuild().getMembersByNickname(arg, true);
-//        }
-//
-//        if (!members.isEmpty()) {
-//            sendMuteResponse(event, members.getFirst().getUser());
-//        } else {
-//            sendError(event, "### \\❌ Упс... Пользователь с таким юзернеймом не найден");
-//        }
+        if (!members.isEmpty()) {
+            if (parts.length < 4) {
+                ErrorThrow.timeOverhead(event);
+                return null;
+            }
+            mute(event, members.getFirst(), moderator, parts[2], parts[3], reason);
+        } else {
+            log.error("❌ Упс... Пользователь с таким юзернеймом не найден.");
+        }
+
         return null;
     }
 
+    private void mute(MessageReceivedEvent event, Member target, Member moderator, String rawAmount, String unit, String reason) {
+        Guild guild = event.getGuild();
+
+        if (!guild.getSelfMember().canInteract(target)) {
+            log.error("❌ Бот не может замутить этого пользователя: Роль пользователя выше роли бота.");
+            return;
+        }
+
+//        if (!moderator.canInteract(target)) {
+//            log.error("❌ Вы не можете замутить этого пользователя: Роль пользователя выше вашей роли.");
+//            return;
+//        }
+
+        long amount;
+        try {
+            amount = Long.parseLong(rawAmount);
+        } catch (NumberFormatException e) {
+            log.error("❌ Некорректное число для времени: {}", rawAmount);
+            return;
+        }
+
+        OffsetDateTime until = TimeUtil.calculateUntil(amount, unit);
+
+        target.timeoutUntil(until).reason(reason).queue(
+                success -> {
+                    MuteCreateData data = new MuteCreateData(
+                            "TIMEOUT",
+                            guild.getIdLong(),
+                            target.getIdLong(),
+                            moderator.getIdLong(),
+                            reason,
+                            until
+                    );
+                    MuteTable.createMute(data);
+
+                    var response = MuteUI.build(target.getIdLong(), moderator.getIdLong(), until, reason);
+                    event.getChannel().sendMessageComponents(response).useComponentsV2(true).queue();
+                },
+                error -> log.error("❌ Ошибка при выдаче мута: {}", error.getMessage())
+        );
+    }
 }

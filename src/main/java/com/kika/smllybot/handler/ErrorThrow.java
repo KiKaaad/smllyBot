@@ -42,6 +42,17 @@ public class ErrorThrow {
         );
     }
 
+    public static void onlyOnStaging(MessageReceivedEvent event) {
+        createErrorMessage(
+                event,
+                "## \\❌ Режим тестирования выключен",
+                """
+                        \\⚠️ Режим тестирования крайне нестабилен, используйте на свой страх и риск OwO
+                        Включить режим тестирования можно командой `рд` (нужны права администратора)
+                        """
+        );
+    }
+
     private static void createErrorMessage(MessageReceivedEvent event,
             String header, String text) {
 
