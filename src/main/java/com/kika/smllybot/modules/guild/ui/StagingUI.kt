@@ -1,6 +1,5 @@
 package com.kika.smllybot.modules.guild.ui
 
-import com.kika.smllybot.modules.guild.GuildInfoContext
 import com.kika.smllybot.modules.guild.StagingContext
 import net.dv8tion.jda.api.components.buttons.Button
 import net.dv8tion.jda.api.components.container.Container
@@ -31,31 +30,20 @@ class StagingUI {
             val new = TextDisplay.of("""
                 ## При включении станут доступны:
                 ### \🛡️ Модерация
-                - `бан` <юзернейм / айди / никнейм>\❔ <время>\❔ <причина>\❔
-                   - `разбан` <юзернейм / айди / никнейм>\❔
-                - `мут` <юзернейм / айди / никнейм>\❔ <время>\❔ <причина>\❔
-                   - `размут` <юзернейм / айди / никнейм>\❔
-                - `варн` <юзернейм / айди / никнейм>\❔ <время>\❔ <причина>\❔
-                   - `-варн` <юзернейм / айди / никнейм>\❔
+                - `мут` <юзернейм / айди / никнейм>\❔ <время>\❔ <тип>\❔ <причина>\❔\⬇️ - выдает тайм-аут на срок не более 28 дней. Также можно использовать в ответ на чье-либо сообщение
+                   - `<тип>`: секунды, минуты, часы, дни, недели, месяца, года (последние 2 типа временно не поддерживаются)
+                   - **Пример**:
+                   ```
+                   мут 1234567801213 14 дней
+                   low iq
+                   ```
                 -# \❔ — знаком вопроса помечаются необязательные аргументы
+                -# \⬇️ — знаком вниз помечаются переносы строки
             """.trimIndent())
 
             components.add(header)
             components.add(text)
             components.add(new)
-
-            return Container.of(components)
-        }
-
-        @JvmStatic
-        fun buildError(): Container {
-            val components: MutableList<ContainerChildComponent?> = ArrayList(12)
-
-            val main = TextDisplay.of("# \\❌ Недостаточно прав")
-            val text = TextDisplay.of("Похоже, вы не имеете прав администратора")
-
-            components.add(main)
-            components.add(text)
 
             return Container.of(components)
         }

@@ -23,7 +23,7 @@ public class Staging extends BaseCmd {
     public Container execute(MessageReceivedEvent event, String raw, String args) {
         if (!event.isFromGuild()) return null;
         if (event.getMember() == null || !event.getMember().hasPermission(Permission.ADMINISTRATOR)) {
-            ErrorThrow.noAccessPermission(event,  Permission.ADMINISTRATOR);
+            ErrorThrow.noAccessPermission(event, Permission.ADMINISTRATOR);
 
             return null;
         }

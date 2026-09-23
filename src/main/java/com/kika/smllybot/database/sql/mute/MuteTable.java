@@ -20,7 +20,7 @@ import java.util.List;
 
 public class MuteTable {
 
-    @NotNull JdbcTemplate query = DatabaseManager.getQuery();
+    @NotNull JdbcTemplate query;
     public MuteTable(@NonNull JdbcTemplate query) {
         this.query = query;
     }
