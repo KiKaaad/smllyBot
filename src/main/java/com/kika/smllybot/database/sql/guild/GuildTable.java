@@ -52,13 +52,13 @@ public class GuildTable {
         String upsertSql = """
                 INSERT INTO guild (id, title) VALUES (?, ?)
                 ON CONFLICT (id) DO UPDATE SET id = EXCLUDED.id
-                RETURNING id, title, staging;
+                RETURNING id, title, staging, mute_type, mute_role;
                 """;
 
         try {
             return query.queryForObject(upsertSql, GUILD_MAPPER, id, guildName);
         } catch (Exception e) {
-            log.error("❌ Возникла ошибка при попытке вернуть / записать данные гильдии %s", e);
+            log.error("❌ Возникла ошибка при попытке вернуть / записать данные гильдии ", e);
             return null;
         }
     }
