@@ -26,6 +26,33 @@ public class ErrorThrow {
         );
     }
 
+    public static void noAccessPermissionBot(MessageReceivedEvent event, Permission permission) {
+        createErrorMessage(
+                event,
+                "## \\❌ У бота нет требуемых прав",
+                "Нет следующего права: %s".formatted(permission.getName())
+        );
+    }
+
+    public static void smallPermission(MessageReceivedEvent event) {
+        createErrorMessage(
+                event,
+                "## \\❌ Ваша роль или роль бота ниже",
+                "Вы или бот не могут замутить пользователя выше своей роли"
+        );
+    }
+
+    public static void notNumber(MessageReceivedEvent event, String input) {
+        createErrorMessage(
+                event,
+                "## \\❌ Вы ввели не число",
+                """
+                        Пожалуйста, проверьте, как вы заполнили аргументы команды
+                        Было введено -> `%s` вместо требуемого аргумента
+                        """.formatted(input.replace("@", "\\@"))
+        );
+    }
+
     public static void userNotFound(MessageReceivedEvent event, String user) {
         createErrorMessage(
                 event,
@@ -34,11 +61,11 @@ public class ErrorThrow {
         );
     }
 
-    public static void timeOverhead(MessageReceivedEvent event) {
+    public static void timeoutOverhead(MessageReceivedEvent event) {
         createErrorMessage(
                 event,
                 "## \\❌ Время слишком большое",
-                "Время мута __не может__ быть более чем **на 28 дней**"
+                "Время мута __не может__ быть более, чем **на 28 дней**"
         );
     }
 
@@ -50,6 +77,19 @@ public class ErrorThrow {
                         \\⚠️ Режим тестирования крайне нестабилен, используйте на свой страх и риск OwO
                         Включить режим тестирования можно командой `рд` (нужны права администратора)
                         """
+        );
+    }
+
+    public static void undefined(MessageReceivedEvent event, String error) {
+        createErrorMessage(
+                event,
+                "## \\❌ Неизвестная ошибка",
+                """
+                        ## Ошибка:
+                        ```Java
+                        %s
+                        ```
+                        """.formatted(error)
         );
     }
 
