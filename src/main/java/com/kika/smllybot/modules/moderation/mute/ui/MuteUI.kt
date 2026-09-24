@@ -26,5 +26,16 @@ class MuteUI {
 
             return Container.of(components)
         }
+
+        @JvmStatic
+        fun unmute(discordId: Long): Container {
+            val components: MutableList<ContainerChildComponent?> = ArrayList(12)
+
+            val header = TextDisplay.of("## \\🎙️ <@$discordId> вернули право слова")
+
+            components.add(header)
+
+            return Container.of(components)
+        }
     }
 }

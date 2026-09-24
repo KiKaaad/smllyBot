@@ -20,7 +20,8 @@ import java.util.List;
 
 public class MuteTable {
 
-    @NotNull JdbcTemplate query;
+    @NotNull
+    static JdbcTemplate query;
     public MuteTable(@NonNull JdbcTemplate query) {
         this.query = query;
     }
@@ -111,7 +112,7 @@ public class MuteTable {
         return query.query(sql, MUTE_MAPPER);
     }
 
-    public void markAsUnmuted(long id, Long removedByDiscordId) {
+    public static void markAsUnmuted(long id, Long removedByDiscordId) {
         String sql = """
             UPDATE mute
             SET active = false,
@@ -120,6 +121,10 @@ public class MuteTable {
             WHERE id = ?;
             """;
 
-        query.update(sql, removedByDiscordId, id);
+        try {
+            query.update(sql, removedByDiscordId, id);
+        } catch (Exception e) {
+            log.error("Возникла ошибка при попытке размутить пользователя", e);
+        }
     }
 }
