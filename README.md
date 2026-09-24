@@ -8,6 +8,8 @@
 
 <img width="2560" alt="kikameowoow" src="https://github.com/user-attachments/assets/ed7fc82d-fbd1-4be8-ac8a-4d61a87c280f" />
 
+---
+
 ![Alt](https://repobeats.axiom.co/api/embed/90733a6f49e9dfee39ea4435bb010d09ec7fa3e9.svg "Repobeats analytics image")
 
 ## 📋 Навигация
