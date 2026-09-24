@@ -46,7 +46,7 @@ public class Mute extends BaseCmd {
         }
 
         if (!guild.getSelfMember().hasPermission(Permission.MODERATE_MEMBERS)) {
-            log.error("❌ У бота нет права MODERATE_MEMBERS для выдачи мутов.");
+            ErrorThrow.noAccessPermissionBot(event, Permission.MODERATE_MEMBERS);
             return null;
         }
 
@@ -65,11 +65,11 @@ public class Mute extends BaseCmd {
             }
 
             if (parts.length < 3) {
-                ErrorThrow.timeOverhead(event);
+                ErrorThrow.timeoutOverhead(event);
                 return null;
             }
 
-            mute(event, target, moderator, parts[1], parts[2], reason);
+            MuteService.mute(event, target, moderator, parts[1], parts[2], reason);
             return null;
         }
 
@@ -78,11 +78,11 @@ public class Mute extends BaseCmd {
             Member target = event.getMessage().getMentions().getMembers().getFirst();
 
             if (parts.length < 4) {
-                ErrorThrow.timeOverhead(event);
+                ErrorThrow.timeoutOverhead(event);
                 return null;
             }
 
-            mute(event, target, moderator, parts[2], parts[3], reason);
+            MuteService.mute(event, target, moderator, parts[2], parts[3], reason);
             return null;
         }
 
@@ -98,12 +98,12 @@ public class Mute extends BaseCmd {
             guild.retrieveMemberById(targetId).queue(
                     target -> {
                         if (parts.length < 4) {
-                            ErrorThrow.timeOverhead(event);
+                            ErrorThrow.timeoutOverhead(event);
                             return;
                         }
-                        mute(event, target, moderator, parts[2], parts[3], reason);
+                        MuteService.mute(event, target, moderator, parts[2], parts[3], reason);
                     },
-                    failure -> log.error("❌ Участник с ID " + arg + " не найден на сервере.")
+                    failure -> ErrorThrow.userNotFound(event, arg)
             );
             return null;
         }
@@ -116,56 +116,15 @@ public class Mute extends BaseCmd {
 
         if (!members.isEmpty()) {
             if (parts.length < 4) {
-                ErrorThrow.timeOverhead(event);
+                ErrorThrow.timeoutOverhead(event);
                 return null;
             }
-            mute(event, members.getFirst(), moderator, parts[2], parts[3], reason);
+            MuteService.mute(event, members.getFirst(), moderator, parts[2], parts[3], reason);
         } else {
-            log.error("❌ Упс... Пользователь с таким юзернеймом не найден.");
+            ErrorThrow.userNotFound(event, members.getFirst().getNickname());
         }
 
         return null;
     }
 
-    private void mute(MessageReceivedEvent event, Member target, Member moderator, String rawAmount, String unit, String reason) {
-        Guild guild = event.getGuild();
-
-        if (!guild.getSelfMember().canInteract(target)) {
-            log.error("❌ Бот не может замутить этого пользователя: Роль пользователя выше роли бота.");
-            return;
-        }
-
-//        if (!moderator.canInteract(target)) {
-//            log.error("❌ Вы не можете замутить этого пользователя: Роль пользователя выше вашей роли.");
-//            return;
-//        }
-
-        long amount;
-        try {
-            amount = Long.parseLong(rawAmount);
-        } catch (NumberFormatException e) {
-            log.error("❌ Некорректное число для времени: {}", rawAmount);
-            return;
-        }
-
-        OffsetDateTime until = TimeUtil.calculateUntil(amount, unit);
-
-        target.timeoutUntil(until).reason(reason).queue(
-                success -> {
-                    MuteCreateData data = new MuteCreateData(
-                            "TIMEOUT",
-                            guild.getIdLong(),
-                            target.getIdLong(),
-                            moderator.getIdLong(),
-                            reason,
-                            until
-                    );
-                    MuteTable.createMute(data);
-
-                    var response = MuteUI.build(target.getIdLong(), moderator.getIdLong(), until, reason);
-                    event.getChannel().sendMessageComponents(response).useComponentsV2(true).queue();
-                },
-                error -> log.error("❌ Ошибка при выдаче мута: {}", error.getMessage())
-        );
-    }
 }
