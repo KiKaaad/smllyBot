@@ -12,6 +12,7 @@ import com.kika.smllybot.modules.guild.GuildInfo;
 import com.kika.smllybot.modules.guild.Staging;
 import com.kika.smllybot.modules.helper.GlobalHelp;
 import com.kika.smllybot.modules.moderation.mute.Mute;
+import com.kika.smllybot.modules.moderation.mute.MuteList;
 import com.kika.smllybot.modules.moderation.mute.Unmute;
 import com.kika.smllybot.modules.privacy.Privacy;
 import com.kika.smllybot.modules.privacy.PrivacyInteraction;
@@ -75,7 +76,7 @@ public class Manager extends ListenerAdapter {
         log.info("✅ Модуль локальных профилей загружен");
 
         // Модерация
-        reg(new Mute(), new Unmute());
+        reg(new Mute(), new Unmute(), new MuteList());
 
         // Настройки гильдии
         reg(new Staging());

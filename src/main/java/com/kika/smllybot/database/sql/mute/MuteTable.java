@@ -112,17 +112,26 @@ public class MuteTable {
         return query.query(sql, MUTE_MAPPER);
     }
 
-    public static void markAsUnmuted(long id, Long removedByDiscordId) {
+    public static List<MuteData> getMuteList(long guildId) {
+        String sql = """
+                SELECT * FROM mute
+                WHERE guild_id = ?
+                """;
+
+        return query.query(sql, MUTE_MAPPER, guildId);
+    }
+
+    public static void markAsUnmuted(long discordId, Long removedByDiscordId, long guildId) {
         String sql = """
             UPDATE mute
             SET active = false,
                 removed_at = NOW(),
                 removed_by = ?
-            WHERE id = ?;
+            WHERE discord_id = ? and active = true and guild_id = ?;
             """;
 
         try {
-            query.update(sql, removedByDiscordId, id);
+            query.update(sql, removedByDiscordId, discordId, guildId);
         } catch (Exception e) {
             log.error("Возникла ошибка при попытке размутить пользователя", e);
         }
