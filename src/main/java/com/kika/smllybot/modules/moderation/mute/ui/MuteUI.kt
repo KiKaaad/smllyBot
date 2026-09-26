@@ -11,16 +11,18 @@ class MuteUI {
 
     companion object {
         @JvmStatic
-        fun build(discordId: Long, byDiscordId: Long, time: OffsetDateTime?, reason: String?): Container {
+        fun mute(discordId: Long, byDiscordId: Long, time: OffsetDateTime?, reason: String?): Container {
             val components: MutableList<ContainerChildComponent?> = ArrayList(12)
 
             val timeRelative = time?.let { TimeUtil.getTimestampRelative(it) } ?: "**навсегда**"
 
             val header = TextDisplay.of("## \\🤫 <@$discordId> лишается права слова на $timeRelative")
+            val separator = Separator.createDivider(Separator.Spacing.SMALL)
             val main = TextDisplay.of("**Модератор:** <@$byDiscordId>")
             val reasonText = TextDisplay.of("**Причина:** $reason")
 
             components.add(header)
+            components.add(separator)
             components.add(main)
             if (reason != null) components.add(reasonText)
 

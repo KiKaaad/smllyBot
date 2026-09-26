@@ -23,7 +23,7 @@ public class TestErrors extends BaseCmd {
         String argument = arg[2];
 
         switch (argument.toLowerCase()) {
-            case "noaccesspermissions" -> ErrorThrow.noAccessPermission(event, Permission.BYPASS_SLOWMODE);
+            case "noaccesspermission" -> ErrorThrow.noAccessPermission(event, Permission.BYPASS_SLOWMODE);
             case "usernotfound" -> ErrorThrow.userNotFound(event, "kef123");
             case "timeoverhead" -> ErrorThrow.timeoutOverhead(event);
             case "onlyonstaging" -> ErrorThrow.onlyOnStaging(event);

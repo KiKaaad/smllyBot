@@ -14,7 +14,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-// TODO: Доделать шедулер этот ваш
+// TODO: Что-то здесь мне не нравится, но понять что пока что не могу
 public class MuteScheduler {
 
     private static final Logger log = LoggerFactory.getLogger(MuteScheduler.class);
@@ -38,14 +38,14 @@ public class MuteScheduler {
             for (MuteData mute : expiredMutes) {
                 Guild guild = jda.getGuildById(mute.getGuildId());
                 if (guild == null) {
-                    muteTable.markAsUnmuted(mute.getId(), null);
+                    muteTable.markAsUnmuted(mute.getId(), null, mute.getGuildId());
                     continue;
                 }
 
                 guild.retrieveMemberById(mute.getDiscordId()).queue(
                         member -> processUnmute(guild, member, mute),
                         throwable -> {
-                            muteTable.markAsUnmuted(mute.getId(), null);
+                            muteTable.markAsUnmuted(mute.getId(), null, mute.getGuildId());
                         }
                 );
             }
@@ -59,8 +59,8 @@ public class MuteScheduler {
             guild.removeTimeout(member)
                     .reason("⏳ Истекло время мута")
                     .queue(
-                            success -> muteTable.markAsUnmuted(mute.getId(), null),
-                            error -> muteTable.markAsUnmuted(mute.getId(), null)
+                            success -> muteTable.markAsUnmuted(mute.getId(), null, mute.getGuildId()),
+                            error -> muteTable.markAsUnmuted(mute.getId(), null, mute.getGuildId())
                     );
         }
     }

@@ -13,7 +13,8 @@ import java.time.OffsetDateTime;
 
 public class MuteService {
 
-    protected static void mute(MessageReceivedEvent event, Member target, Member moderator, String rawAmount, String unit, String reason) {
+    protected static void mute(MessageReceivedEvent event, Member target,
+                               Member moderator, String rawAmount, String unit, String reason) {
         Guild guild = event.getGuild();
 
         if (!guild.getSelfMember().canInteract(target)) {
@@ -48,7 +49,7 @@ public class MuteService {
                     );
                     MuteTable.createMute(data);
 
-                    var response = MuteUI.build(target.getIdLong(), moderator.getIdLong(), until, reason);
+                    var response = MuteUI.mute(target.getIdLong(), moderator.getIdLong(), until, reason);
                     event.getChannel().sendMessageComponents(response).useComponentsV2(true).queue();
                 },
                 error -> ErrorThrow.undefined(event, error.getMessage())
@@ -70,7 +71,7 @@ public class MuteService {
 
         var response = MuteUI.unmute(target.getIdLong());
 
-        MuteTable.markAsUnmuted(target.getIdLong(), moderator.getIdLong());
+        MuteTable.markAsUnmuted(target.getIdLong(), moderator.getIdLong(), target.getGuild().getIdLong());
         target.removeTimeout().queue();
         event.getChannel().sendMessageComponents(response).useComponentsV2(true).queue();
     }

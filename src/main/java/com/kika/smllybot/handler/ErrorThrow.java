@@ -11,6 +11,7 @@ import net.dv8tion.jda.api.components.textdisplay.TextDisplay;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
+import java.awt.*;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 
@@ -109,8 +110,8 @@ public class ErrorThrow {
 
         event.getChannel()
                 .sendMessageComponents(
-                        Container.of(head, separator, main).withAccentColor(0xff6b6b),
-                        Container.of(section).withAccentColor(0xff6b6b)
+                        Container.of(head, separator, main).withAccentColor(Color.RED),
+                        Container.of(section).withAccentColor(Color.RED)
                 )
                 .useComponentsV2(true)
                 .delay(Duration.ofSeconds(15))

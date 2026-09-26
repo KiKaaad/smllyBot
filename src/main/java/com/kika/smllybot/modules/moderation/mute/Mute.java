@@ -2,12 +2,8 @@ package com.kika.smllybot.modules.moderation.mute;
 
 import com.kika.smllybot.database.sql.guild.GuildTable;
 import com.kika.smllybot.database.sql.guild.dto.GuildData;
-import com.kika.smllybot.database.sql.mute.MuteTable;
-import com.kika.smllybot.database.sql.mute.dto.MuteCreateData;
 import com.kika.smllybot.handler.ErrorThrow;
-import com.kika.smllybot.modules.moderation.mute.ui.MuteUI;
 import com.kika.smllybot.other.BaseCmd;
-import com.kika.smllybot.utils.TimeUtil;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.components.container.Container;
 import net.dv8tion.jda.api.entities.Guild;
@@ -16,7 +12,6 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.time.OffsetDateTime;
 import java.util.Set;
 
 public class Mute extends BaseCmd {
@@ -24,7 +19,7 @@ public class Mute extends BaseCmd {
     private static final Logger log = LoggerFactory.getLogger(Mute.class);
 
     public Mute() {
-        super(Set.of("мут", "мьют"));
+        super(Set.of("мут", "мьют", "unmute"));
     }
 
     @Override

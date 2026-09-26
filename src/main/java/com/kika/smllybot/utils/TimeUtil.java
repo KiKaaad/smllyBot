@@ -2,17 +2,13 @@ package com.kika.smllybot.utils;
 
 import net.dv8tion.jda.api.utils.TimeFormat;
 
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
 import java.util.concurrent.TimeUnit;
 
 import static com.kika.smllybot.utils.Plural.getTimeType;
 
 public class TimeUtil {
-
-    public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
 
     // Правильные склонения для фермы
     public static String formatTimeLeft(long timeLeft) {
@@ -54,8 +50,7 @@ public class TimeUtil {
             case "час", "часа", "часов", "ч" -> now.plusHours(rawTime);
             case "минуту", "минуты", "минут", "м" -> now.plusMinutes(rawTime);
             case "секунду", "секунды", "секунд", "с" -> now.plusSeconds(rawTime);
-            case null -> null;
-            default -> null;
+            case null, default -> null;
         };
     }
 
