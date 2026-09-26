@@ -12,6 +12,7 @@ public class NameSave extends ListenerAdapter {
         long id = event.getUser().getIdLong();
         String username = event.getUser().getName();
 
+        UsersTable.getOrCreateUser(id, username);
         UsersTable.setUsername(id, username);
     }
 }

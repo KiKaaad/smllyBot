@@ -31,6 +31,8 @@ class GuildInfoUI {
             val botCount = ctx.event.guild.members.count { it.user.isBot }
             val data = TimeUtil.getTimestamp(ctx.event.guild.timeCreated)
             val dataRelative = TimeUtil.getTimestampRelative(ctx.event.guild.timeCreated)
+            var dev = ""
+            if (ctx.guild.staging) dev = "\\🛠️"
 
             val levelBoost = ctx.event.guild.boostCount
             val emojiBoost: String = when (levelBoost) {
@@ -51,7 +53,7 @@ class GuildInfoUI {
 
             val header = Section.of(
                 Thumbnail.fromUrl(icon),
-                TextDisplay.of("# $guildTitle \\$emojiBoost"),
+                TextDisplay.of("# $guildTitle \\$emojiBoost $dev"),
                 TextDisplay.of(
                     """
                             ### Описание:
@@ -59,7 +61,7 @@ class GuildInfoUI {
                             """.trimIndent()
                 )
             )
-            val separator: ContainerChildComponent = Separator.createDivider(Separator.Spacing.SMALL)
+            val separator = Separator.createDivider(Separator.Spacing.SMALL)
             val dates = TextDisplay.of("Создана $data ($dataRelative)")
             val mainUsers = TextDisplay.of("## Участники:")
             val owner = TextDisplay.of("\\🕶️ **Владелец:** $ownerName | **ID:** `$ownerId`")

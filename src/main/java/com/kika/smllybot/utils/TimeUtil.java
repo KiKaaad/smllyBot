@@ -2,17 +2,13 @@ package com.kika.smllybot.utils;
 
 import net.dv8tion.jda.api.utils.TimeFormat;
 
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
 import java.util.concurrent.TimeUnit;
 
 import static com.kika.smllybot.utils.Plural.getTimeType;
 
 public class TimeUtil {
-
-    public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
 
     // Правильные склонения для фермы
     public static String formatTimeLeft(long timeLeft) {
@@ -43,13 +39,19 @@ public class TimeUtil {
         return TimeFormat.RELATIVE.atTimestamp(time.toInstant().toEpochMilli()).toString();
     }
 
-    @Deprecated
-    public static String getBotTimestamp(String date) {
-        if (date == null || date.isBlank()) return "Неизвестно";
+    public static OffsetDateTime calculateUntil(long rawTime, String type) {
+        OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC);
 
-        LocalDateTime dateTime = LocalDateTime.parse(date, DATE_TIME_FORMATTER);
-        long millis = dateTime.toInstant(ZoneOffset.UTC).toEpochMilli();
-        return TimeFormat.DATE_TIME_SHORT.atTimestamp(millis).toString();
+        return switch (type.toLowerCase().trim()) {
+            case "год", "года", "лет", "г", "л" -> now.plusYears(rawTime);
+            case "месяц", "месяца", "месяцев", "мес" -> now.plusMonths(rawTime);
+            case "неделю", "недели", "недель", "нед" -> now.plusWeeks(rawTime);
+            case "день", "дня", "дней", "д" -> now.plusDays(rawTime);
+            case "час", "часа", "часов", "ч" -> now.plusHours(rawTime);
+            case "минуту", "минуты", "минут", "м" -> now.plusMinutes(rawTime);
+            case "секунду", "секунды", "секунд", "с" -> now.plusSeconds(rawTime);
+            case null, default -> null;
+        };
     }
 
 }

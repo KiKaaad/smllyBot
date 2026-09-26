@@ -57,7 +57,7 @@ public class BankTable {
                 """;
 
         try {
-            return DatabaseManager.getQuery().queryForObject(upsertSql, BANK_MAPPER, id, defaultName.replace("@", "\\@"));
+            return DatabaseManager.getQuery().queryForObject(upsertSql, BANK_MAPPER, id, defaultName);
         } catch (Exception e) {
             log.error("❌ Ошибка при получении / создании BANK: ", e);
         }
@@ -81,6 +81,15 @@ public class BankTable {
             DatabaseManager.getQuery().update(sql, id);
         } catch (Exception e) {
             log.error("❌ Ошибка обновления времени фармы: ", e);
+        }
+    }
+
+    public static void scheduleMinusStars() {
+        String sql = "UPDATE bank SET star = star * 0.99";
+        try {
+            DatabaseManager.getQuery().update(sql);
+        } catch (Exception e) {
+            log.error("❌ Не удалось исполнить таск уменьшение звездности", e);
         }
     }
 

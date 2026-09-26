@@ -8,12 +8,13 @@ import net.dv8tion.jda.api.components.container.ContainerChildComponent
 import net.dv8tion.jda.api.components.section.Section
 import net.dv8tion.jda.api.components.separator.Separator
 import net.dv8tion.jda.api.components.textdisplay.TextDisplay
+import kotlin.collections.buildList
 
 class GlobalHelpUI {
 
     companion object {
         @JvmStatic
-        fun defaultHelp(discordId: Long): Container {
+        fun defaultHelp(discordId: Long, page: Int): Container {
 
             val header: ContainerChildComponent = TextDisplay.of("# \\ℹ️ Справочная информация")
             val mainInfo: ContainerChildComponent = TextDisplay.of(
@@ -33,6 +34,11 @@ class GlobalHelpUI {
                 TextDisplay.of("## \\👤 Профили & Анкеты"),
                 TextDisplay
                     .of("### Анкеты и профили описывают конкретного юзера, которую пользователь указал у себя в профиле.")
+            )
+            val moderationModule: ContainerChildComponent = Section.of(
+                Button.of(ButtonStyle.SECONDARY, "help:moderation:$discordId", "➡️"),
+                TextDisplay.of("## \\🛡️ Модерация \\🅱️"),
+                TextDisplay.of("### Позволяет модерировать дискорд-сервер и держать его в чистое и порядке")
             )
             val tops: ContainerChildComponent = Section.of(
                 Button.of(ButtonStyle.SECONDARY, "help:tops:$discordId", "➡️"),
@@ -59,26 +65,40 @@ class GlobalHelpUI {
                 TextDisplay.of("## \\❔ Другое"),
                 TextDisplay.of("### Все команды, что не поддаются описаниям категорий выше")
             )
+            val pagination = ActionRow.of(
+                Button.of(ButtonStyle.PRIMARY, "help:undo:$page:$discordId", "⬅️ Назадㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ").withDisabled(page <= 1),
+                Button.of(ButtonStyle.PRIMARY, "help:redo:$page:$discordId", "ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤВперед ➡️").withDisabled(page >= 2)
+            )
 
-            val components = buildList {
+            val page1 = if (page == 1) buildList {
                 add(header)
                 add(mainInfo)
                 add(buttons)
                 add(separator)
                 add(userModule)
                 add(separator)
+                add(moderationModule)
+                add(separator)
                 add(tops)
                 add(separator)
                 add(economy)
                 add(separator)
                 add(statistic)
-                add(separator)
-                add(interactive)
-                add(separator)
-                add(others)
+                add(pagination)
+            } else {
+                buildList {
+                    add(header)
+                    add(mainInfo)
+                    add(buttons)
+                    add(separator)
+                    add(interactive)
+                    add(separator)
+                    add(others)
+                    add(pagination)
+                }
             }
 
-            return Container.of(components)
+            return Container.of(page1)
         }
 
         @JvmStatic
@@ -239,6 +259,40 @@ class GlobalHelpUI {
         }
 
         @JvmStatic
+        fun moderation(discordId: Long): Container {
+
+            val header: ContainerChildComponent = Section.of(
+                Button.of(ButtonStyle.SECONDARY, "help:back:$discordId", "🔙"),
+                TextDisplay.of("# \\🛡️ Модерация \\🅱️"),
+                TextDisplay
+                    .of("### \\🅱️ — крайне нестабильный и не протестированный модуль. Используйте осторожно и сообщайте об ошибках")
+            )
+            val mainInfo: ContainerChildComponent = TextDisplay.of(
+                "### Позволяет модерировать дискорд-сервер и держать его в чистое и порядке.")
+            val separator: ContainerChildComponent = Separator.createDivider(Separator.Spacing.SMALL)
+            val interactiveModule: ContainerChildComponent = TextDisplay.of("""
+                - `мут` <юзернейм / айди / никнейм> <время> <причина>\⬇️ — мутит пользователь на указанное время
+                   - `размут` <юзернейм / айди / никнейм>
+                - `мутлист` — показывает все муты, которые когда либо были
+                """.trimIndent())
+            val footer: ContainerChildComponent = TextDisplay.of("""
+                -# \ℹ️ **< аргумент >** — необязательные аргументы | **[ аргумент ]** — обязательные аргументы
+                -# \⬇️ — знаком вниз помечаются аргументы которые пишутся на следующей строке (shift + enter) 
+                -# При использовании тайм-аут мутов максимальный срок — **28 дней**
+                """.trimIndent())
+            val components = buildList {
+                add(header)
+                add(mainInfo)
+                add(separator)
+                add(interactiveModule)
+                add(separator)
+                add(footer)
+            }
+
+            return Container.of(components)
+        }
+
+        @JvmStatic
         fun other(discordId: Long): Container {
 
             val header: ContainerChildComponent = Section.of(
@@ -265,3 +319,5 @@ class GlobalHelpUI {
         }
     }
 }
+
+// TODO: Требует рефакторинг общих деталей (футер)

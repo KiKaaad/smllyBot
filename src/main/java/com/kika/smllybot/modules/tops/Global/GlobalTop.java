@@ -32,14 +32,14 @@ public class GlobalTop extends BaseCmd {
         long owner = event.getAuthor().getIdLong();
 
         switch (value) {
-            case "ириски" -> {
+            case "ириски", "ирисы", "ирис" -> {
                 List<BankTopAmount> topAmount = BankTable.getTopIris();
                 GlobalTopContext ctx = new GlobalTopContext(topAmount, "iris", owner);
                 var response = GlobalTopUI.build(ctx, 1);
 
                 event.getChannel().sendMessageComponents(response).useComponentsV2(true).queue();
             }
-            case "коины" -> {
+            case "коины", "ферма", "фарма" -> {
                 List<BankTopAmount> topAmount = BankTable.getTopIrisCoins();
                 GlobalTopContext ctx = new GlobalTopContext(topAmount, "coin", owner);
                 var response = GlobalTopUI.build(ctx, 1);

@@ -20,7 +20,7 @@ public class GlobalHelp extends BaseCmd {
     public Container execute(MessageReceivedEvent event, String raw, String args) {
 
         if (args.isEmpty()) {
-            Container response = GlobalHelpUI.defaultHelp(event.getAuthor().getIdLong());
+            Container response = GlobalHelpUI.defaultHelp(event.getAuthor().getIdLong(), 1);
 
             event.getChannel().sendMessageComponents(response)
                     .useComponentsV2(true)
@@ -41,6 +41,8 @@ public class GlobalHelp extends BaseCmd {
         if (!Interaction.checkOwner(event, args)) return;
         String[] componentId = event.getComponentId().split(":");
         var discordId = event.getUser().getIdLong();
+        int page = 1;
+        if (Long.parseLong(componentId[2]) <= 10) page = Integer.parseInt(componentId[2]);
 
         switch (componentId[1]) {
             case "anketaAndProfile" -> {
@@ -78,6 +80,13 @@ public class GlobalHelp extends BaseCmd {
                         .useComponentsV2(true)
                         .queue();
             }
+            case "moderation" -> {
+                var response = GlobalHelpUI.moderation(discordId);
+
+                event.editComponents(response)
+                        .useComponentsV2(true)
+                        .queue();
+            }
             case "other" -> {
                 var response = GlobalHelpUI.other(discordId);
 
@@ -86,7 +95,21 @@ public class GlobalHelp extends BaseCmd {
                         .queue();
             }
             case "back" -> {
-                var response = GlobalHelpUI.defaultHelp(discordId);
+                var response = GlobalHelpUI.defaultHelp(discordId, page);
+
+                event.editComponents(response)
+                        .useComponentsV2(true)
+                        .queue();
+            }
+            case "redo" -> {
+                var response = GlobalHelpUI.defaultHelp(discordId, 2);
+
+                event.editComponents(response)
+                        .useComponentsV2(true)
+                        .queue();
+            }
+            case "undo" -> {
+                var response = GlobalHelpUI.defaultHelp(discordId, 1);
 
                 event.editComponents(response)
                         .useComponentsV2(true)

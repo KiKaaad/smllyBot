@@ -9,10 +9,15 @@ import com.kika.smllybot.modules.economy.Dice;
 import com.kika.smllybot.modules.economy.Farm;
 import com.kika.smllybot.modules.fun.*;
 import com.kika.smllybot.modules.guild.GuildInfo;
+import com.kika.smllybot.modules.guild.Staging;
 import com.kika.smllybot.modules.helper.GlobalHelp;
+import com.kika.smllybot.modules.moderation.mute.Mute;
+import com.kika.smllybot.modules.moderation.mute.MuteList;
+import com.kika.smllybot.modules.moderation.mute.Unmute;
 import com.kika.smllybot.modules.privacy.Privacy;
 import com.kika.smllybot.modules.privacy.PrivacyInteraction;
 import com.kika.smllybot.modules.statistic.StatisticBot;
+import com.kika.smllybot.modules.testing.TestErrors;
 import com.kika.smllybot.modules.tops.Global.GlobalTop;
 import com.kika.smllybot.modules.user.Global.GlobalProfile;
 import com.kika.smllybot.modules.user.Global.Motto;
@@ -70,6 +75,12 @@ public class Manager extends ListenerAdapter {
         reg(new Citizenship());
         log.info("✅ Модуль локальных профилей загружен");
 
+        // Модерация
+        reg(new Mute(), new Unmute(), new MuteList());
+
+        // Настройки гильдии
+        reg(new Staging());
+
         // Интерактивные команды
         reg(new Hug(), new Bite(), new Burn(), new Cuddle(), new Five(), new Fuck(), new Five(), new Fuckin(),
                 new Furryfication(), new GigaHit(), new Hit(), new Hold(), new Kick(), new Kill(), new Kiss(),
@@ -78,6 +89,7 @@ public class Manager extends ListenerAdapter {
         log.info("✅ Интерактивные команды загружены");
 
         // Другое
+        reg(new TestErrors());
         reg(new GlobalHelp());
         reg(new Privacy());
         reg(new PrivacyInteraction());
@@ -94,7 +106,7 @@ public class Manager extends ListenerAdapter {
                 if (method.isAnnotationPresent(ButtonPrefix.class)) {
                     ButtonPrefix annotation = method.getAnnotation(ButtonPrefix.class);
                     String prefix = annotation.prefix().toLowerCase();
-                    log.info("📌 Зарегистрирована кнопка '{}' -> Метод: {} (параметров: {})",
+                    log.debug("📌 Зарегистрирована кнопка '{}' -> Метод: {} (параметров: {})",
                             prefix, method.toGenericString(), method.getParameterCount());
                     method.setAccessible(true);
 
@@ -106,7 +118,7 @@ public class Manager extends ListenerAdapter {
                 if (method.isAnnotationPresent(ModalPrefix.class)) {
                     ModalPrefix annotation = method.getAnnotation(ModalPrefix.class);
                     String prefix = annotation.prefix().toLowerCase();
-                    log.debug("🪛 Получен префикс модального окна: " + prefix);
+                    log.debug("\uD83E\uDE9B Получен префикс модального окна: {}", prefix);
                     method.setAccessible(true);
 
                     modal.put(prefix, new RegisteredModal(cmd, method));
