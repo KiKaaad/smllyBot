@@ -60,13 +60,14 @@ site:
             directory: ./changelog
     - type: section
       key: section-5
-      title: Help Center
+      title: Помощь
       path: help-center
+      description: ""
       icon: life-ring
       children:
         - type: space
           key: space-5
-          title: Help Center
+          title: Помощь
           path: help-center
           default: true
           content:
