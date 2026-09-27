@@ -16,6 +16,7 @@ site:
           default: true
           content:
             directory: ./home
+            language: ru
     - type: section
       key: section-2
       title: Documentation
