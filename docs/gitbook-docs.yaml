@@ -4,14 +4,15 @@ site:
   structure:
     - type: section
       key: section-1
-      title: Home
+      title: Главная
       path: home
+      description: ""
       icon: house
       default: true
       children:
         - type: space
           key: space-1
-          title: Home
+          title: Главная
           path: home
           default: true
           content:
@@ -19,13 +20,14 @@ site:
             language: ru
     - type: section
       key: section-2
-      title: Documentation
+      title: Документация
       path: documentation
+      description: ""
       icon: book-blank
       children:
         - type: space
           key: space-2
-          title: Documentation
+          title: Документация
           path: documentation
           default: true
           content:
