@@ -30,7 +30,6 @@ site:
           title: Документация
           path: documentation
           default: true
-          hidden: true
           content:
             directory: ./documentation
     - type: section
