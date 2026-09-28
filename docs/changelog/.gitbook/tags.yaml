@@ -1,6 +1,6 @@
 - tag: improvement
   label: Обновление
-  icon: wrench-simple
+  icon: asterisk
   color: blue
 - tag: fix
   label: Исправление
@@ -14,3 +14,10 @@
   label: Хотфикс
   icon: fire
   color: $danger
+- tag: reliz
+  label: Релиз
+  icon: sun-bright
+  color: green
+- tag: veta
+  label: βeta
+  icon: terminal
