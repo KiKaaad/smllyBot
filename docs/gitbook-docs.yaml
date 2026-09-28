@@ -1,0 +1,77 @@
+$schema: https://api.gitbook.com/gitbook-docs.yaml
+site:
+  title: smlly, Nocm
+  structure:
+    - type: section
+      key: section-1
+      title: Главная
+      path: home
+      description: ""
+      icon: house
+      default: true
+      children:
+        - type: space
+          key: space-1
+          title: Главная
+          path: home
+          default: true
+          content:
+            directory: ./home
+            language: ru
+    - type: section
+      key: section-2
+      title: Документация
+      path: documentation
+      description: ""
+      icon: book-blank
+      children:
+        - type: space
+          key: space-2
+          title: Документация
+          path: documentation
+          default: true
+          content:
+            directory: ./documentation
+    - type: section
+      key: section-3
+      title: API Reference
+      path: api-reference
+      icon: terminal
+      children:
+        - type: space
+          key: space-3
+          title: API Reference
+          path: api-reference
+          default: true
+          hidden: true
+          content:
+            directory: ./api-reference
+    - type: section
+      key: section-4
+      title: Чендж-лог
+      path: changelog
+      description: Список всех изменений бота за все время
+      icon: clock-rotate-left
+      children:
+        - type: space
+          key: space-4
+          title: Чендж-лог
+          path: changelog
+          default: true
+          content:
+            directory: ./changelog
+            language: ru
+    - type: section
+      key: section-5
+      title: Помощь
+      path: help-center
+      description: ""
+      icon: life-ring
+      children:
+        - type: space
+          key: space-5
+          title: Помощь
+          path: help-center
+          default: true
+          content:
+            directory: ./help-center
