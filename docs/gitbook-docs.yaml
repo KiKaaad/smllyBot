@@ -58,6 +58,7 @@ site:
           default: true
           content:
             directory: ./changelog
+            language: ru
     - type: section
       key: section-5
       title: Помощь
