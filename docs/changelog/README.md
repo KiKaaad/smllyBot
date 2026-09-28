@@ -1,5 +1,5 @@
 ---
-description: New updates and improvements
+description: Страница с обновлениями дискорд-бота
 icon: clock-rotate-left
 layout:
   width: wide
@@ -12,9 +12,9 @@ layout:
   outline:
     visible: true
   pagination:
-    visible: false
+    visible: true
   metadata:
-    visible: false
+    visible: true
   tags:
     visible: true
   actions:
@@ -23,128 +23,83 @@ layout:
     visible: true
 ---
 
-# Changelog
-
-
+# 🔄️ Чендж-лог
 
 {% updates format="full" %}
-{% update date="2025-12-03" tags="feature,improvement,fix" %}
-## Product update
+{% update date="2026-09-26" tags="novoe,improvement,fix,feature" %}
+## v0.7.0 — Модуль мутов
 
-See what’s new and improved in our latest update.
+### ✨ Новое
 
-<div align="left"><figure><img src="https://gitbookio.github.io/onboarding-template-images/placeholder.png" alt=""><figcaption></figcaption></figure></div>
+* Звездность теперь действительно уменьшается каждые 5 дней на 1%
+* Новая команда раннего доступа - `рд`. Позволяет использовать то,\
+  что еще не вышло в релиз
+* Муты и размуты! Теперь можно мутить сроком до 28 дней, через тайм-ауты\
+  (НЕ управляемая роль пока что). Подробнее в `хелп`
+* История мутов - `мутлист`
 
-### Product feature
+{% hint style="info" %}
+Муты, размуты и мутлист будут работать только при включенном режиме тестирования — `рд`
+{% endhint %}
 
-* Feature description
-* Feature description
+* Единый обработчик ошибок. Теперь большинство ответов выглядят более\
+  стилизованно под бота
+* **Тестировщик:** Можно вызывать ошибки через `debug error`
+  * Типы ошибок: `noAccessPermission`,\
+    `userNotFound`, `notNumber`, `undefined` и другие
 
-### Product feature
+### 🔄️ Обновлено
 
-* Feature description
-* Feature description
+* Топы стали более отзывчивыми
+* Добавлены пагинации в помощь по боту - `хелп`
+* UI мешка переписан на Kotlin
 
-<a href="2026/product-update.md" class="button primary">Read full update</a><a href="https://gitbook.com/" class="button secondary">Documentation</a>
+### 🐛 Исправлено
 
-<details>
-
-<summary>Improved</summary>
-
-* Product improvement
-* Product improvement
-* Product improvement
-* Product improvement
-* Product improvement
-
-</details>
-
-<details>
-
-<summary>Fixed</summary>
-
-* Product fix
-* Product fix
-* Product fix
-* Product fix
-* Product fix
-
-</details>
+* Таблица гильдий могла не создаться из-за неверного типа колонки
+* В информации о гильдии (`гильдия`) не выводились часть полей
 {% endupdate %}
 
-{% update date="2026-05-08" tags="feature,fix" %}
-## Product update
+{% update date="2026-09-14" tags="feature,fix" %}
+## v0.6.4
 
-See what’s new and improved in our latest update.
+### 🐛 Исправления
 
-<div align="left"><figure><img src="https://gitbookio.github.io/onboarding-template-images/placeholder.png" alt=""><figcaption></figcaption></figure></div>
-
-### Product feature
-
-* Feature description
-* Feature description
-
-<a href="2026/product-update-1.md" class="button primary">Read full update</a><a href="https://gitbook.com/" class="button secondary">Documentation</a>
-
-<details>
-
-<summary>Fixed</summary>
-
-* Product fix
-* Product fix
-* Product fix
-* Product fix
-* Product fix
-
-</details>
+* Имя в анкете могло быть null, из-за чего анкета не открывалась
+* При просмотре чужого профиля, тому, чей профиль смотрели,\
+  устанавливалась дата того, кто смотрел
+* Шансы на больший выигрыш до 2.500 коинов были выше, чем шансы на выигрыш\
+  до 500
 {% endupdate %}
 
-{% update date="2025-11-18" tags="improvement,fix" %}
-## Product update
+{% update date="2026-08-28" tags="khotfiks" %}
+## v0.6.3 — Хотфикс
 
-See what’s new and improved in our latest update.
+### 🐛 Исправления
 
-<a href="2025/product-update.md" class="button primary">Read full update</a><a href="https://gitbook.com/" class="button secondary">Documentation</a>
-
-<details>
-
-<summary>Improved</summary>
-
-* Product improvement
-* Product improvement
-* Product improvement
-* Product improvement
-* Product improvement
-
-</details>
-
-<details>
-
-<summary>Fixed</summary>
-
-* Product fix
-* Product fix
-* Product fix
-* Product fix
-* Product fix
-
-</details>
+* Команда `о себе` ставила в описание только первое слово
+* В никнейм, о себе, девиз можно было поставить любые пинги и в том числе everyone, here
 {% endupdate %}
 
-{% update date="2025-06-09" tags="feature" %}
-## Product update
+{% update date="2026-08-24" tags="feature,novoe,improvement,fix" %}
+## v0.6.2 — Гильдии
 
-See what’s new and improved in our latest update.
+### ✨ Новое
 
+* Команда `гильдия` - выводит информацию о сервере. Рядом с названием отображается уровень буста в виде эмоджи,\
+  описание сервера, количество участников, бустеров, каналов и ролей, айди гильдии, владелец и другое
 
+### 🔄️ Обновлено
 
-<div align="left"><figure><img src="https://gitbookio.github.io/onboarding-template-images/placeholder.png" alt=""><figcaption></figcaption></figure></div>
+* По умолчанию вместо "100 фактов о фембоях" теперь выводится версия бота
+* Красивое форматирование чисел в статистике анкеты и профиля: 1234567 → 1.234.567
+* Команде профиля добавлен алиас `кто ты`
 
-### Product feature
+### 🐛 Исправлено
 
-* Feature description
-* Feature description
-
-<a href="2025/product-update-1.md" class="button primary">Read full update</a><a href="https://gitbook.com/" class="button secondary">Documentation</a>
+* При использовании команды `о себе` или `девиз` при переходе обратно исчезал баннер
+* При использовании команды `кто я` "я" принималась как аргумент и бот естественно выводил, что такого пользователя нет
+* При использовании команды `статбот`, если у бота отсутствовал баннер или аватарка статистика бота просто не выводилась
+* В терминал могла выводиться пустота, если любая команда используется без аргументов
 {% endupdate %}
 {% endupdates %}

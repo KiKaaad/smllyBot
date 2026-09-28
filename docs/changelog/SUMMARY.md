@@ -1,6 +1,6 @@
 # Table of contents
 
-* [Changelog](README.md)
+* [🔄️ Чендж-лог](README.md)
 
 ## 2026
 
