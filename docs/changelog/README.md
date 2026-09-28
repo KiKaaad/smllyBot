@@ -26,7 +26,7 @@ layout:
 # 🔄️ Чендж-лог
 
 {% updates format="full" %}
-{% update date="2026-09-26" tags="reliz,novoe,improvement,fix,feature" %}
+{% update date="2026-09-26" tags="veta,novoe,improvement,fix,feature" %}
 ## v0.7.0 — Модуль мутов
 
 ### ✨ Новое
