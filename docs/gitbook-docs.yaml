@@ -44,6 +44,7 @@ site:
           title: API Reference
           path: api-reference
           default: true
+          hidden: true
           content:
             directory: ./api-reference
     - type: section
