@@ -25,7 +25,7 @@ layout:
 
 # Discord bot - femboy#6593
 
-<figure><img src="https://private-user-images.githubusercontent.com/177404098/618657881-ed7fc82d-fbd1-4be8-ac8a-4d61a87c280f.png?jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3OTA1Mzc2MzgsIm5iZiI6MTc5MDUzNzMzOCwicGF0aCI6Ii8xNzc0MDQwOTgvNjE4NjU3ODgxLWVkN2ZjODJkLWZiZDEtNGJlOC1hYzhhLTRkNjFhODdjMjgwZi5wbmc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjYwOTI3JTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI2MDkyN1QxOTI4NThaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT01MmVlNWY5NTQ2ZGU2YmM2ZThmMWFkMmFhMzE5YmVlMDc2ZGE0MjIxMDJlYjMzY2JlOTJkYzJlZjFjOTFkMmU1JlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCZyZXNwb25zZS1jb250ZW50LXR5cGU9aW1hZ2UlMkZwbmcifQ.F1YQAbOHf6ZuHTO54DBgH4RIaIMj-2M-aSISLa7DBFo" alt=""><figcaption></figcaption></figure>
+<figure><img src=".gitbook/assets/618657881-ed7fc82d-fbd1-4be8-ac8a-4d61a87c280f.png" alt=""><figcaption></figcaption></figure>
 
 ## Использование готового бота
 
