@@ -1,6 +1,6 @@
 # Table of contents
 
-* [Help Center](README.md)
+* [Помощь](README.md)
 
 ## Getting started
 

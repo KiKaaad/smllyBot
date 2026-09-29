@@ -22,29 +22,19 @@ layout:
     visible: false
 ---
 
-# Help Center
+# Помощь
 
-{% columns %}
-{% column width="16.666666666666664%" %}
+{% hint style="info" icon="terminal" %}
+Эта страница **в разработке**. Здесь может быть не полная информация
 
-{% endcolumn %}
-
-{% column width="66.66666666666667%" %}
-{% hint style="success" %}
-**All systems operational** — No known issues. [View status page](https://status.gitbook.com)
+Я обязательно сообщу в [тг-канале](https://t.me/smaaaly) и [дискорд-сервере](https://discord.gg/3JSz5fEeee) о том, что эта страница полностью доделана
 {% endhint %}
-{% endcolumn %}
-
-{% column width="16.666666666666657%" %}
-
-{% endcolumn %}
-{% endcolumns %}
 
 <h2 align="center">What can we help you find?</h2>
 
 <p align="center">Browse the topics below or use the GitBook Assistant to ask anything you need help with.</p>
 
-<p align="center"><button type="button" class="button primary" data-action="ask" data-icon="gitbook-assistant">How can we help?</button><a href="https://gitbook.com/" class="button secondary" data-icon="paper-plane">Contact support</a></p>
+<p align="center"><a href="https://t.me/kikaaad" class="button secondary" data-icon="paper-plane">Связаться с поддержкой</a></p>
 
 &#x20;
 
