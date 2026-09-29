@@ -2,17 +2,15 @@
 
 * [Привет!](README.md)
 
-## Getting Started
+## Начать пользоваться
 
-* [Getting started](getting-started/getting-started.md)
-* [Quickstart](getting-started/quickstart.md)
-* [Your first project](getting-started/your-first-project.md)
+* [Getting started](nachat-polzovatsya/getting-started.md)
 
-## Core concepts
+## Модули
 
-* [Core concepts](core-concepts/core-concepts.md)
-* [Workspaces and projects](core-concepts/workspaces-and-projects.md)
-* [Permissions](core-concepts/permissions.md)
+* [Модерация](moduli/moderaciya.md)
+* [Workspaces and projects](moduli/workspaces-and-projects.md)
+* [Permissions](moduli/permissions.md)
 
 ## Guides
 
