@@ -5,6 +5,8 @@ import net.dv8tion.jda.api.components.buttons.Button
 import net.dv8tion.jda.api.components.buttons.ButtonStyle
 import net.dv8tion.jda.api.components.container.Container
 import net.dv8tion.jda.api.components.container.ContainerChildComponent
+import net.dv8tion.jda.api.components.mediagallery.MediaGallery
+import net.dv8tion.jda.api.components.mediagallery.MediaGalleryItem
 import net.dv8tion.jda.api.components.section.Section
 import net.dv8tion.jda.api.components.separator.Separator
 import net.dv8tion.jda.api.components.textdisplay.TextDisplay
@@ -28,6 +30,14 @@ class GlobalHelpUI {
                 Button.of(ButtonStyle.LINK, "https://github.com/KiKaaad/smllyBot", "🐈‍⬛ Гитхаб"),
                 Button.of(ButtonStyle.LINK, "https://github.com/KiKaaad/smllyBot/issues", "🐞 Нашел ошибку")
             )
+            val help = Section.of(
+                Button.of(ButtonStyle.LINK, "https://smlly.gitbook.io/i", "🛟 Вики"),
+                TextDisplay.of("## Что-то не понятно?"),
+                TextDisplay.of("""
+                    У бота есть крутецкая документация с видео-иллюстрациями.
+                    Там вы точно все поймете!
+                    """.trimIndent())
+            )
             val separator: ContainerChildComponent = Separator.createDivider(Separator.Spacing.SMALL)
             val userModule: ContainerChildComponent = Section.of(
                 Button.of(ButtonStyle.SECONDARY, "help:anketaAndProfile:$discordId", "➡️"),
@@ -38,7 +48,7 @@ class GlobalHelpUI {
             val moderationModule: ContainerChildComponent = Section.of(
                 Button.of(ButtonStyle.SECONDARY, "help:moderation:$discordId", "➡️"),
                 TextDisplay.of("## \\🛡️ Модерация \\🅱️"),
-                TextDisplay.of("### Позволяет модерировать дискорд-сервер и держать его в чистое и порядке")
+                TextDisplay.of("### Позволяет модерировать дискорд-сервер и держать его в чистоте и порядке")
             )
             val tops: ContainerChildComponent = Section.of(
                 Button.of(ButtonStyle.SECONDARY, "help:tops:$discordId", "➡️"),
@@ -74,6 +84,7 @@ class GlobalHelpUI {
                 add(header)
                 add(mainInfo)
                 add(buttons)
+                add(help)
                 add(separator)
                 add(userModule)
                 add(separator)
@@ -90,6 +101,7 @@ class GlobalHelpUI {
                     add(header)
                     add(mainInfo)
                     add(buttons)
+                    add(help)
                     add(separator)
                     add(interactive)
                     add(separator)
@@ -268,7 +280,8 @@ class GlobalHelpUI {
                     .of("### \\🅱️ — крайне нестабильный и не протестированный модуль. Используйте осторожно и сообщайте об ошибках")
             )
             val mainInfo: ContainerChildComponent = TextDisplay.of(
-                "### Позволяет модерировать дискорд-сервер и держать его в чистое и порядке.")
+                "### Позволяет модерировать дискорд-сервер и держать его в чистоте и порядке.")
+            val illustration = MediaGallery.of(MediaGalleryItem.fromUrl("https://github.com/KiKaaad/smllyBot/blob/gitbook/docs/docs/changelog/.gitbook/assets/v0.7.0.gif?raw=true"))
             val separator: ContainerChildComponent = Separator.createDivider(Separator.Spacing.SMALL)
             val interactiveModule: ContainerChildComponent = TextDisplay.of("""
                 - `мут` <юзернейм / айди / никнейм> <время> <причина>\⬇️ — мутит пользователь на указанное время
@@ -283,6 +296,7 @@ class GlobalHelpUI {
             val components = buildList {
                 add(header)
                 add(mainInfo)
+                add(illustration)
                 add(separator)
                 add(interactiveModule)
                 add(separator)
