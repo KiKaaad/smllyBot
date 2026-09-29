@@ -32,6 +32,7 @@ site:
           default: true
           content:
             directory: ./documentation
+            language: ru
     - type: section
       key: section-3
       title: API Reference
