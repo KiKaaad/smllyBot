@@ -5,7 +5,13 @@ description: >-
 icon: hand-wave
 ---
 
-# Welcome
+# Привет!
+
+{% hint style="info" icon="terminal" %}
+Эта страница **в разработке**. Здесь может быть не полная информация
+
+Я обязательно сообщу в [тг-канале](https://t.me/smaaaly) и [дискорд-сервере](https://discord.gg/3JSz5fEeee) о том, что эта страница полностью доделана
+{% endhint %}
 
 Welcome to the platform. These docs cover everything from your first project to advanced workflows — pick a starting point below or ask the Assistant to jump straight to what you need.
 
