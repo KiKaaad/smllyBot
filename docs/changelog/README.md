@@ -29,6 +29,8 @@ layout:
 {% update date="2026-09-26" tags="veta,novoe,improvement,fix,feature" %}
 ## v0.7.0 — Модуль мутов
 
+<div data-with-frame="true"><figure><img src=".gitbook/assets/v0.7.0.gif" alt=""><figcaption><p>Как включить ранний доступ. Как работают мут и мутлист</p></figcaption></figure></div>
+
 ### ✨ Новое
 
 * Звездность теперь действительно уменьшается каждые 5 дней на 1%
