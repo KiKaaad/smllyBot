@@ -18,6 +18,8 @@ icon: gavel
 
 ### 🔇 Муты
 
+<div data-with-frame="true"><figure><img src="../.gitbook/assets/mutemoder.gif" alt=""><figcaption><p>Мут и размут пользователя</p></figcaption></figure></div>
+
 Муты поддерживают множество возможных вариаций замутить пользователя:
 
 * Ответом на сообщение нарушителя
