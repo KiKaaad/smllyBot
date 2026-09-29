@@ -8,18 +8,13 @@
 
 ## Модули
 
+* [Анкеты & Профили](moduli/ankety-and-profili.md)
+* [Экономика](moduli/ekonomika.md)
 * [Модерация](moduli/moderaciya.md)
-* [Workspaces and projects](moduli/workspaces-and-projects.md)
-* [Permissions](moduli/permissions.md)
+* [Интерактивные команды](moduli/interaktivnye-komandy.md)
 
-## Guides
+## Для разработчиков
 
-* [Guides](guides/guides.md)
-* [Custom domains](guides/custom-domains.md)
-* [Automations](guides/automations.md)
-
-## Reference
-
-* [Reference](reference/reference.md)
-* [Configuration](reference/configuration.md)
-* [Glossary](reference/glossary.md)
+* [Guides](dlya-razrabotchikov/guides.md)
+* [Custom domains](dlya-razrabotchikov/custom-domains.md)
+* [Automations](dlya-razrabotchikov/automations.md)
