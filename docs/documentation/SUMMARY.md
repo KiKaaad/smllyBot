@@ -4,7 +4,7 @@
 
 ## Начать пользоваться
 
-* [Getting started](nachat-polzovatsya/getting-started.md)
+* [Прежде, чем начнем](nachat-polzovatsya/prezhde-chem-nachnem.md)
 
 ## Модули
 
