@@ -24,11 +24,23 @@ layout:
 
 # Помощь
 
+{% columns %}
+{% column width="8.333333333333332%" %}
+
+{% endcolumn %}
+
+{% column width="83.33333333333333%" %}
 {% hint style="info" icon="terminal" %}
 Эта страница **в разработке**. Здесь может быть не полная информация
 
 Я обязательно сообщу в [тг-канале](https://t.me/smaaaly) и [дискорд-сервере](https://discord.gg/3JSz5fEeee) о том, что эта страница полностью доделана
 {% endhint %}
+{% endcolumn %}
+
+{% column width="8.333333333333329%" %}
+
+{% endcolumn %}
+{% endcolumns %}
 
 <h2 align="center">What can we help you find?</h2>
 
