@@ -44,6 +44,8 @@ layout:
 ### ⚙️ Внутренние изменения
 
 * Муты стали более расширяемы за счет использования конструкторов вместо статичных полей
+
+<a href="https://github.com/KiKaaad/smllyBot/releases/download/v0.7.1-beta/smllyDS-0.7.1-beta.jar" class="button primary" data-icon="folder-arrow-down">Установить релиз</a>
 {% endupdate %}
 
 {% update date="2026-09-26" tags="veta,novoe,improvement,fix,feature" %}
@@ -80,8 +82,6 @@ layout:
 
 * Таблица гильдий могла не создаться из-за неверного типа колонки
 * В информации о гильдии (`гильдия`) не выводились часть полей
-
-<a href="https://github.com/KiKaaad/smllyBot/releases/download/v0.7.0-beta/smllyDS-0.7.0-pre-release.jar" class="button primary" data-icon="folder-arrow-down">Установить релиз</a>
 {% endupdate %}
 
 {% update date="2026-09-14" tags="feature,fix" %}
