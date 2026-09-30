@@ -38,7 +38,7 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-java-time:1.5.0")
     implementation("org.jetbrains.exposed:exposed-core:1.5.0")
     implementation("org.jetbrains.lets-plot:lets-plot-kotlin-jvm:4.15.0")
-    implementation("org.springframework:spring-jdbc:7.0.8")
+    implementation("org.springframework:spring-jdbc:7.0.9")
     implementation("com.electronwill.night-config:toml:3.9.0")
     implementation("com.zaxxer:HikariCP:7.1.0")
     implementation("org.postgresql:postgresql:42.7.13")
