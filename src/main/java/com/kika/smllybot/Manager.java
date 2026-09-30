@@ -11,6 +11,7 @@ import com.kika.smllybot.modules.economy.Farm;
 import com.kika.smllybot.modules.fun.*;
 import com.kika.smllybot.modules.guild.GuildInfo;
 import com.kika.smllybot.modules.guild.Staging;
+import com.kika.smllybot.modules.helper.Changelog;
 import com.kika.smllybot.modules.helper.GlobalHelp;
 import com.kika.smllybot.modules.moderation.mute.Mute;
 import com.kika.smllybot.modules.moderation.mute.MuteList;
@@ -93,6 +94,7 @@ public class Manager extends ListenerAdapter {
         // Другое
         reg(new TestErrors());
         reg(new GlobalHelp());
+        reg(new Changelog());
         reg(new Privacy());
         reg(new PrivacyInteraction());
     }
