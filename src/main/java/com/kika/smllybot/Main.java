@@ -11,6 +11,7 @@ import com.kika.smllybot.database.sql.users.UsersTable;
 import com.kika.smllybot.listeners.MessageCounter;
 import com.kika.smllybot.listeners.NameSave;
 import com.kika.smllybot.listeners.ReactionCounter;
+import com.kika.smllybot.modules.moderation.mute.MuteService;
 import com.kika.smllybot.modules.ping.PrefixPing;
 import com.kika.smllybot.modules.ping.SlashPing;
 import com.kika.smllybot.other.slashCmdInfo;
@@ -41,12 +42,15 @@ public class Main implements EventListener {
 
     private static final Logger log = LoggerFactory.getLogger(Main.class);
     public static String[] PREFIXES;
-    public static final String VERSION = "v0.7.1-beta (29.09.2026)";
+    public static final String VERSION = "v0.7.1-beta (30.09.2026)";
     public static final String OWNER = "<@683345722611073059>";
 
     static void main() throws InterruptedException {
         Config.getInstance().load();
+
         DatabaseManager.init();
+        JdbcTemplate query = DatabaseManager.getQuery();
+
         Stars.minusStarsScheduler();
 
         String token = Config.getInstance().getString("main.token");
@@ -56,25 +60,28 @@ public class Main implements EventListener {
                 .map(Object::toString)
                 .toArray(String[]::new);
 
-        try (Connection conn = DatabaseManager.getConnection()) {
-            log.info("✅ База данных PostgreSQL подключена!");
-
-            // Создание таблиц
+        // Создание таблиц БД
+        try {
             UsersTable.createTable();
             BankTable.createTable();
             PrivacyTable.createTable();
             StatisticTable.createTable();
             ProfileTable.createTable();
             GuildTable.createTable();
-            MuteTable.createTable();
 
-        } catch (SQLException e) {
-            log.error("❌ Не удалось подключиться к базе данных: ");
+            new MuteTable(query).createTable();
 
-            throw new RuntimeException();
+            log.info("✅ База данных PostgreSQL и таблицы успешно инициализированы!");
+        } catch (Exception e) {
+            log.error("❌ Ошибка при инициализации таблиц базы данных: ", e);
+            throw new RuntimeException(e);
         }
 
-        Manager manager = new Manager();
+        MuteTable muteTable = new MuteTable(query);
+        MuteService muteService = new MuteService(muteTable);
+
+        Manager manager = new Manager(muteService, muteTable);
+
         MemberCachePolicy memberCachePolicy = Config.getInstance().getMemberCachePolicy("jda.cache_policy");
         JDA jda = JDABuilder.createDefault(token)
                 // Cache & Intents
@@ -102,11 +109,8 @@ public class Main implements EventListener {
         jda.awaitReady();
         slashCmdInfo.registerCommands(jda);
 
-        MuteTable muteTable = new MuteTable(new JdbcTemplate(DatabaseManager.getQuery()));
         MuteScheduler muteScheduler = new MuteScheduler(muteTable, jda);
         muteScheduler.start();
-
-        Config.getInstance().close();
     }
 
     @Override

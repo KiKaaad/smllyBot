@@ -4,6 +4,7 @@ import com.kika.smllybot.annotations.ButtonPrefix;
 import com.kika.smllybot.annotations.ModalPrefix;
 import com.kika.smllybot.annotations.RegisteredButton;
 import com.kika.smllybot.annotations.RegisteredModal;
+import com.kika.smllybot.database.sql.mute.MuteTable;
 import com.kika.smllybot.modules.economy.Bag;
 import com.kika.smllybot.modules.economy.Dice;
 import com.kika.smllybot.modules.economy.Farm;
@@ -13,6 +14,7 @@ import com.kika.smllybot.modules.guild.Staging;
 import com.kika.smllybot.modules.helper.GlobalHelp;
 import com.kika.smllybot.modules.moderation.mute.Mute;
 import com.kika.smllybot.modules.moderation.mute.MuteList;
+import com.kika.smllybot.modules.moderation.mute.MuteService;
 import com.kika.smllybot.modules.moderation.mute.Unmute;
 import com.kika.smllybot.modules.privacy.Privacy;
 import com.kika.smllybot.modules.privacy.PrivacyInteraction;
@@ -48,7 +50,7 @@ public class Manager extends ListenerAdapter {
     private final Map<String, RegisteredButton> button = new HashMap<>();
     private final Map<String, RegisteredModal> modal = new HashMap<>();
 
-    public Manager() {
+    public Manager(MuteService muteService, MuteTable muteTable) {
         // Экономика
         reg(new GlobalTop());
         reg(new Farm());
@@ -76,7 +78,7 @@ public class Manager extends ListenerAdapter {
         log.info("✅ Модуль локальных профилей загружен");
 
         // Модерация
-        reg(new Mute(), new Unmute(), new MuteList());
+        reg(new Mute(muteService), new Unmute(muteService), new MuteList(muteTable));
 
         // Настройки гильдии
         reg(new Staging());
