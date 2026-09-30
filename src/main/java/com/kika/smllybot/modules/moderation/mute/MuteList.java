@@ -31,8 +31,11 @@ public class MuteList extends BaseCmd {
 
     private static final Logger log = LoggerFactory.getLogger(MuteList.class);
 
-    public MuteList() {
+    private final MuteTable muteTable;
+
+    public MuteList(MuteTable muteTable) {
         super(Set.of("мутлист", "мьютлист", "mutelist"));
+        this.muteTable = muteTable;
     }
 
     @Override
@@ -53,7 +56,7 @@ public class MuteList extends BaseCmd {
             return null;
         }
 
-        List<MuteData> muteData = MuteTable.getMuteList(guild.getIdLong());
+        List<MuteData> muteData = muteTable.getMuteList(guild.getIdLong());
         MuteListContext context = new MuteListContext(muteData, moderator.getIdLong());
         var response = MuteListUI.build(context, 1);
 
@@ -90,7 +93,7 @@ public class MuteList extends BaseCmd {
         // И уже потом парсим в инт, а то все сломается
         int page = Integer.parseInt(parts[1]);
 
-        List<MuteData> muteData = MuteTable.getMuteList(event.getGuild().getIdLong());
+        List<MuteData> muteData = muteTable.getMuteList(event.getGuild().getIdLong());
         MuteListContext ctx = new MuteListContext(muteData, owner);
         response = MuteListUI.build(ctx, page);
 
@@ -115,7 +118,7 @@ public class MuteList extends BaseCmd {
     }
 
     private Container buildResponse(long guildId, int page, long owner) {
-        List<MuteData> muteData = MuteTable.getMuteList(guildId);
+        List<MuteData> muteData = muteTable.getMuteList(guildId);
 
         MuteListContext ctx = new MuteListContext(muteData, owner);
         return MuteListUI.build(ctx, page);

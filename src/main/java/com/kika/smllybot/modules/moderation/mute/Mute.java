@@ -18,8 +18,11 @@ public class Mute extends BaseCmd {
 
     private static final Logger log = LoggerFactory.getLogger(Mute.class);
 
-    public Mute() {
+    private final MuteService muteService;
+
+    public Mute(MuteService muteService) {
         super(Set.of("мут", "мьют", "unmute"));
+        this.muteService = muteService;
     }
 
     @Override
@@ -64,7 +67,7 @@ public class Mute extends BaseCmd {
                 return null;
             }
 
-            MuteService.mute(event, target, moderator, parts[1], parts[2], reason);
+            muteService.mute(event, target, moderator, parts[1], parts[2], reason);
             return null;
         }
 
@@ -77,7 +80,7 @@ public class Mute extends BaseCmd {
                 return null;
             }
 
-            MuteService.mute(event, target, moderator, parts[2], parts[3], reason);
+            muteService.mute(event, target, moderator, parts[2], parts[3], reason);
             return null;
         }
 
@@ -96,7 +99,7 @@ public class Mute extends BaseCmd {
                             ErrorThrow.timeoutOverhead(event);
                             return;
                         }
-                        MuteService.mute(event, target, moderator, parts[2], parts[3], reason);
+                        muteService.mute(event, target, moderator, parts[2], parts[3], reason);
                     },
                     failure -> ErrorThrow.userNotFound(event, arg)
             );
@@ -114,7 +117,7 @@ public class Mute extends BaseCmd {
                 ErrorThrow.timeoutOverhead(event);
                 return null;
             }
-            MuteService.mute(event, members.getFirst(), moderator, parts[2], parts[3], reason);
+            muteService.mute(event, members.getFirst(), moderator, parts[2], parts[3], reason);
         } else {
             ErrorThrow.userNotFound(event, members.getFirst().getNickname());
         }

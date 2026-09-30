@@ -2,6 +2,7 @@ package com.kika.smllybot.modules.moderation.mute;
 
 import com.kika.smllybot.database.sql.guild.GuildTable;
 import com.kika.smllybot.database.sql.guild.dto.GuildData;
+import com.kika.smllybot.database.sql.mute.MuteTable;
 import com.kika.smllybot.handler.ErrorThrow;
 import com.kika.smllybot.other.BaseCmd;
 import net.dv8tion.jda.api.Permission;
@@ -14,8 +15,11 @@ import java.util.Set;
 
 public class Unmute extends BaseCmd {
 
-    public Unmute() {
+    public final MuteService muteService;
+
+    public Unmute(MuteService muteService) {
         super(Set.of("размут", "размьют"));
+        this.muteService = muteService;
     }
 
     @Override
@@ -52,7 +56,7 @@ public class Unmute extends BaseCmd {
                 return null;
             }
 
-            MuteService.unMute(event, target, moderator);
+            muteService.unMute(event, target, moderator);
             return null;
         }
 
@@ -60,7 +64,7 @@ public class Unmute extends BaseCmd {
         if (!event.getMessage().getMentions().getMembers().isEmpty()) {
             Member target = event.getMessage().getMentions().getMembers().getFirst();
 
-            MuteService.unMute(event, target, moderator);
+            muteService.unMute(event, target, moderator);
             return null;
         }
 
@@ -75,7 +79,7 @@ public class Unmute extends BaseCmd {
             long targetId = Long.parseLong(arg);
             guild.retrieveMemberById(targetId).queue(
                     target -> {
-                        MuteService.unMute(event, target, moderator);
+                        muteService.unMute(event, target, moderator);
                     },
                     failure -> ErrorThrow.userNotFound(event, arg)
             );
@@ -89,7 +93,7 @@ public class Unmute extends BaseCmd {
         }
 
         if (!members.isEmpty()) {
-            MuteService.unMute(event, members.getFirst(), moderator);
+            muteService.unMute(event, members.getFirst(), moderator);
         } else {
             ErrorThrow.userNotFound(event, members.getFirst().getNickname());
         }
