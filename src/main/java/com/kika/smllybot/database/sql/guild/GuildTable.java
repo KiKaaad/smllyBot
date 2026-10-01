@@ -30,11 +30,11 @@ public class GuildTable {
 
         String sql = """
                 CREATE TABLE IF NOT EXISTS guild (
-                id BIGINT PRIMARY KEY,
-                title TEXT,
-                staging BOOLEAN DEFAULT FALSE,
-                mute_type VARCHAR(32) DEFAULT 'TIMEOUT',
-                mute_role BIGINT
+                    id          BIGINT PRIMARY KEY,
+                    title       TEXT,
+                    staging     BOOLEAN DEFAULT FALSE,
+                    mute_type   VARCHAR(32) DEFAULT 'TIMEOUT',
+                    mute_role   BIGINT
                 );
                 """;
 

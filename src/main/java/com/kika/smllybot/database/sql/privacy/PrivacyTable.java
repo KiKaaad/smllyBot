@@ -18,10 +18,10 @@ public class PrivacyTable {
 
         String sql = """
                 CREATE TABLE IF NOT EXISTS privacy (
-                id BIGINT PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
-                bag BOOLEAN DEFAULT false,
-                activity BOOLEAN DEFAULT false,
-                last_activity BOOLEAN DEFAULT false
+                    id              BIGINT PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+                    bag             BOOLEAN DEFAULT false,
+                    activity        BOOLEAN DEFAULT false,
+                    last_activity   BOOLEAN DEFAULT false
                 );
                 """;
 
