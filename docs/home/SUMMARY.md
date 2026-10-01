@@ -1,3 +1,3 @@
 # Table of contents
 
-* [Discord bot - femboy#6593](README.md)
+* [Discord bot - smlly#6593](README.md)
