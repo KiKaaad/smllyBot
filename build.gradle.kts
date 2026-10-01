@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     java
     kotlin("jvm") version "2.4.20"
@@ -32,11 +34,15 @@ tasks.processResources {
     }
 }
 
+tasks.withType<KotlinCompile> {
+    compilerOptions {
+        freeCompilerArgs.add("-java-parameters")
+    }
+}
+
 dependencies {
-    implementation("org.jetbrains.exposed:exposed-jdbc:1.5.0")
-    implementation("org.jetbrains.exposed:exposed-kotlin-datetime:1.5.0")
-    implementation("org.jetbrains.exposed:exposed-java-time:1.5.0")
-    implementation("org.jetbrains.exposed:exposed-core:1.5.0")
+    implementation("org.flywaydb:flyway-core:10.8.0")
+    implementation("org.flywaydb:flyway-database-postgresql:10.8.0")
     implementation("org.jetbrains.lets-plot:lets-plot-kotlin-jvm:4.15.0")
     implementation("org.springframework:spring-jdbc:7.0.8")
     implementation("com.electronwill.night-config:toml:3.9.0")

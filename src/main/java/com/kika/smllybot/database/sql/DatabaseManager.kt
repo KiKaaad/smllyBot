@@ -3,7 +3,7 @@ package com.kika.smllybot.database.sql
 import com.kika.smllybot.Config
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
-import org.jetbrains.exposed.v1.jdbc.Database
+import org.flywaydb.core.Flyway
 import org.slf4j.LoggerFactory
 import org.springframework.jdbc.core.JdbcTemplate
 import java.sql.Connection
@@ -51,7 +51,10 @@ object DatabaseManager {
 
         query = JdbcTemplate(ds)
 
-        Database.connect(ds)
+        val flyway = Flyway.configure().dataSource(url, user, password)
+            .baselineOnMigrate(true)
+            .load()
+        flyway.migrate()
 
         log.info("✅ База данных успешно инициализирована")
     }
