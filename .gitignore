@@ -6,6 +6,7 @@ target/
 .env.local
 .env.*.local
 .gradle/
+logs
 config.toml
 
 ### IntelliJ IDEA ###
