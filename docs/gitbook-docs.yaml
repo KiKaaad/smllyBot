@@ -6,7 +6,7 @@ site:
       key: section-1
       title: Главная
       path: home
-      description: ""
+      description: Информация, которую, вероятно, вы бы хотели получить первым же делом
       icon: house
       default: true
       children:
