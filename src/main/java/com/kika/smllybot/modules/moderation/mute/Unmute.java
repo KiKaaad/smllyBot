@@ -18,7 +18,7 @@ public class Unmute extends BaseCmd {
     public final MuteService muteService;
 
     public Unmute(MuteService muteService) {
-        super(Set.of("размут", "размьют"));
+        super(Set.of("размут", "размьют", "unmute"));
         this.muteService = muteService;
     }
 

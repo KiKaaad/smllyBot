@@ -69,7 +69,7 @@ public class GlobalProfileModal extends BaseCmd {
 
             UserAccount user = UsersTable.getOrCreateUser(discordId, username);
             BankAccount bank = BankTable.getOrCreateBank(user.getId(), username);
-            PrivacyAccount privacy = PrivacyTable.getOrCreatePrivacy(user.getId());
+            PrivacyAccount privacy = new PrivacyTable().getOrCreatePrivacy(user.getId());
 
             GlobalProfileContext ctx = new GlobalProfileContext(
                     event.getUser(),
