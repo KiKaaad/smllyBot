@@ -6,6 +6,7 @@ import com.kika.smllybot.database.sql.bank.dto.BankTopAmount;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.jdbc.core.DataClassRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.io.PrintStream;
@@ -18,18 +19,9 @@ public class BankTable {
 
     private static final Logger log = LoggerFactory.getLogger(BankTable.class);
 
-    private static final RowMapper<BankAccount> BANK_MAPPER = (rs, rowNum) -> new BankAccount(
-        rs.getLong("id"),
-        rs.getString("name"),
-        rs.getInt("star"),
-        rs.getLong("iris"),
-        rs.getLong("iris_coin"),
-        rs.getObject("last_farm", Timestamp.class)
-    );
+    private static final RowMapper<BankAccount> BANK_MAPPER = DataClassRowMapper.newInstance(BankAccount.class);
 
     public static void createTable() {
-        System.setOut(new PrintStream(System.out, true, StandardCharsets.UTF_8));
-
         String sql = """
                 CREATE TABLE IF NOT EXISTS bank (
                 id        BIGINT PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
