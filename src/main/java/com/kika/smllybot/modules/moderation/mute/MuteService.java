@@ -1,6 +1,5 @@
 package com.kika.smllybot.modules.moderation.mute;
 
-import com.kika.smllybot.database.sql.DatabaseManager;
 import com.kika.smllybot.database.sql.mute.MuteTable;
 import com.kika.smllybot.database.sql.mute.dto.MuteCreateData;
 import com.kika.smllybot.handler.ErrorThrow;
@@ -9,7 +8,6 @@ import com.kika.smllybot.utils.TimeUtil;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.time.OffsetDateTime;
 

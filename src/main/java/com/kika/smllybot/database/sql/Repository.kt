@@ -48,7 +48,7 @@ class Repository {
 
     fun getPrivacy(discordId: Long, name: String): PrivacyAccount {
         val user: UserAccount = UsersTable.getOrCreateUser(discordId, name)
-        val privacy: PrivacyAccount = PrivacyTable.getOrCreatePrivacy(user.id)
+        val privacy: PrivacyAccount = PrivacyTable().getOrCreatePrivacy(user.id)
 
         return privacy
     }
