@@ -46,7 +46,7 @@ public class Main implements EventListener {
 
     private static final Logger log = LoggerFactory.getLogger(Main.class);
     public static String[] PREFIXES;
-    public static final String VERSION = "v0.7.1-beta (30.09.2026)";
+    public static final String VERSION = "v0.8.0-beta (06.10.2026)";
     public static final String OWNER = "<@683345722611073059>";
 
     static void main() throws InterruptedException {
