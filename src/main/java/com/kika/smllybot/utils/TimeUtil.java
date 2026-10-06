@@ -94,8 +94,12 @@ public class TimeUtil {
         return TimeFormat.RELATIVE.atTimestamp(time.toInstant().toEpochMilli()).toString();
     }
 
-    public static OffsetDateTime calculateUntil(long rawTime, String type) {
+    public static OffsetDateTime calculateUntil(Long rawTime, String type) {
         OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC);
+
+        if (type == null) {
+            return null;
+        }
 
         return switch (type.toLowerCase().trim()) {
             case "год", "года", "лет", "г", "л" -> now.plusYears(rawTime);
@@ -105,7 +109,7 @@ public class TimeUtil {
             case "час", "часа", "часов", "ч" -> now.plusHours(rawTime);
             case "минуту", "минуты", "минут", "м" -> now.plusMinutes(rawTime);
             case "секунду", "секунды", "секунд", "с" -> now.plusSeconds(rawTime);
-            case null, default -> null;
+            default -> null;
         };
     }
 
