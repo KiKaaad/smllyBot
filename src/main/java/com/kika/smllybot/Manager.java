@@ -4,15 +4,22 @@ import com.kika.smllybot.annotations.ButtonPrefix;
 import com.kika.smllybot.annotations.ModalPrefix;
 import com.kika.smllybot.annotations.RegisteredButton;
 import com.kika.smllybot.annotations.RegisteredModal;
+import com.kika.smllybot.database.sql.ban.BanTable;
 import com.kika.smllybot.database.sql.mute.MuteTable;
 import com.kika.smllybot.modules.economy.Bag;
 import com.kika.smllybot.modules.economy.Dice;
 import com.kika.smllybot.modules.economy.Farm;
-import com.kika.smllybot.modules.fun.*;
+import com.kika.smllybot.modules.fun.Infa;
+import com.kika.smllybot.modules.fun.YesOrNo;
+import com.kika.smllybot.modules.fun.soft.*;
 import com.kika.smllybot.modules.guild.GuildInfo;
 import com.kika.smllybot.modules.guild.Staging;
 import com.kika.smllybot.modules.helper.Changelog;
 import com.kika.smllybot.modules.helper.GlobalHelp;
+import com.kika.smllybot.modules.moderation.ban.Ban;
+import com.kika.smllybot.modules.moderation.ban.BanList;
+import com.kika.smllybot.modules.moderation.ban.BanService;
+import com.kika.smllybot.modules.moderation.ban.Unban;
 import com.kika.smllybot.modules.moderation.mute.Mute;
 import com.kika.smllybot.modules.moderation.mute.MuteList;
 import com.kika.smllybot.modules.moderation.mute.MuteService;
@@ -51,7 +58,8 @@ public class Manager extends ListenerAdapter {
     private final Map<String, RegisteredButton> button = new HashMap<>();
     private final Map<String, RegisteredModal> modal = new HashMap<>();
 
-    public Manager(MuteService muteService, MuteTable muteTable) {
+    public Manager(MuteService muteService, MuteTable muteTable,
+                   BanTable banTable, BanService banService) {
         // Экономика
         reg(new GlobalTop());
         reg(new Farm());
@@ -80,6 +88,8 @@ public class Manager extends ListenerAdapter {
 
         // Модерация
         reg(new Mute(muteService), new Unmute(muteService), new MuteList(muteTable));
+        reg(new Ban(banService), new Unban(banService), new BanList(banTable));
+        log.info("✅ Модуль модерации загружен");
 
         // Настройки гильдии
         reg(new Staging());
@@ -89,6 +99,7 @@ public class Manager extends ListenerAdapter {
                 new Furryfication(), new GigaHit(), new Hit(), new Hold(), new Kick(), new Kill(), new Kiss(),
                 new Lick(), new Pat(), new Press(), new Shoot(), new Slap(), new SlapBack(), new Spank(),
                 new Tickle(), new Tie(), new Suck(), new Inseminate());
+        reg(new Infa(), new YesOrNo());
         log.info("✅ Интерактивные команды загружены");
 
         // Другое
@@ -183,14 +194,7 @@ public class Manager extends ListenerAdapter {
                 break;
             }
 
-            int lastSpace = -1;
-            for (int i = searchCommand.length() - 1; i >= 0; i--) {
-                if (Character.isWhitespace(searchCommand.charAt(i))) {
-                    lastSpace = i;
-                    break;
-                }
-            }
-
+            int lastSpace = searchCommand.lastIndexOf(' ');
             if (lastSpace == -1) break;
             searchCommand = searchCommand.substring(0, lastSpace);
         }
