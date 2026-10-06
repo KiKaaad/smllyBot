@@ -29,8 +29,6 @@ import java.util.Set;
 
 public class MuteList extends BaseCmd {
 
-    private static final Logger log = LoggerFactory.getLogger(MuteList.class);
-
     private final MuteTable muteTable;
 
     public MuteList(MuteTable muteTable) {
