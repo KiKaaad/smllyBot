@@ -1,7 +1,7 @@
 ---
 description: Уделите немножко времени на то, чтобы в целом узнать самые самые основы бота
 icon: rocket-launch
-cover: ../.gitbook/assets/image_2026-10-07_15-41-41.png
+cover: ../.gitbook/assets/image_2026-10-07_15-46-07.png
 coverY: 0
 coverHeight: 239
 layout:
