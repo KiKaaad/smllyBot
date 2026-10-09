@@ -44,7 +44,7 @@ dependencies {
     implementation("org.flywaydb:flyway-core:10.8.0")
     implementation("org.flywaydb:flyway-database-postgresql:10.8.0")
     implementation("org.jetbrains.lets-plot:lets-plot-kotlin-jvm:4.15.0")
-    implementation("org.springframework:spring-jdbc:7.0.8")
+    implementation("org.springframework:spring-jdbc:7.0.9")
     implementation("com.electronwill.night-config:toml:3.9.0")
     implementation("com.zaxxer:HikariCP:7.1.0")
     implementation("org.postgresql:postgresql:42.7.13")
