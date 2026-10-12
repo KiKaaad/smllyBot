@@ -18,6 +18,7 @@ import com.kika.smllybot.modules.moderation.mute.MuteService;
 import com.kika.smllybot.modules.ping.PrefixPing;
 import com.kika.smllybot.modules.ping.SlashPing;
 import com.kika.smllybot.other.slashCmdInfo;
+import com.kika.smllybot.schedule.BanScheduler;
 import com.kika.smllybot.schedule.MuteScheduler;
 import com.kika.smllybot.schedule.Stars;
 import net.dv8tion.jda.api.JDA;
@@ -46,7 +47,7 @@ public class Main implements EventListener {
 
     private static final Logger log = LoggerFactory.getLogger(Main.class);
     public static String[] PREFIXES;
-    public static final String VERSION = "v0.8.0-beta (06.10.2026)";
+    public static final String VERSION = "v0.8.1-beta (12.10.2026)";
     public static final String OWNER = "<@683345722611073059>";
 
     static void main() throws InterruptedException {
@@ -123,6 +124,8 @@ public class Main implements EventListener {
         slashCmdInfo.registerCommands(jda);
 
         MuteScheduler muteScheduler = new MuteScheduler(muteTable, jda);
+        BanScheduler banScheduler = new BanScheduler(banTable, jda);
+        banScheduler.start();
         muteScheduler.start();
     }
 

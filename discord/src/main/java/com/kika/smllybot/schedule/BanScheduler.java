@@ -21,9 +21,9 @@ public class BanScheduler {
     private final BanTable banTable;
 
 
-    BanScheduler(JDA jda, BanTable banTable) {
-        this.jda = jda;
+    public BanScheduler(BanTable banTable, JDA jda) {
         this.banTable = banTable;
+        this.jda = jda;
     }
 
     public void start() {
