@@ -50,15 +50,15 @@ public class Unban extends BaseCmd {
 
         // Ответом на сообщение
         if (event.getMessage().getReferencedMessage() != null) {
-            User target = event.getMessage().getReferencedMessage().getMember().getUser();
+            User target = event.getMessage().getReferencedMessage().getAuthor();
 
             banService.unban(event, target, moderator);
             return null;
         }
 
         // Упоминание -> @username
-        if (!event.getMessage().getMentions().getMembers().isEmpty()) {
-            User target = event.getMessage().getMentions().getMembers().getFirst().getUser();
+        if (!event.getMessage().getMentions().getUsers().isEmpty()) {
+            User target = event.getMessage().getMentions().getUsers().getFirst();
 
             banService.unban(event, target, moderator);
             return null;
@@ -73,8 +73,10 @@ public class Unban extends BaseCmd {
         // ID -> 12345678910121314
         if (arg.matches("\\d+")) {
             long targetId = Long.parseLong(arg);
-            User target = event.getJDA().getUserById(targetId);
-            banService.unban(event, target, moderator);
+            event.getJDA().retrieveUserById(targetId).queue(
+                    target -> banService.unban(event, target, moderator),
+                    failure -> ErrorThrow.userNotFound(event, arg)
+            );
             return null;
         }
 

@@ -40,22 +40,28 @@ public class Ban extends BaseCmd {
             return null;
         }
 
+        // Если бот не имеет прав
         if (!guild.getSelfMember().hasPermission(Permission.BAN_MEMBERS)) {
             ErrorThrow.noAccessPermissionBot(event, Permission.BAN_MEMBERS);
             return null;
         }
 
+        /*
+        Полный вид команды:
+        бан @юзер 12 часов
+        гадостно себя ведет!!
+        */
         String[] matches = raw.trim().split("\\n", 2);
         String firstLine = matches[0].trim();
         String[] parts = firstLine.split("\\h+");
 
         String reason = (matches.length >= 2 && !matches[1].isBlank()) ? matches[1].trim() : null;
 
-        // Ответом на сообщение
+        // Ответом на сообщение -> бан [время] [тип]
         if (event.getMessage().getReferencedMessage() != null) {
             Member target = event.getMessage().getReferencedMessage().getMember();
             if (target == null) {
-                ErrorThrow.userNotFound(event, null);
+                ErrorThrow.userNotFound(event, "");
                 return null;
             }
 
