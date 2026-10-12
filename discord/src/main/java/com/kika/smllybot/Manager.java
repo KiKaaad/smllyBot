@@ -145,7 +145,7 @@ public class Manager extends ListenerAdapter {
     @Override
     public void onButtonInteraction(ButtonInteractionEvent event) {
         String[] parts = event.getComponentId().split(":");
-        Interaction.checkOwner(event, parts);
+        if (!Interaction.checkOwner(event, parts)) return;
         if (parts.length == 0) return;
 
         String prefix = parts[0].toLowerCase();
