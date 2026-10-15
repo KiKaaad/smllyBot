@@ -3,11 +3,10 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     java
     kotlin("jvm") version "2.4.20"
-    id("com.gradleup.shadow") version "9.6.1"
 }
 
 group = "kikaaad.smlly"
-version = "0.8.0-beta"
+version = "0.8.1-beta"
 
 java {
     toolchain {

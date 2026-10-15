@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "kikaaad.smlly"
-version = "0.8.0-beta"
+version = "0.8.1-beta"
 
 java {
     toolchain {
@@ -38,6 +38,12 @@ tasks.withType<KotlinCompile> {
     compilerOptions {
         freeCompilerArgs.add("-java-parameters")
     }
+}
+
+tasks.shadowJar {
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    archiveClassifier.set("")
+    mergeServiceFiles()
 }
 
 dependencies {
