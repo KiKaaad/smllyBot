@@ -1,17 +1,17 @@
 package com.kika.smllybot.database.sql
 
-import com.kika.smllybot.database.sql.bank.BankTable
-import com.kika.smllybot.database.sql.bank.dto.BankAccount
-import com.kika.smllybot.database.sql.guild.GuildTable
-import com.kika.smllybot.database.sql.guild.dto.GuildData
-import com.kika.smllybot.database.sql.privacy.PrivacyTable
-import com.kika.smllybot.database.sql.privacy.dto.PrivacyAccount
-import com.kika.smllybot.database.sql.profile.ProfileTable
-import com.kika.smllybot.database.sql.profile.dto.ProfileAccount
-import com.kika.smllybot.database.sql.statistic.StatisticTable
-import com.kika.smllybot.database.sql.statistic.dto.StatisticAccount
-import com.kika.smllybot.database.sql.users.UsersTable
-import com.kika.smllybot.database.sql.users.dto.UserAccount
+import com.kika.smllybot.database.sql.user.bank.BankTable
+import com.kika.smllybot.database.sql.user.bank.dto.BankAccount
+import com.kika.smllybot.database.sql.guild.guild.GuildTable
+import com.kika.smllybot.database.sql.guild.guild.dto.GuildData
+import com.kika.smllybot.database.sql.user.privacy.PrivacyTable
+import com.kika.smllybot.database.sql.user.privacy.dto.PrivacyAccount
+import com.kika.smllybot.database.sql.user.profile.ProfileTable
+import com.kika.smllybot.database.sql.user.profile.dto.ProfileAccount
+import com.kika.smllybot.database.sql.user.statistic.StatisticTable
+import com.kika.smllybot.database.sql.user.statistic.dto.StatisticAccount
+import com.kika.smllybot.database.sql.user.users.UsersTable
+import com.kika.smllybot.database.sql.user.users.dto.UserAccount
 import java.time.OffsetDateTime
 
 /*

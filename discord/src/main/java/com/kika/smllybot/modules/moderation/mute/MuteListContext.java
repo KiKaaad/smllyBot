@@ -1,6 +1,6 @@
 package com.kika.smllybot.modules.moderation.mute;
 
-import com.kika.smllybot.database.sql.mute.dto.MuteData;
+import com.kika.smllybot.database.sql.guild.mute.dto.MuteData;
 
 import java.util.List;
 

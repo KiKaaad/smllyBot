@@ -2,7 +2,7 @@ package com.kika.smllybot.modules.guild;
 
 import com.kika.smllybot.annotations.ButtonPrefix;
 import com.kika.smllybot.database.sql.Repository;
-import com.kika.smllybot.database.sql.guild.GuildTable;
+import com.kika.smllybot.database.sql.guild.guild.GuildTable;
 import com.kika.smllybot.handler.ErrorThrow;
 import com.kika.smllybot.modules.guild.ui.StagingUI;
 import com.kika.smllybot.other.BaseCmd;

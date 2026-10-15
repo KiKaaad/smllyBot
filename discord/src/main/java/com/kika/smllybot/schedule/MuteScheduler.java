@@ -1,7 +1,7 @@
 package com.kika.smllybot.schedule;
 
-import com.kika.smllybot.database.sql.mute.MuteTable;
-import com.kika.smllybot.database.sql.mute.dto.MuteData;
+import com.kika.smllybot.database.sql.guild.mute.MuteTable;
+import com.kika.smllybot.database.sql.guild.mute.dto.MuteData;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;

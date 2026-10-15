@@ -1,8 +1,8 @@
 package com.kika.smllybot.modules.privacy;
 
-import com.kika.smllybot.database.sql.privacy.PrivacyTable;
-import com.kika.smllybot.database.sql.privacy.dto.PrivacyAccount;
-import com.kika.smllybot.database.sql.users.UsersTable;
+import com.kika.smllybot.database.sql.user.privacy.PrivacyTable;
+import com.kika.smllybot.database.sql.user.privacy.dto.PrivacyAccount;
+import com.kika.smllybot.database.sql.user.users.UsersTable;
 import com.kika.smllybot.modules.privacy.ui.PrivacyUI;
 import com.kika.smllybot.other.BaseCmd;
 import net.dv8tion.jda.api.components.container.Container;

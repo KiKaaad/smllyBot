@@ -1,7 +1,7 @@
 package com.kika.smllybot.modules.moderation.mute;
 
-import com.kika.smllybot.database.sql.mute.MuteTable;
-import com.kika.smllybot.database.sql.mute.dto.MuteCreateData;
+import com.kika.smllybot.database.sql.guild.mute.MuteTable;
+import com.kika.smllybot.database.sql.guild.mute.dto.MuteCreateData;
 import com.kika.smllybot.handler.ErrorThrow;
 import com.kika.smllybot.modules.moderation.mute.ui.MuteUI;
 import com.kika.smllybot.utils.TimeUtil;

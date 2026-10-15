@@ -1,10 +1,9 @@
 package com.kika.smllybot.schedule;
 
-import com.kika.smllybot.database.sql.ban.BanTable;
-import com.kika.smllybot.database.sql.ban.dto.BanData;
+import com.kika.smllybot.database.sql.guild.ban.BanTable;
+import com.kika.smllybot.database.sql.guild.ban.dto.BanData;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.UserSnowflake;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -1,7 +1,7 @@
 package com.kika.smllybot.modules.user.Global.ui
 
-import com.kika.smllybot.database.sql.statistic.StatisticTable
-import com.kika.smllybot.database.sql.statistic.dto.StatisticAccount
+import com.kika.smllybot.database.sql.user.statistic.StatisticTable
+import com.kika.smllybot.database.sql.user.statistic.dto.StatisticAccount
 import com.kika.smllybot.modules.user.Global.GlobalProfileContext
 import com.kika.smllybot.utils.NumUtil
 import com.kika.smllybot.utils.TimeUtil
@@ -13,6 +13,7 @@ import net.dv8tion.jda.api.components.section.Section
 import net.dv8tion.jda.api.components.separator.Separator
 import net.dv8tion.jda.api.components.textdisplay.TextDisplay
 import net.dv8tion.jda.api.components.thumbnail.Thumbnail
+import net.dv8tion.jda.api.requests.restaction.MessageCreateAction
 
 class GlobalProfileUI {
 
@@ -42,35 +43,41 @@ class GlobalProfileUI {
             val stars: String = NumUtil.german(ctx.bank.star)
             val irisCoin: String = NumUtil.german(ctx.bank.irisCoin)
 
-            var motto: String? = ctx.user.motto?.replace("@", "\\@")
+            var motto: String? = ctx.user.motto
             if (motto.isNullOrBlank()) motto = "Пользователь не указал описание."
 
-            val main: Section = Section.of(
+            val main = Section.of(
                 Thumbnail.fromUrl(ctx.target().getEffectiveAvatarUrl()),
-                TextDisplay.of("# Это ${ctx.target().effectiveName.replace("@", "\\@")} $status"),
-                TextDisplay.of("### Девиз:"),
+                TextDisplay.of("# Это ${ctx.target().effectiveName} $status"),
+                TextDisplay
+                    .of(ctx.user.badges?.joinToString(" ")?.ifBlank { null } ?: "Пока что бейджиков нет..."),
                 TextDisplay.of(motto)
             )
 
-            val separator: ContainerChildComponent = Separator.createDivider(Separator.Spacing.SMALL)
+            val separator = Separator.createDivider(Separator.Spacing.SMALL)
 
-            val headerMid: ContainerChildComponent = TextDisplay.of("## \\👀 Краткая информация:")
-            val activity: ContainerChildComponent = TextDisplay.of("\\📊 Активность (день | нед | мес | всего): $day | $week | $month | $total")
-            val dataDiscord: ContainerChildComponent = TextDisplay.of("\\🕐 Во вселенной дискорд с $discordCreated ($discordCreatedRelative)")
-            val dataBot: ContainerChildComponent = TextDisplay.of("\\⌛ Во вселенной бота с $botCreated ($botCreatedRelative)")
-            val idb: ContainerChildComponent = TextDisplay.of("IDB `${ctx.user.id}`")
-            val idd: ContainerChildComponent = TextDisplay.of("IDD `${ctx.target.idLong}`")
-            val headerEconomy: ContainerChildComponent = TextDisplay.of("### \\💰 Мешок")
-            val irisAndStars: ContainerChildComponent = TextDisplay.of("\\🍬 **$iris** | \\⭐ **$stars**")
-            val irisCoins: ContainerChildComponent = TextDisplay.of("\\☢️ **$irisCoin** i¢")
+            val headerMid = TextDisplay.of("## \\👀 Краткая информация:")
+            val activity = TextDisplay.of("\\📊 Активность (день | нед | мес | всего): $day | $week | $month | $total")
+            val dataDiscord = TextDisplay.of("\\🕐 Во вселенной дискорд с $discordCreated ($discordCreatedRelative)")
+            val dataBot = TextDisplay.of("\\⌛ Во вселенной бота с $botCreated ($botCreatedRelative)")
+            val idb = TextDisplay.of("IDB `${ctx.user.id}`")
+            val idd = TextDisplay.of("IDD `${ctx.target.idLong}`")
+            val headerEconomy = TextDisplay.of("### \\💰 Мешок")
+            val irisAndStars = TextDisplay.of("\\🍬 **$iris** | \\⭐ **$stars**")
+            val irisCoins = TextDisplay.of("\\☢️ **$irisCoin** i¢")
+
+            val footer = TextDisplay.of("-# **IDB** - айди внутри бота. **IDD** - айди внутри дискорд.")
+
+            val privacy = TextDisplay.of("-# Скрыто (видно только вам)")
+
+            // TODO: Вынести управление профилем в отдельный контейнер и желательно совместить кнопки в одни настройки
+            // Контейнер 2
             val anketaSettings: ContainerChildComponent = TextDisplay.of("### Настройки профиля")
             val action: ContainerChildComponent = ActionRow.of(
                 Button.primary("anketa:modal:" + ctx.target.id, "ℹ️ Редактировать профиль"),
                 Button.secondary("private:private:" + ctx.target.id, "🕶️ Приватность")
             )
-            val footer: ContainerChildComponent = TextDisplay.of("-# **IDB** - айди внутри бота. **IDD** - айди внутри дискорд.")
-
-            val privacy: ContainerChildComponent = TextDisplay.of("-# Скрыто (видно только вам)")
+            val controlPanel = Container.of(anketaSettings, action)
 
             component.add(main)
             component.add(separator)
@@ -98,7 +105,6 @@ class GlobalProfileUI {
             } else component.add(privacy)
             if (isOwner) {
                 component.add(anketaSettings)
-                component.add(separator)
                 component.add(action)
             }
             component.add(footer)

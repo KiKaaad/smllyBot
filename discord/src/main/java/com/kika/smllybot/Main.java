@@ -1,14 +1,14 @@
 package com.kika.smllybot;
 
 import com.kika.smllybot.database.sql.DatabaseManager;
-import com.kika.smllybot.database.sql.ban.BanTable;
-import com.kika.smllybot.database.sql.bank.BankTable;
-import com.kika.smllybot.database.sql.guild.GuildTable;
-import com.kika.smllybot.database.sql.mute.MuteTable;
-import com.kika.smllybot.database.sql.privacy.PrivacyTable;
-import com.kika.smllybot.database.sql.profile.ProfileTable;
-import com.kika.smllybot.database.sql.statistic.StatisticTable;
-import com.kika.smllybot.database.sql.users.UsersTable;
+import com.kika.smllybot.database.sql.guild.ban.BanTable;
+import com.kika.smllybot.database.sql.user.bank.BankTable;
+import com.kika.smllybot.database.sql.guild.guild.GuildTable;
+import com.kika.smllybot.database.sql.guild.mute.MuteTable;
+import com.kika.smllybot.database.sql.user.privacy.PrivacyTable;
+import com.kika.smllybot.database.sql.user.profile.ProfileTable;
+import com.kika.smllybot.database.sql.user.statistic.StatisticTable;
+import com.kika.smllybot.database.sql.user.users.UsersTable;
 import com.kika.smllybot.listeners.MessageCounter;
 import com.kika.smllybot.listeners.NameSave;
 import com.kika.smllybot.listeners.ReactionCounter;
@@ -47,7 +47,7 @@ public class Main implements EventListener {
 
     private static final Logger log = LoggerFactory.getLogger(Main.class);
     public static String[] PREFIXES;
-    public static final String VERSION = "v0.8.1-beta (12.10.2026)";
+    public static final String VERSION = "🔇 v0.8.1-beta (15.10.2026)";
     public static final String OWNER = "<@683345722611073059>";
 
     static void main() throws InterruptedException {
@@ -65,7 +65,7 @@ public class Main implements EventListener {
                 .map(Object::toString)
                 .toArray(String[]::new);
 
-        // Создание таблиц БД
+        // Создание таблиц баз данных
         try {
             UsersTable.createTable();
             BankTable.createTable();
@@ -83,18 +83,21 @@ public class Main implements EventListener {
             throw new RuntimeException(e);
         }
 
+        // Таблицы модерации
         MuteTable muteTable = new MuteTable(query);
         MuteService muteService = new MuteService(muteTable);
 
         BanTable banTable = new BanTable(query);
         BanService banService = new BanService(banTable);
 
+        // Передача сервисов в менеджер
         Manager manager = new Manager(
                 muteService, muteTable,
                 banTable, banService
         );
 
         MemberCachePolicy memberCachePolicy = Config.getInstance().getMemberCachePolicy("jda.cache_policy");
+
         JDA jda = JDABuilder.createDefault(token)
                 // Cache & Intents
                 .enableIntents(GatewayIntent.MESSAGE_CONTENT)
@@ -103,7 +106,7 @@ public class Main implements EventListener {
                 .setMemberCachePolicy(memberCachePolicy)
                 .setChunkingFilter(ChunkingFilter.NONE)
                 .enableCache(CacheFlag.ONLINE_STATUS)
-                .setActivity(Activity.customStatus("🚀 %s".formatted(VERSION)))
+                .setActivity(Activity.customStatus("%s".formatted(VERSION)))
 
                 // Listeners
                 .addEventListeners(new Main())
@@ -119,6 +122,7 @@ public class Main implements EventListener {
                 .addEventListeners(manager)
                 .build();
 
+        // Запрет на пинги
         MessageRequest.setDefaultMentions(EnumSet.noneOf(Message.MentionType.class));
         jda.awaitReady();
         slashCmdInfo.registerCommands(jda);

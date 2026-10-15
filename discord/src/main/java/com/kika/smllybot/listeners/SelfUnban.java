@@ -1,6 +1,6 @@
 package com.kika.smllybot.listeners;
 
-import com.kika.smllybot.database.sql.ban.BanTable;
+import com.kika.smllybot.database.sql.guild.ban.BanTable;
 import net.dv8tion.jda.api.events.guild.GuildUnbanEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;

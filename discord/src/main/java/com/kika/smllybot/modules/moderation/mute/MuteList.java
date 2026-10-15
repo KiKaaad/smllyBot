@@ -2,10 +2,10 @@ package com.kika.smllybot.modules.moderation.mute;
 
 import com.kika.smllybot.annotations.ButtonPrefix;
 import com.kika.smllybot.annotations.ModalPrefix;
-import com.kika.smllybot.database.sql.guild.GuildTable;
-import com.kika.smllybot.database.sql.guild.dto.GuildData;
-import com.kika.smllybot.database.sql.mute.MuteTable;
-import com.kika.smllybot.database.sql.mute.dto.MuteData;
+import com.kika.smllybot.database.sql.guild.guild.GuildTable;
+import com.kika.smllybot.database.sql.guild.guild.dto.GuildData;
+import com.kika.smllybot.database.sql.guild.mute.MuteTable;
+import com.kika.smllybot.database.sql.guild.mute.dto.MuteData;
 import com.kika.smllybot.handler.ErrorThrow;
 import com.kika.smllybot.modules.moderation.mute.ui.MuteListUI;
 import com.kika.smllybot.other.BaseCmd;
@@ -20,8 +20,6 @@ import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.modals.Modal;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.List;

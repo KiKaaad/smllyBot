@@ -1,10 +1,8 @@
 package com.kika.smllybot.modules.moderation.ban;
 
-import com.kika.smllybot.database.sql.Repository;
-import com.kika.smllybot.database.sql.guild.GuildTable;
-import com.kika.smllybot.database.sql.guild.dto.GuildData;
+import com.kika.smllybot.database.sql.guild.guild.GuildTable;
+import com.kika.smllybot.database.sql.guild.guild.dto.GuildData;
 import com.kika.smllybot.handler.ErrorThrow;
-import com.kika.smllybot.modules.moderation.mute.MuteService;
 import com.kika.smllybot.other.BaseCmd;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.components.container.Container;

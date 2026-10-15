@@ -2,8 +2,8 @@ package com.kika.smllybot.modules.tops.Global;
 
 import com.kika.smllybot.annotations.ButtonPrefix;
 import com.kika.smllybot.annotations.ModalPrefix;
-import com.kika.smllybot.database.sql.bank.BankTable;
-import com.kika.smllybot.database.sql.bank.dto.BankTopAmount;
+import com.kika.smllybot.database.sql.user.bank.BankTable;
+import com.kika.smllybot.database.sql.user.bank.dto.BankTopAmount;
 import com.kika.smllybot.modules.tops.Global.ui.GlobalTopUI;
 import com.kika.smllybot.other.BaseCmd;
 import net.dv8tion.jda.api.components.container.Container;

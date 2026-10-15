@@ -2,8 +2,8 @@ package com.kika.smllybot.modules.user.Local;
 
 import com.kika.smllybot.Main;
 import com.kika.smllybot.annotations.ButtonPrefix;
-import com.kika.smllybot.database.sql.users.UsersTable;
-import com.kika.smllybot.database.sql.users.dto.UserAccount;
+import com.kika.smllybot.database.sql.user.users.UsersTable;
+import com.kika.smllybot.database.sql.user.users.dto.UserAccount;
 import com.kika.smllybot.modules.user.Local.ui.CitizenshipUI;
 import com.kika.smllybot.other.BaseCmd;
 import com.kika.smllybot.utils.PrefixUtil;

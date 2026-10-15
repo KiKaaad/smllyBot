@@ -1,6 +1,6 @@
 package com.kika.smllybot.modules.tops.Global;
 
-import com.kika.smllybot.database.sql.bank.dto.BankTopAmount;
+import com.kika.smllybot.database.sql.user.bank.dto.BankTopAmount;
 
 import java.util.List;
 

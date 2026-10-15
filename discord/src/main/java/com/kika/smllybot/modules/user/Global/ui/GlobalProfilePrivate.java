@@ -2,12 +2,12 @@ package com.kika.smllybot.modules.user.Global.ui;
 
 import com.kika.smllybot.annotations.ButtonPrefix;
 import com.kika.smllybot.annotations.ModalPrefix;
-import com.kika.smllybot.database.sql.bank.BankTable;
-import com.kika.smllybot.database.sql.bank.dto.BankAccount;
-import com.kika.smllybot.database.sql.privacy.PrivacyTable;
-import com.kika.smllybot.database.sql.privacy.dto.PrivacyAccount;
-import com.kika.smllybot.database.sql.users.UsersTable;
-import com.kika.smllybot.database.sql.users.dto.UserAccount;
+import com.kika.smllybot.database.sql.user.bank.BankTable;
+import com.kika.smllybot.database.sql.user.bank.dto.BankAccount;
+import com.kika.smllybot.database.sql.user.privacy.PrivacyTable;
+import com.kika.smllybot.database.sql.user.privacy.dto.PrivacyAccount;
+import com.kika.smllybot.database.sql.user.users.UsersTable;
+import com.kika.smllybot.database.sql.user.users.dto.UserAccount;
 import com.kika.smllybot.modules.user.Global.GlobalProfileContext;
 import com.kika.smllybot.other.BaseCmd;
 import com.kika.smllybot.utils.Interaction;

@@ -1,7 +1,7 @@
 package com.kika.smllybot.modules.statistic.ui
 
 import com.kika.smllybot.Main
-import com.kika.smllybot.database.sql.users.UsersTable
+import com.kika.smllybot.database.sql.user.users.UsersTable
 import com.kika.smllybot.modules.statistic.StatisticContext
 import com.kika.smllybot.utils.NumUtil
 import com.sun.management.OperatingSystemMXBean

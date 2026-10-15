@@ -1,6 +1,6 @@
 package com.kika.smllybot.listeners;
 
-import com.kika.smllybot.database.sql.users.UsersTable;
+import com.kika.smllybot.database.sql.user.users.UsersTable;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionRemoveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;

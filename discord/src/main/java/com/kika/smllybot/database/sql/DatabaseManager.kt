@@ -9,6 +9,7 @@ import org.springframework.jdbc.core.JdbcTemplate
 import java.sql.Connection
 import java.sql.SQLException
 
+// TODO: Удалить createTable из классов таблиц
 object DatabaseManager {
 
     private val log = LoggerFactory.getLogger(DatabaseManager::class.java)
@@ -53,6 +54,7 @@ object DatabaseManager {
 
         val flyway = Flyway.configure().dataSource(url, user, password)
             .baselineOnMigrate(true)
+            .validateMigrationNaming(true)
             .load()
         flyway.migrate()
 

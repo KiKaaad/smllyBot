@@ -1,7 +1,7 @@
 package com.kika.smllybot.modules.guild;
 
 import com.kika.smllybot.database.sql.Repository;
-import com.kika.smllybot.database.sql.guild.dto.GuildData;
+import com.kika.smllybot.database.sql.guild.guild.dto.GuildData;
 import com.kika.smllybot.modules.guild.ui.GuildInfoUI;
 import com.kika.smllybot.other.BaseCmd;
 import net.dv8tion.jda.api.components.container.Container;

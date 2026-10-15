@@ -1,8 +1,7 @@
 package com.kika.smllybot.listeners;
 
-import com.kika.smllybot.database.sql.guild.GuildTable;
-import com.kika.smllybot.database.sql.statistic.StatisticTable;
-import com.kika.smllybot.database.sql.users.UsersTable;
+import com.kika.smllybot.database.sql.user.statistic.StatisticTable;
+import com.kika.smllybot.database.sql.user.users.UsersTable;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 

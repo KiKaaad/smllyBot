@@ -1,6 +1,6 @@
 package com.kika.smllybot.schedule;
 
-import com.kika.smllybot.database.sql.bank.BankTable;
+import com.kika.smllybot.database.sql.user.bank.BankTable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -2,14 +2,14 @@ package com.kika.smllybot.modules.user.Local;
 
 import com.kika.smllybot.Main;
 import com.kika.smllybot.annotations.ButtonPrefix;
-import com.kika.smllybot.database.sql.bank.BankTable;
-import com.kika.smllybot.database.sql.bank.dto.BankAccount;
-import com.kika.smllybot.database.sql.profile.ProfileTable;
-import com.kika.smllybot.database.sql.profile.dto.ProfileAccount;
-import com.kika.smllybot.database.sql.statistic.StatisticTable;
-import com.kika.smllybot.database.sql.statistic.dto.StatisticAccount;
-import com.kika.smllybot.database.sql.users.UsersTable;
-import com.kika.smllybot.database.sql.users.dto.UserAccount;
+import com.kika.smllybot.database.sql.user.bank.BankTable;
+import com.kika.smllybot.database.sql.user.bank.dto.BankAccount;
+import com.kika.smllybot.database.sql.user.profile.ProfileTable;
+import com.kika.smllybot.database.sql.user.profile.dto.ProfileAccount;
+import com.kika.smllybot.database.sql.user.statistic.StatisticTable;
+import com.kika.smllybot.database.sql.user.statistic.dto.StatisticAccount;
+import com.kika.smllybot.database.sql.user.users.UsersTable;
+import com.kika.smllybot.database.sql.user.users.dto.UserAccount;
 import com.kika.smllybot.modules.user.Local.ui.AboutMeUI;
 import com.kika.smllybot.modules.user.Local.ui.ProfileUI;
 import com.kika.smllybot.other.BaseCmd;
@@ -19,7 +19,6 @@ import net.dv8tion.jda.api.components.container.Container;
 import net.dv8tion.jda.api.components.container.ContainerChildComponent;
 import net.dv8tion.jda.api.components.mediagallery.MediaGallery;
 import net.dv8tion.jda.api.components.mediagallery.MediaGalleryItem;
-import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -27,7 +26,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 

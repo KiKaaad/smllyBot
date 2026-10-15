@@ -108,8 +108,7 @@ public class ErrorThrow {
                 Button.secondary("undefined", "скоро...").asDisabled(),
                 TextDisplay.of(StackTrace.getCallerLocation()));
 
-        event.getChannel()
-                .sendMessageComponents(
+        event.getChannel().sendMessageComponents(
                         Container.of(head, separator, main).withAccentColor(Color.RED),
                         Container.of(section).withAccentColor(Color.RED)
                 )

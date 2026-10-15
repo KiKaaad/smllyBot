@@ -1,6 +1,6 @@
 package com.kika.smllybot.modules.moderation.ban;
 
-import com.kika.smllybot.database.sql.ban.dto.BanData;
+import com.kika.smllybot.database.sql.guild.ban.dto.BanData;
 
 import java.util.List;
 

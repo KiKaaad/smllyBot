@@ -2,7 +2,7 @@ package com.kika.smllybot.modules.economy;
 
 import com.kika.smllybot.Config;
 import com.kika.smllybot.database.sql.Repository;
-import com.kika.smllybot.database.sql.bank.BankTable;
+import com.kika.smllybot.database.sql.user.bank.BankTable;
 import com.kika.smllybot.modules.economy.ui.FarmUI;
 import com.kika.smllybot.other.BaseCmd;
 import com.kika.smllybot.utils.TimeUtil;
