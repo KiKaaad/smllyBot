@@ -45,7 +45,7 @@ public class PrivacyInteraction extends BaseCmd {
                 break;
         }
 
-        PrivacyAccount privacyAccount = PrivacyTable.getOrCreatePrivacy(id);
+        PrivacyAccount privacyAccount = new PrivacyTable().getOrCreatePrivacy(id);
         PrivacyContext privacy = new PrivacyContext(event.getUser().getIdLong(), privacyAccount);
         var response = PrivacyUI.buildPrivacyUI(privacy);
 

@@ -13,7 +13,13 @@ import java.time.OffsetDateTime;
 
 public class MuteService {
 
-    protected static void mute(MessageReceivedEvent event, Member target,
+    private final MuteTable muteTable;
+
+    public MuteService(MuteTable muteTable) {
+        this.muteTable = muteTable;
+    }
+
+    protected void mute(MessageReceivedEvent event, Member target,
                                Member moderator, String rawAmount, String unit, String reason) {
         Guild guild = event.getGuild();
 
@@ -47,7 +53,7 @@ public class MuteService {
                             reason,
                             until
                     );
-                    MuteTable.createMute(data);
+                    muteTable.createMute(data);
 
                     var response = MuteUI.mute(target.getIdLong(), moderator.getIdLong(), until, reason);
                     event.getChannel().sendMessageComponents(response).useComponentsV2(true).queue();
@@ -56,7 +62,7 @@ public class MuteService {
         );
     }
 
-    protected static void unMute(MessageReceivedEvent event, Member target, Member moderator) {
+    protected void unMute(MessageReceivedEvent event, Member target, Member moderator) {
         Guild guild = event.getGuild();
 
         if (!guild.getSelfMember().canInteract(target)) {
@@ -71,7 +77,7 @@ public class MuteService {
 
         var response = MuteUI.unmute(target.getIdLong());
 
-        MuteTable.markAsUnmuted(target.getIdLong(), moderator.getIdLong(), target.getGuild().getIdLong());
+        muteTable.markAsUnmuted(target.getIdLong(), moderator.getIdLong(), target.getGuild().getIdLong());
         target.removeTimeout().queue();
         event.getChannel().sendMessageComponents(response).useComponentsV2(true).queue();
     }

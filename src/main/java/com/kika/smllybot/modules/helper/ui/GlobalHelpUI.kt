@@ -5,6 +5,8 @@ import net.dv8tion.jda.api.components.buttons.Button
 import net.dv8tion.jda.api.components.buttons.ButtonStyle
 import net.dv8tion.jda.api.components.container.Container
 import net.dv8tion.jda.api.components.container.ContainerChildComponent
+import net.dv8tion.jda.api.components.mediagallery.MediaGallery
+import net.dv8tion.jda.api.components.mediagallery.MediaGalleryItem
 import net.dv8tion.jda.api.components.section.Section
 import net.dv8tion.jda.api.components.separator.Separator
 import net.dv8tion.jda.api.components.textdisplay.TextDisplay
@@ -13,6 +15,11 @@ import kotlin.collections.buildList
 class GlobalHelpUI {
 
     companion object {
+        val footer = TextDisplay.of("""
+        -# \ℹ️ **< аргумент >** — необязательные аргументы | **[ аргумент ]** — обязательные аргументы
+        -# \⬇️ — знаком вниз помечаются аргументы которые пишутся на следующей строке (shift + enter) 
+        """.trimIndent())
+
         @JvmStatic
         fun defaultHelp(discordId: Long, page: Int): Container {
 
@@ -28,6 +35,14 @@ class GlobalHelpUI {
                 Button.of(ButtonStyle.LINK, "https://github.com/KiKaaad/smllyBot", "🐈‍⬛ Гитхаб"),
                 Button.of(ButtonStyle.LINK, "https://github.com/KiKaaad/smllyBot/issues", "🐞 Нашел ошибку")
             )
+            val help = Section.of(
+                Button.of(ButtonStyle.LINK, "https://smlly.gitbook.io/i", "🛟 Вики"),
+                TextDisplay.of("## Что-то не понятно?"),
+                TextDisplay.of("""
+                    У бота есть крутецкая документация с видео-иллюстрациями.
+                    Там вы точно все поймете!
+                    """.trimIndent())
+            )
             val separator: ContainerChildComponent = Separator.createDivider(Separator.Spacing.SMALL)
             val userModule: ContainerChildComponent = Section.of(
                 Button.of(ButtonStyle.SECONDARY, "help:anketaAndProfile:$discordId", "➡️"),
@@ -38,7 +53,7 @@ class GlobalHelpUI {
             val moderationModule: ContainerChildComponent = Section.of(
                 Button.of(ButtonStyle.SECONDARY, "help:moderation:$discordId", "➡️"),
                 TextDisplay.of("## \\🛡️ Модерация \\🅱️"),
-                TextDisplay.of("### Позволяет модерировать дискорд-сервер и держать его в чистое и порядке")
+                TextDisplay.of("### Позволяет модерировать дискорд-сервер и держать его в чистоте и порядке")
             )
             val tops: ContainerChildComponent = Section.of(
                 Button.of(ButtonStyle.SECONDARY, "help:tops:$discordId", "➡️"),
@@ -74,6 +89,7 @@ class GlobalHelpUI {
                 add(header)
                 add(mainInfo)
                 add(buttons)
+                add(help)
                 add(separator)
                 add(userModule)
                 add(separator)
@@ -90,6 +106,7 @@ class GlobalHelpUI {
                     add(header)
                     add(mainInfo)
                     add(buttons)
+                    add(help)
                     add(separator)
                     add(interactive)
                     add(separator)
@@ -113,23 +130,22 @@ class GlobalHelpUI {
             val separator: ContainerChildComponent = Separator.createDivider(Separator.Spacing.SMALL)
             val anketaModule: ContainerChildComponent = TextDisplay.of("""
                 ## Анкеты
-                - `анкета ?<юзернейм / айди / никнейм>` — выводит глобальный профиль пользователя, который одинаковый во всех гильдиях
+                - `анкета <юзернейм / айди / никнейм>` — выводит глобальный профиль пользователя, который одинаковый во всех гильдиях
                 - `девиз` — показывает ваш текущий девиз
                    - `-девиз` — удаляет ваш девиз
-                   - `+девиз` & `девиз` — устанавливает девиз который указан со следующей строки после команды (shift + enter)
+                   - `+девиз` <девиз>\⬇️ & `девиз` <девиз>\⬇️ — устанавливает девиз который указан со следующей строки после команды (shift + enter)
                 - `приватность` — показывает ваши текущие настройки приватности
                 """.trimIndent())
             val profileModule: ContainerChildComponent = TextDisplay.of("""
                 ## Профили
-                - `профиль ?<юзернейм / айди / никнейм>` — выводит локальный профиль пользователя, который уникален для каждой гильдии
+                - `профиль <юзернейм / айди / никнейм>` — выводит локальный профиль пользователя, который уникален для каждой гильдии
                 - `о себе` — показывает ваш текущее описание о себе
-                   - `+о себе` & `о себе` — устанавливает описание которое указано со следующей строки после команды (shift + enter)
+                   - `+о себе` <о себе>\⬇️ & `о себе` <о себе>\⬇️ — устанавливает описание которое указано со следующей строки после команды (shift + enter)
                    - `-о себе` — удаляет ваше описание
                 - `гражданство` — показывает ваше текущее гражданство
                    - `+гражданство` — устанавливает гражданство в той гильдии, где прописана команда
                    - `-гражданство` — удаляет гражданство
                 """.trimIndent())
-            val footer: ContainerChildComponent = TextDisplay.of("-# **?** — знаком вопроса помечаются необязательные аргументы")
             val components = buildList {
                 add(header)
                 add(mainInfo)
@@ -155,7 +171,7 @@ class GlobalHelpUI {
             val separator: ContainerChildComponent = Separator.createDivider(Separator.Spacing.SMALL)
             val globalTopModule: ContainerChildComponent = TextDisplay.of("""
                 ## Глобальные топы
-                - `гтоп <ириски / коины>` — показывает глобальный топ в зависимости от параметров
+                - `гтоп [ириски / коины]` — показывает глобальный топ в зависимости от параметров
                    - `ириски` — показывает топ по ирискам (\🍬)
                    - `коины` — показывает топ по ирис-коинам (\☢️)
                 """.trimIndent())
@@ -163,7 +179,7 @@ class GlobalHelpUI {
                 ## Локальные топы
                 Когда нибудь, в скором времени, оно появится...
                 """.trimIndent())
-            val footer: ContainerChildComponent = TextDisplay.of("-# **?** — знаком вопроса помечаются необязательные аргументы")
+
             val components = buildList {
                 add(header)
                 add(mainInfo)
@@ -188,10 +204,9 @@ class GlobalHelpUI {
                 "### Экономика бота позволяет зарабатывать ирис-коины, обменивать их на ириски и зарабатывать звездность (репутацию).")
             val separator: ContainerChildComponent = Separator.createDivider(Separator.Spacing.SMALL)
             val economyModule: ContainerChildComponent = TextDisplay.of("""
-                - `мешок ?<юзернейм / айди / никнейм>` — покажет мешок: ириски (\🍬) , ирис-коины (\☢️) и звездность (\⭐)
+                - `мешок <юзернейм / айди / никнейм>` — покажет мешок: ириски (\🍬) , ирис-коины (\☢️) и звездность (\⭐)
                 - `ферма` — позволяет зарабатывать ирис-коины (\☢️)
                 """.trimIndent())
-            val footer: ContainerChildComponent = TextDisplay.of("-# **?** — знаком вопроса помечаются необязательные аргументы")
             val components = buildList {
                 add(header)
                 add(mainInfo)
@@ -218,7 +233,6 @@ class GlobalHelpUI {
                 - `статбот` — покажет статистику бота: Нагрузка на ЦП, использование ОЗУ, количество серверов и пользователей в кэше, а также количество шардов, версию бота и JDA (Java Discord API)
                 - `пинг` — покажет Rest и Gateway пинг бота 
                 """.trimIndent())
-            val footer: ContainerChildComponent = TextDisplay.of("-# **?** — знаком вопроса помечаются необязательные аргументы")
             val components = buildList {
                 add(header)
                 add(mainInfo)
@@ -242,10 +256,9 @@ class GlobalHelpUI {
                 "### Позволяют взаимодействовать с другими пользователями путем ответа на его сообщение определенном командой.")
             val separator: ContainerChildComponent = Separator.createDivider(Separator.Spacing.SMALL)
             val interactiveModule: ContainerChildComponent = TextDisplay.of("""
-                - `рп-команда ?<действие>` — в ответ на сообщение пользователя. Также можно указать реплику со следующей строки
+                - `рп-команда <действие>` — в ответ на сообщение пользователя. Также можно указать реплику со следующей строки
                 - `обнять`, `погладить`, `убить`, `сжечь`, `ударить`, `уебать`, `выебать`, `трахнуть`, `осеменить`, `поцеловать`, `шлепнуть`, `отсосать`, `укусить`, `связать`, `офурить`, `дать пять`, `потискать`, `лизнуть`, `выстрелить`, `прижать`, `пнуть`, `взять за руку`, `отшлепать`
                 """.trimIndent())
-            val footer: ContainerChildComponent = TextDisplay.of("-# **?** — знаком вопроса помечаются необязательные аргументы")
             val components = buildList {
                 add(header)
                 add(mainInfo)
@@ -268,21 +281,21 @@ class GlobalHelpUI {
                     .of("### \\🅱️ — крайне нестабильный и не протестированный модуль. Используйте осторожно и сообщайте об ошибках")
             )
             val mainInfo: ContainerChildComponent = TextDisplay.of(
-                "### Позволяет модерировать дискорд-сервер и держать его в чистое и порядке.")
+                "### Позволяет модерировать дискорд-сервер и держать его в чистоте и порядке.")
+            val illustration = MediaGallery.of(MediaGalleryItem.fromUrl("https://github.com/KiKaaad/smllyBot/blob/gitbook/docs/docs/changelog/.gitbook/assets/v0.7.0.gif?raw=true"))
             val separator: ContainerChildComponent = Separator.createDivider(Separator.Spacing.SMALL)
             val interactiveModule: ContainerChildComponent = TextDisplay.of("""
-                - `мут` <юзернейм / айди / никнейм> <время> <причина>\⬇️ — мутит пользователь на указанное время
-                   - `размут` <юзернейм / айди / никнейм>
+                - `мут` <юзернейм / айди / никнейм> <время> <тип> <причина>\⬇️ — мутит пользователь на указанное время
+                   - `размут` <юзернейм / айди / никнейм> — размутить пользователя
                 - `мутлист` — показывает все муты, которые когда либо были
-                """.trimIndent())
-            val footer: ContainerChildComponent = TextDisplay.of("""
-                -# \ℹ️ **< аргумент >** — необязательные аргументы | **[ аргумент ]** — обязательные аргументы
-                -# \⬇️ — знаком вниз помечаются аргументы которые пишутся на следующей строке (shift + enter) 
-                -# При использовании тайм-аут мутов максимальный срок — **28 дней**
+                - `бан` <юзернейм / айди / никнейм> <время> <тип> <причина>\⬇️ — блокирует пользователь на указанное время
+                   - `разбан` <юзернейм / айди / никнейм> — разблокировать пользователя
+                - `банлист` — показывает все баны, которые когда либо были
                 """.trimIndent())
             val components = buildList {
                 add(header)
                 add(mainInfo)
+                add(illustration)
                 add(separator)
                 add(interactiveModule)
                 add(separator)
@@ -305,7 +318,6 @@ class GlobalHelpUI {
             val otherModule: ContainerChildComponent = TextDisplay.of("""
                 Пока что тут ничего нет, но тут обязательно когда-нибудь что-то появится!
                 """.trimIndent())
-            val footer: ContainerChildComponent = TextDisplay.of("-# **?** — знаком вопроса помечаются необязательные аргументы")
             val components = buildList {
                 add(header)
                 add(mainInfo)
@@ -315,7 +327,9 @@ class GlobalHelpUI {
                 add(footer)
             }
 
-            return Container.of(components)
+            return Container.of(
+                components
+            )
         }
     }
 }

@@ -105,7 +105,7 @@ public class Motto extends BaseCmd {
 
             UserAccount userAccount = UsersTable.getOrCreateUser(user.getIdLong(), user.getEffectiveName());
             BankAccount bank = BankTable.getOrCreateBank(userAccount.getId(), user.getEffectiveName());
-            PrivacyAccount privacy = PrivacyTable.getOrCreatePrivacy(userAccount.getId());
+            PrivacyAccount privacy = new PrivacyTable().getOrCreatePrivacy(userAccount.getId());
 
             GlobalProfileContext ctx = new GlobalProfileContext(
                     user, user, event.getMember(), userAccount, bank, privacy);
