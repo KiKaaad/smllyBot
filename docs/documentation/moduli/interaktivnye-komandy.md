@@ -3,6 +3,33 @@ description: >-
   Позволяют взаимодействовать с другими пользователями путем ответа на его
   сообщение определенном командой.
 icon: face-smiling-hands
+cover: ../.gitbook/assets/Screenshot 2026-10-16 203535.png
+coverY: 0
+coverHeight: 306
+layout:
+  width: default
+  cover:
+    visible: true
+    size: hero
+    mask: none
+  title:
+    visible: true
+  description:
+    visible: true
+  tableOfContents:
+    visible: true
+  outline:
+    visible: true
+  pagination:
+    visible: true
+  metadata:
+    visible: true
+  tags:
+    visible: true
+  actions:
+    visible: true
+  anchors:
+    visible: true
 ---
 
 # Интерактивные команды

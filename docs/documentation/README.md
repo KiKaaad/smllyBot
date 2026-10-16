@@ -13,8 +13,6 @@ icon: hand-wave
 Я обязательно сообщу в [тг-канале](https://t.me/smaaaly) и [дискорд-сервере](https://discord.gg/3JSz5fEeee) о том, что эта страница полностью доделана
 {% endhint %}
 
-<button type="button" class="button primary" data-action="ask" data-icon="gitbook-assistant">Ask a question…</button>
-
 ***
 
 ## 👀 Что посмотреть

@@ -1,11 +1,37 @@
 ---
-description: Что они означают и зачем они нужны
+description: Отображаются под вашим именем и позволяют показать всю крутость вашего профиля
 icon: star-sharp
+cover: ../.gitbook/assets/image 3.png
+coverY: 0
+layout:
+  width: default
+  cover:
+    visible: true
+    size: hero
+    mask: none
+  title:
+    visible: true
+  description:
+    visible: true
+  tableOfContents:
+    visible: true
+  outline:
+    visible: true
+  pagination:
+    visible: true
+  metadata:
+    visible: true
+  tags:
+    visible: true
+  actions:
+    visible: true
+  anchors:
+    visible: true
 ---
 
 # Бейджики
 
-Бейджики созданы для возможности как-то отличиться среди других пользователей. Например, чтобы отличить настоящего модератора бота от врунишки
+Они дают возможность отличиться от остальных пользователей
 
 ### Значки команды
 
@@ -35,7 +61,7 @@ icon: star-sharp
 {% endcolumn %}
 {% endcolumns %}
 
-
+***
 
 {% columns %}
 {% column width="16.666666666666664%" %}
