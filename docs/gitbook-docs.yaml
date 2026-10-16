@@ -76,3 +76,4 @@ site:
           default: true
           content:
             directory: ./help-center
+            language: ru
