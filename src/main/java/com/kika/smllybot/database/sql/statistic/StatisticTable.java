@@ -106,8 +106,8 @@ public class StatisticTable {
             ), id, guildId);
         } catch (Exception e) {
             log.error("❌ Ошибка при получении статистики с учетом гильдии: ", e);
-        }
 
-        return new StatisticAccount(-1, -1, -1, -1);
+            return new StatisticAccount(-1, -1, -1, -1);
+        }
     }
 }

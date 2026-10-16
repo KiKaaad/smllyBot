@@ -12,7 +12,9 @@ import java.util.Set;
 
 public class Privacy extends BaseCmd {
 
-    public Privacy() { super(Set.of("приватность", "privacy")); }
+    public Privacy() {
+        super(Set.of("приватность", "privacy"));
+    }
 
     @Override
     public Container execute(MessageReceivedEvent event, String raw, String args) {
@@ -21,7 +23,7 @@ public class Privacy extends BaseCmd {
         long discordId = event.getAuthor().getIdLong();
         long id = UsersTable.getUserId(discordId);
 
-        PrivacyAccount privacy = PrivacyTable.getOrCreatePrivacy(id);
+        PrivacyAccount privacy = new PrivacyTable().getOrCreatePrivacy(id);
         PrivacyContext privacyContext = new PrivacyContext(discordId, privacy);
 
         var response = PrivacyUI.buildPrivacyUI(privacyContext);

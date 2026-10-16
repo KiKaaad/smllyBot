@@ -2,6 +2,8 @@ package com.kika.smllybot.database.sql
 
 import com.kika.smllybot.database.sql.bank.BankTable
 import com.kika.smllybot.database.sql.bank.dto.BankAccount
+import com.kika.smllybot.database.sql.guild.GuildTable
+import com.kika.smllybot.database.sql.guild.dto.GuildData
 import com.kika.smllybot.database.sql.privacy.PrivacyTable
 import com.kika.smllybot.database.sql.privacy.dto.PrivacyAccount
 import com.kika.smllybot.database.sql.profile.ProfileTable
@@ -46,7 +48,7 @@ class Repository {
 
     fun getPrivacy(discordId: Long, name: String): PrivacyAccount {
         val user: UserAccount = UsersTable.getOrCreateUser(discordId, name)
-        val privacy: PrivacyAccount = PrivacyTable.getOrCreatePrivacy(user.id)
+        val privacy: PrivacyAccount = PrivacyTable().getOrCreatePrivacy(user.id)
 
         return privacy
     }
@@ -63,6 +65,12 @@ class Repository {
         val statistic: StatisticAccount = StatisticTable.getTotalStatisticUserGuild(user.id, guildId)
 
         return statistic
+    }
+
+    fun getGuild(guildId: Long, guildName: String): GuildData {
+        val guild: GuildData = GuildTable.getOrCreateGuild(guildId, guildName)
+
+        return guild
     }
 
 }

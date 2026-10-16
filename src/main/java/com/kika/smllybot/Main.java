@@ -1,7 +1,10 @@
 package com.kika.smllybot;
 
 import com.kika.smllybot.database.sql.DatabaseManager;
+import com.kika.smllybot.database.sql.ban.BanTable;
 import com.kika.smllybot.database.sql.bank.BankTable;
+import com.kika.smllybot.database.sql.guild.GuildTable;
+import com.kika.smllybot.database.sql.mute.MuteTable;
 import com.kika.smllybot.database.sql.privacy.PrivacyTable;
 import com.kika.smllybot.database.sql.profile.ProfileTable;
 import com.kika.smllybot.database.sql.statistic.StatisticTable;
@@ -9,13 +12,19 @@ import com.kika.smllybot.database.sql.users.UsersTable;
 import com.kika.smllybot.listeners.MessageCounter;
 import com.kika.smllybot.listeners.NameSave;
 import com.kika.smllybot.listeners.ReactionCounter;
+import com.kika.smllybot.listeners.SelfUnban;
+import com.kika.smllybot.modules.moderation.ban.BanService;
+import com.kika.smllybot.modules.moderation.mute.MuteService;
 import com.kika.smllybot.modules.ping.PrefixPing;
 import com.kika.smllybot.modules.ping.SlashPing;
 import com.kika.smllybot.other.slashCmdInfo;
+import com.kika.smllybot.schedule.MuteScheduler;
+import com.kika.smllybot.schedule.Stars;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.JDAInfo;
 import net.dv8tion.jda.api.entities.Activity;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.hooks.EventListener;
@@ -23,12 +32,13 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
+import net.dv8tion.jda.api.utils.messages.MessageRequest;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.jdbc.core.JdbcTemplate;
 
-import java.sql.Connection;
-import java.sql.SQLException;
+import java.util.EnumSet;
 import java.util.List;
 
 public class Main implements EventListener {
@@ -36,12 +46,16 @@ public class Main implements EventListener {
 
     private static final Logger log = LoggerFactory.getLogger(Main.class);
     public static String[] PREFIXES;
-    public static final String VERSION = "v0.6.4 beta (14.09.2026)";
+    public static final String VERSION = "v0.8.0-beta (06.10.2026)";
     public static final String OWNER = "<@683345722611073059>";
 
     static void main() throws InterruptedException {
         Config.getInstance().load();
+
         DatabaseManager.init();
+        JdbcTemplate query = DatabaseManager.getQuery();
+
+        Stars.minusStarsScheduler();
 
         String token = Config.getInstance().getString("main.token");
 
@@ -50,23 +64,35 @@ public class Main implements EventListener {
                 .map(Object::toString)
                 .toArray(String[]::new);
 
-        try (Connection conn = DatabaseManager.getConnection()) {
-            log.info("✅ База данных PostgreSQL подключена!");
-
-            // Создание таблиц
+        // Создание таблиц БД
+        try {
             UsersTable.createTable();
             BankTable.createTable();
-            PrivacyTable.createTable();
             StatisticTable.createTable();
             ProfileTable.createTable();
+            GuildTable.createTable();
 
-        } catch (SQLException e) {
-            log.error("❌ Не удалось подключиться к базе данных: ");
+            new PrivacyTable().createTable();
+            new MuteTable(query).createTable();
+            new BanTable(query).createTable();
 
-            throw new RuntimeException();
+            log.info("✅ База данных PostgreSQL и таблицы успешно инициализированы!");
+        } catch (Exception e) {
+            log.error("❌ Ошибка при инициализации таблиц базы данных: ", e);
+            throw new RuntimeException(e);
         }
 
-        Manager manager = new Manager();
+        MuteTable muteTable = new MuteTable(query);
+        MuteService muteService = new MuteService(muteTable);
+
+        BanTable banTable = new BanTable(query);
+        BanService banService = new BanService(banTable);
+
+        Manager manager = new Manager(
+                muteService, muteTable,
+                banTable, banService
+        );
+
         MemberCachePolicy memberCachePolicy = Config.getInstance().getMemberCachePolicy("jda.cache_policy");
         JDA jda = JDABuilder.createDefault(token)
                 // Cache & Intents
@@ -83,6 +109,7 @@ public class Main implements EventListener {
                 .addEventListeners(new NameSave())
                 .addEventListeners(new MessageCounter())
                 .addEventListeners(new ReactionCounter())
+                .addEventListeners(new SelfUnban(banTable))
 
                 // Ping
                 .addEventListeners(new PrefixPing(), new SlashPing())
@@ -91,10 +118,12 @@ public class Main implements EventListener {
                 .addEventListeners(manager)
                 .build();
 
+        MessageRequest.setDefaultMentions(EnumSet.noneOf(Message.MentionType.class));
         jda.awaitReady();
         slashCmdInfo.registerCommands(jda);
 
-        Config.getInstance().close();
+        MuteScheduler muteScheduler = new MuteScheduler(muteTable, jda);
+        muteScheduler.start();
     }
 
     @Override

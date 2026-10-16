@@ -34,7 +34,7 @@ public class GlobalProfilePrivate extends BaseCmd {
     @ButtonPrefix(prefix = "private")
     public void onButton(@NotNull ButtonInteractionEvent event, String[] parts) {
         UserAccount user = UsersTable.getOrCreateUser(event.getUser().getIdLong(), event.getUser().getName());
-        PrivacyAccount privacy = PrivacyTable.getOrCreatePrivacy(user.getId());
+        PrivacyAccount privacy = new PrivacyTable().getOrCreatePrivacy(user.getId());
 
         if (!Interaction.checkOwner(event, parts)) return;
 
@@ -90,7 +90,7 @@ public class GlobalProfilePrivate extends BaseCmd {
             PrivacyTable.updateLastActivityPrivacy(user.getId(), lastActivityMapping.getAsString().equals("true"));
 
             BankAccount bank = BankTable.getOrCreateBank(user.getId(), username);
-            PrivacyAccount privacy = PrivacyTable.getOrCreatePrivacy(user.getId());
+            PrivacyAccount privacy = new PrivacyTable().getOrCreatePrivacy(user.getId());
 
             GlobalProfileContext ctx = new GlobalProfileContext(
                     event.getUser(),

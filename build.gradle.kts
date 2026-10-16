@@ -1,11 +1,13 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     java
-    kotlin("jvm") version "2.4.10"
+    kotlin("jvm") version "2.4.20"
     id("com.gradleup.shadow") version "9.6.1"
 }
 
 group = "kikaaad.smlly"
-version = "0.6.4-beta"
+version = "0.8.0-beta"
 
 java {
     toolchain {
@@ -32,15 +34,24 @@ tasks.processResources {
     }
 }
 
+tasks.withType<KotlinCompile> {
+    compilerOptions {
+        freeCompilerArgs.add("-java-parameters")
+    }
+}
+
 dependencies {
-    implementation("org.springframework:spring-jdbc:7.0.8")
+    implementation("org.flywaydb:flyway-core:10.8.0")
+    implementation("org.flywaydb:flyway-database-postgresql:10.8.0")
+    implementation("org.jetbrains.lets-plot:lets-plot-kotlin-jvm:4.15.0")
+    implementation("org.springframework:spring-jdbc:7.0.9")
     implementation("com.electronwill.night-config:toml:3.9.0")
     implementation("com.zaxxer:HikariCP:7.1.0")
     implementation("org.postgresql:postgresql:42.7.13")
-    implementation("ch.qos.logback:logback-classic:1.6.3")
-    implementation("ch.qos.logback:logback-core:1.6.3")
+    implementation("ch.qos.logback:logback-classic:1.6.4")
+    implementation("ch.qos.logback:logback-core:1.6.4")
     implementation("com.google.code.gson:gson:2.14.0")
-    implementation("net.dv8tion:JDA:6.6.0")
+    implementation("net.dv8tion:JDA:6.7.0")
     implementation("club.minnced:jda-ktx:0.15.0")
     implementation(libs.org.jetbrains.kotlin.kotlin.stdlib.jdk8)
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.11.0")

@@ -1,9 +1,13 @@
 package com.kika.smllybot.database.sql.privacy;
 
 import com.kika.smllybot.database.sql.DatabaseManager;
+import com.kika.smllybot.database.sql.mute.dto.MuteData;
 import com.kika.smllybot.database.sql.privacy.dto.PrivacyAccount;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.jdbc.core.DataClassRowMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
@@ -13,62 +17,46 @@ public class PrivacyTable {
 
     private static final Logger log = LoggerFactory.getLogger(PrivacyTable.class);
 
-    public static void createTable() {
+    private static final RowMapper<PrivacyAccount> PRIVACY_MAPPER = DataClassRowMapper.newInstance(PrivacyAccount.class);
+
+    private final JdbcTemplate query;
+
+    public PrivacyTable() {
+        this.query = DatabaseManager.getQuery();
+    }
+
+    public void createTable() {
         System.setOut(new PrintStream(System.out, true, StandardCharsets.UTF_8));
 
         String sql = """
                 CREATE TABLE IF NOT EXISTS privacy (
-                id BIGINT PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
-                bag BOOLEAN DEFAULT false,
-                activity BOOLEAN DEFAULT false,
-                last_activity BOOLEAN DEFAULT false
+                    id              BIGINT PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+                    bag             BOOLEAN DEFAULT false,
+                    activity        BOOLEAN DEFAULT false,
+                    last_activity   BOOLEAN DEFAULT false
                 );
                 """;
 
-        try (Connection conn = DatabaseManager.getConnection();
-             Statement stmt = conn.createStatement()) {
-            stmt.execute(sql);
+        try {
+            query.execute(sql);
             log.info("✅ Таблица PRIVACY успешно проверена / создана");
-        } catch (SQLException e) {
+        } catch (Exception e) {
             log.error("❌ Ошибка создания таблицы PRIVACY: ");
         }
     }
 
-    public static PrivacyAccount getOrCreatePrivacy(long id) {
-        String selectSql = "SELECT id, bag, activity, last_activity FROM privacy WHERE id = ?";
-        String insertSql = """
-            INSERT INTO privacy (id) VALUES (?)
-            ON CONFLICT (id) DO NOTHING
+    public PrivacyAccount getOrCreatePrivacy(long id) {
+        String sql = """
+            INSERT INTO privacy (id)
+            VALUES (?)
+            ON CONFLICT (id) DO UPDATE
+                SET id = EXCLUDED.id
             RETURNING id, bag, activity, last_activity;
             """;
 
-        try (Connection conn = DatabaseManager.getConnection()) {
-            try (PreparedStatement pstmt = conn.prepareStatement(selectSql)) {
-                pstmt.setLong(1, id);
-                try (ResultSet rs = pstmt.executeQuery()) {
-                    if (rs.next()) {
-                        return mapPrivacy(rs);
-                    }
-                }
-            }
-
-            try (PreparedStatement pstmt = conn.prepareStatement(insertSql)) {
-                pstmt.setLong(1, id);
-                try (ResultSet rs = pstmt.executeQuery()) {
-                    if (rs.next()) {
-                        return mapPrivacy(rs);
-                    }
-                }
-            }
-
-            try (PreparedStatement pstmt = conn.prepareStatement(selectSql)) {
-                pstmt.setLong(1, id);
-                try (ResultSet rs = pstmt.executeQuery()) {
-                    if (rs.next()) return mapPrivacy(rs);
-                }
-            }
-
-        } catch (SQLException e) {
+        try {
+            return query.queryForObject(sql, PRIVACY_MAPPER, id);
+        } catch (Exception e) {
             log.error("❌ Ошибка PRIVACY (id: {}): ", id, e);
         }
         return null;
@@ -98,14 +86,5 @@ public class PrivacyTable {
         } catch (SQLException e) {
             log.error("❌ Ошибка обновления приватности (id: {}): ", internalId, e);
         }
-    }
-
-    private static PrivacyAccount mapPrivacy(ResultSet rs) throws SQLException {
-        return new PrivacyAccount(
-                rs.getInt("id"),
-                rs.getBoolean("bag"),
-                rs.getBoolean("activity"),
-                rs.getBoolean("last_activity")
-        );
     }
 }

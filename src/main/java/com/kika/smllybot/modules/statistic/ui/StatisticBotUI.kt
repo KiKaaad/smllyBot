@@ -35,7 +35,9 @@ class StatisticBotUI {
             // ЦП
             val systemLoadFriendly = NumUtil.german(systemLoad)
 
-            val diffRam = NumUtil.german(freeRam.toDouble() / ram.toDouble() * 100)
+            val diffRam = NumUtil.german((
+                    (osBean.totalMemorySize - osBean.freeMemorySize) / 1048576.0)
+                    / (osBean.totalMemorySize / 1048576.0) * 100)
 
             val systemLoadEmoji: String = when (systemLoad.toInt()) {
                 in 0..25 -> "🟢"
