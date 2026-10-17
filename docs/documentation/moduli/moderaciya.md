@@ -21,6 +21,8 @@ layout:
     visible: true
   anchors:
     visible: true
+tags:
+  - beta
 ---
 
 # Модерация
