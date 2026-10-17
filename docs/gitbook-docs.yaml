@@ -18,21 +18,41 @@ site:
           content:
             directory: ./home
             language: ru
-    - type: section
-      key: section-2
+    - type: section-group
+      key: section-group-1
       title: Документация
-      path: documentation
-      description: ""
-      icon: book-blank
+      icon: lychee
       children:
-        - type: space
-          key: space-2
-          title: Документация
+        - type: section
+          key: section-2
+          title: Для пользователей
           path: documentation
-          default: true
-          content:
-            directory: ./documentation
-            language: ru
+          description: Документация для обычных пользователей и администраторов
+          icon: book-open-lines
+          children:
+            - type: space
+              key: space-2
+              title: ЧЕТАТАМ
+              path: documentation
+              default: true
+              content:
+                directory: ./documentation
+                language: ru
+        - type: section
+          key: section-4
+          title: Для разработчиков
+          path: ./documentation
+          description: Документация для тех, кто вносит вклад в разработку бота
+          icon: rotate
+          children:
+            - type: space
+              key: space-4
+              title: ЧЕТАТАМ2
+              path: documentation
+              default: true
+              content:
+                directory: ./documentation
+                language: ru
     - type: section
       key: section-3
       title: API Reference
