@@ -77,7 +77,7 @@ public class UsersTable {
         String insertSql = """
         INSERT INTO users (discord_id, name) VALUES (?, ?)
         ON CONFLICT (discord_id) DO NOTHING
-        RETURNING id, discord_id, role, name, motto, created_at, reaction, citizenship, citizenship_data;
+        RETURNING id, discord_id, role, name, motto, created_at, reaction, citizenship, citizenship_data, ARRAY[]::text[] as badges;
         """;
 
         try {
