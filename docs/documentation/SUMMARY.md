@@ -11,6 +11,7 @@
 * [Анкеты & Профили](moduli/ankety-and-profili.md)
 * [Экономика](moduli/ekonomika.md)
 * [Модерация](moduli/moderaciya.md)
+* [Топы](moduli/topy.md)
 * [Интерактивные команды](moduli/interaktivnye-komandy.md)
 
 ## 🎈 Другое
