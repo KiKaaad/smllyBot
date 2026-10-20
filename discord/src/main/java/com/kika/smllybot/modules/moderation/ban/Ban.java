@@ -3,6 +3,8 @@ package com.kika.smllybot.modules.moderation.ban;
 import com.kika.smllybot.database.sql.guild.guild.GuildTable;
 import com.kika.smllybot.database.sql.guild.guild.dto.GuildData;
 import com.kika.smllybot.handler.ErrorThrow;
+import com.kika.smllybot.modules.moderation.TargetUser;
+import com.kika.smllybot.modules.moderation.Typification;
 import com.kika.smllybot.other.BaseCmd;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.components.container.Container;
@@ -44,75 +46,10 @@ public class Ban extends BaseCmd {
             return null;
         }
 
-        /*
-        Полный вид команды:
-        бан @юзер 12 часов
-        гадостно себя ведет!!
-        */
-        String[] matches = raw.trim().split("\\n", 2);
-        String firstLine = matches[0].trim();
-        String[] parts = firstLine.split("\\h+");
+        Typification typification = new Typification();
+        TargetUser context = typification.find(event, raw);
 
-        String reason = (matches.length >= 2 && !matches[1].isBlank()) ? matches[1].trim() : null;
-
-        // Ответом на сообщение -> бан [время] [тип]
-        if (event.getMessage().getReferencedMessage() != null) {
-            Member target = event.getMessage().getReferencedMessage().getMember();
-            if (target == null) {
-                ErrorThrow.userNotFound(event, "");
-                return null;
-            }
-
-            if (parts.length < 3 || parts[1].isBlank()) banService.ban(event, target, moderator, null, null, reason);
-            else banService.ban(event, target, moderator, parts[1], parts[2], reason);
-
-            return null;
-        }
-
-        // Упоминание -> @username
-        if (!event.getMessage().getMentions().getMembers().isEmpty()) {
-            Member target = event.getMessage().getMentions().getMembers().getFirst();
-
-            if (parts.length < 4 || parts[2].isBlank()) banService.ban(event, target, moderator, null, null, reason);
-            else banService.ban(event, target, moderator, parts[2], parts[3], reason);
-
-            banService.ban(event, target, moderator, parts[2], parts[3], reason);
-            return null;
-        }
-
-        if (parts.length < 2) {
-            return null;
-        }
-
-        String arg = parts[1];
-
-        // ID -> 12345678910121314
-        if (arg.matches("\\d+")) {
-            long targetId = Long.parseLong(arg);
-            guild.retrieveMemberById(targetId).queue(
-                    target -> {
-                        if (parts.length < 4 || parts[2].isBlank()) banService.ban(event, target,
-                                moderator, null, null, reason);
-                        else banService.ban(event, target, moderator, parts[2], parts[3], reason);
-                    },
-                    failure -> ErrorThrow.userNotFound(event, arg)
-            );
-            return null;
-        }
-
-        // Никнейм -> kefichik.
-        var members = guild.getMembersByName(arg, true);
-        if (members.isEmpty()) {
-            members = guild.getMembersByNickname(arg, true);
-        }
-
-        if (!members.isEmpty()) {
-            if (parts.length < 4 && parts[2].isBlank()) banService.ban(event, members.getFirst(),
-                    moderator, null, null, reason);
-            else banService.ban(event, members.getFirst(), moderator, parts[2], parts[3], reason);
-        } else {
-            ErrorThrow.userNotFound(event, "");
-        }
+        banService.ban(event, moderator, context);
 
         return null;
     }
