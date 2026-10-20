@@ -50,7 +50,7 @@ layout:
 
 * Бот разделен на два модуля: discord и telegram. В планах на будущее сделать бота, который одинаково бы работал в обоих API
 
-<a href="https://github.com/KiKaaad/smllyBot/releases/download/v0.8.0-beta/smllyDS-0.8.0-beta.jar" class="button primary" data-icon="folder-arrow-down">Установить релиз</a>
+<a href="https://github.com/KiKaaad/smllyBot/releases/download/v0.8.1-beta/smllyDS-0.8.1-beta.jar" class="button primary" data-icon="folder-arrow-down">Установить релиз</a>
 {% endupdate %}
 
 {% update date="2026-10-06" tags="veta,novoe,improvement,fix" %}
