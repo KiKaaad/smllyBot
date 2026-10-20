@@ -3,3 +3,6 @@
  */
 
 rootProject.name = "smllyDS"
+
+// include("telegram")
+include("discord")

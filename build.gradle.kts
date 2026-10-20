@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "kikaaad.smlly"
-version = "0.8.0-beta"
+version = "0.8.1-beta"
 
 java {
     toolchain {
@@ -40,7 +40,15 @@ tasks.withType<KotlinCompile> {
     }
 }
 
+tasks.shadowJar {
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    archiveClassifier.set("")
+    mergeServiceFiles()
+}
+
 dependencies {
+//    implementation(project(":telegram"))
+    implementation(project(":discord"))
     implementation("org.flywaydb:flyway-core:10.8.0")
     implementation("org.flywaydb:flyway-database-postgresql:10.8.0")
     implementation("org.jetbrains.lets-plot:lets-plot-kotlin-jvm:4.15.0")

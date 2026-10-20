@@ -1,0 +1,165 @@
+package com.kika.smllybot;
+
+import com.kika.smllybot.database.sql.DatabaseManager;
+import com.kika.smllybot.database.sql.guild.ban.BanTable;
+import com.kika.smllybot.database.sql.user.bank.BankTable;
+import com.kika.smllybot.database.sql.guild.guild.GuildTable;
+import com.kika.smllybot.database.sql.guild.mute.MuteTable;
+import com.kika.smllybot.database.sql.user.privacy.PrivacyTable;
+import com.kika.smllybot.database.sql.user.profile.ProfileTable;
+import com.kika.smllybot.database.sql.user.statistic.StatisticTable;
+import com.kika.smllybot.database.sql.user.users.UsersTable;
+import com.kika.smllybot.listeners.MessageCounter;
+import com.kika.smllybot.listeners.NameSave;
+import com.kika.smllybot.listeners.ReactionCounter;
+import com.kika.smllybot.listeners.SelfUnban;
+import com.kika.smllybot.modules.moderation.ban.BanService;
+import com.kika.smllybot.modules.moderation.mute.MuteService;
+import com.kika.smllybot.modules.ping.PrefixPing;
+import com.kika.smllybot.modules.ping.SlashPing;
+import com.kika.smllybot.other.slashCmdInfo;
+import com.kika.smllybot.schedule.BanScheduler;
+import com.kika.smllybot.schedule.MuteScheduler;
+import com.kika.smllybot.schedule.Stars;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.JDAInfo;
+import net.dv8tion.jda.api.entities.Activity;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.events.GenericEvent;
+import net.dv8tion.jda.api.events.session.ReadyEvent;
+import net.dv8tion.jda.api.hooks.EventListener;
+import net.dv8tion.jda.api.requests.GatewayIntent;
+import net.dv8tion.jda.api.utils.ChunkingFilter;
+import net.dv8tion.jda.api.utils.MemberCachePolicy;
+import net.dv8tion.jda.api.utils.cache.CacheFlag;
+import net.dv8tion.jda.api.utils.messages.MessageRequest;
+import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.jdbc.core.JdbcTemplate;
+
+import java.util.EnumSet;
+import java.util.List;
+
+public class Main implements EventListener {
+
+
+    private static final Logger log = LoggerFactory.getLogger(Main.class);
+    public static String[] PREFIXES;
+    public static final String VERSION = "🔇 v0.8.1-beta (20.10.2026)";
+    public static final String OWNER = "<@683345722611073059>";
+
+    static void main() throws InterruptedException {
+        Config.getInstance().load();
+
+        DatabaseManager.init();
+        JdbcTemplate query = DatabaseManager.getQuery();
+
+        Stars.minusStarsScheduler();
+
+        String token = Config.getInstance().getString("main.token");
+
+        List<?> configPrefixes = Config.getInstance().getList("main.prefix");
+        PREFIXES = configPrefixes.stream()
+                .map(Object::toString)
+                .toArray(String[]::new);
+
+        // Создание таблиц баз данных
+        try {
+            UsersTable.createTable();
+            BankTable.createTable();
+            StatisticTable.createTable();
+            ProfileTable.createTable();
+            GuildTable.createTable();
+
+            new PrivacyTable().createTable();
+            new MuteTable(query).createTable();
+            new BanTable(query).createTable();
+
+            log.info("✅ База данных PostgreSQL и таблицы успешно инициализированы!");
+        } catch (Exception e) {
+            log.error("❌ Ошибка при инициализации таблиц базы данных: ", e);
+            throw new RuntimeException(e);
+        }
+
+        // Таблицы модерации
+        MuteTable muteTable = new MuteTable(query);
+        MuteService muteService = new MuteService(muteTable);
+
+        BanTable banTable = new BanTable(query);
+        BanService banService = new BanService(banTable);
+
+        // Передача сервисов в менеджер
+        Manager manager = new Manager(
+                muteService, muteTable,
+                banTable, banService
+        );
+
+        MemberCachePolicy memberCachePolicy = Config.getInstance().getMemberCachePolicy("jda.cache_policy");
+
+        JDA jda = JDABuilder.createDefault(token)
+                // Cache & Intents
+                .enableIntents(GatewayIntent.MESSAGE_CONTENT)
+                .enableIntents(GatewayIntent.GUILD_MEMBERS)
+                .enableIntents(GatewayIntent.GUILD_PRESENCES)
+                .setMemberCachePolicy(memberCachePolicy)
+                .setChunkingFilter(ChunkingFilter.NONE)
+                .enableCache(CacheFlag.ONLINE_STATUS)
+                .setActivity(Activity.customStatus("%s".formatted(VERSION)))
+
+                // Listeners
+                .addEventListeners(new Main())
+                .addEventListeners(new NameSave())
+                .addEventListeners(new MessageCounter())
+                .addEventListeners(new ReactionCounter())
+                .addEventListeners(new SelfUnban(banTable))
+
+                // Ping
+                .addEventListeners(new PrefixPing(), new SlashPing())
+
+                // Managers
+                .addEventListeners(manager)
+                .build();
+
+        // Запрет на пинги
+        MessageRequest.setDefaultMentions(EnumSet.noneOf(Message.MentionType.class));
+        jda.awaitReady();
+        slashCmdInfo.registerCommands(jda);
+
+        MuteScheduler muteScheduler = new MuteScheduler(muteTable, jda);
+        BanScheduler banScheduler = new BanScheduler(banTable, jda);
+        banScheduler.start();
+        muteScheduler.start();
+    }
+
+    @Override
+    public void onEvent(@NotNull GenericEvent event) {
+        if (event instanceof ReadyEvent) {
+            var jdaVersion = JDAInfo.VERSION;
+            var jdaGithub = JDAInfo.GITHUB;
+            var jdaShardTotal = JDA.ShardInfo.SINGLE.getShardTotal();
+            var botName = event.getJDA().getSelfUser().getAsTag();
+            var botId = event.getJDA().getSelfUser().getId();
+            var serversCount = ((ReadyEvent) event).getGuildTotalCount();
+            var userCount = event.getJDA().getUserCache().stream().count();
+
+            log.info("""
+                    \nИнформация JDA:
+                    🐾 Версия: {}
+                    🐾 Гитхаб: {}
+                    Информация бота:
+                    ℹ️ Префиксы: {}
+                    💾 Версия: {}
+                    📎 Гитхаб: https://github.com/KiKaaad/smllyBot
+                    🌚 Работает на боте: {} | 🆔 ID: {}
+                    🔗 Шардов всего (1 шард = 0 - 2.500 серверов): {}
+                    🌃 Серверов: {}
+                    💀 Пользователей: {}
+                    ✅ Успешно запущено
+                    """, jdaVersion, jdaGithub, String.join("][", PREFIXES),
+                    VERSION, botName, botId, jdaShardTotal, serversCount, userCount);
+        }
+    }
+
+}
