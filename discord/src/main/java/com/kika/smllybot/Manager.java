@@ -194,7 +194,7 @@ public class Manager extends ListenerAdapter {
                 break;
             }
 
-            int lastSpace = searchCommand.lastIndexOf(' ');
+            int lastSpace = searchCommand.lastIndexOf('\n');
             if (lastSpace == -1) break;
             searchCommand = searchCommand.substring(0, lastSpace);
         }
