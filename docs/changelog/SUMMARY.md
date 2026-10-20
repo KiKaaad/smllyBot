@@ -1,6 +1,6 @@
 # Table of contents
 
-* [🔄️ Чендж-лог](README.md)
+* [Чендж-лог](README.md)
 
 ## 2026
 
