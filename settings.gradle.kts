@@ -4,5 +4,5 @@
 
 rootProject.name = "smllyDS"
 
-include("telegram")
+// include("telegram")
 include("discord")
