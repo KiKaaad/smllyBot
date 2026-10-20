@@ -47,7 +47,7 @@ tasks.shadowJar {
 }
 
 dependencies {
-    implementation(project(":telegram"))
+//    implementation(project(":telegram"))
     implementation(project(":discord"))
     implementation("org.flywaydb:flyway-core:10.8.0")
     implementation("org.flywaydb:flyway-database-postgresql:10.8.0")
