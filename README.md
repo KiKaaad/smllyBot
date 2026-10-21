@@ -17,7 +17,7 @@
 - [🛠️ Для разработчиков](#-для-разработчиков)
 
 ### 🛟 Поддержка
-Документация — [smlly.gitbok.io/i](https://smlly.gitbok.io/i)\
+Документация — [smlly.gitbok.io/i](https://smlly.gitbook.io/i)\
 Телеграм — [t.me/kikaaad](https://t.me/KiKaaad)\
 Дискорд-сервер — [discord.gg/3JSz5fEeee](https://discord.gg/3JSz5fEeee)\
 Вы можете задать любой вопрос или сообщить об уязвимости, для обычных багов есть [issues](https://github.com/KiKaaad/smllyBotDiscordJDA/issues)
