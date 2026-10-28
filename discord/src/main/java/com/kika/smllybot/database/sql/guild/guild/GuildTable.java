@@ -47,7 +47,7 @@ public class GuildTable {
         String upsertSql = """
                 INSERT INTO guild (id, title) VALUES (?, ?)
                 ON CONFLICT (id) DO UPDATE SET id = EXCLUDED.id
-                RETURNING id, title, staging, mute_type, mute_role;
+                RETURNING id, title, staging, mute_type, mute_role, ARRAY[]::text[];
                 """;
 
         try {
