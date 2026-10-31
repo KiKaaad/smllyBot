@@ -1,7 +1,7 @@
 ---
 description: Уделите немножко времени на то, чтобы в целом узнать самые самые основы бота
 icon: rocket-launch
-cover: ../.gitbook/assets/image_2026-10-07_15-46-07.png
+cover: .gitbook/assets/image_2026-10-07_15-46-07.png
 coverY: 0
 coverHeight: 239
 layout:
@@ -52,7 +52,7 @@ layout:
 
 Большая часть команд, позволяющих взаимодействовать с другими пользователями умеют правильно работать и с ответами на команду
 
-<div data-with-frame="true"><figure><img src="../.gitbook/assets/Screenshot 2026-10-17 122733.png" alt=""><figcaption></figcaption></figure></div>
+<div data-with-frame="true"><figure><img src=".gitbook/assets/Screenshot 2026-10-17 122733.png" alt=""><figcaption></figcaption></figure></div>
 
 [^1]: Префиксы: `ирис`, `!`, `.`&#x20;
 

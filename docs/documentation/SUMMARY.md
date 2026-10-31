@@ -1,10 +1,7 @@
 # Table of contents
 
 * [Привет!](README.md)
-
-## ℹ️ Начать пользоваться
-
-* [Прежде, чем начнем](nachat-polzovatsya/prezhde-chem-nachnem.md)
+* [Прежде, чем начнем](prezhde-chem-nachnem.md)
 
 ## 🚗 Модули
 
