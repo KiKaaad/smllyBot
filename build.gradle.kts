@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "kikaaad.smlly"
-version = "0.8.1-beta"
+version = "0.8.2-beta"
 
 java {
     toolchain {
