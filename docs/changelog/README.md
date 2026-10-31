@@ -26,6 +26,29 @@ layout:
 # Чендж-лог
 
 {% updates format="full" %}
+{% update date="2026-10-31" tags="veta,improvement,fix" %}
+## v0.8.2 — Чёрт побери, бот не отвечает!
+
+<div data-with-frame="true"><figure><img src=".gitbook/assets/giftoupdate.gif" alt=""><figcaption><p>Демонстрация рджбт логирования</p></figcaption></figure></div>
+
+### 🔄️ Изменено
+
+* Некоторые команды переименованы в соответствии с логикой (эти команды отображают все баны включая оконченные):
+  * `Банлист` -> `Банхист`, `Мутлист` -> `Мутхист`
+* Бейджи стали более крупными
+* Красивое форматирование логирования:
+  * **INFO:** Зеленый
+  * **WARN:** Желтый
+  * **ERROR:** Красный
+
+### 🐛 Исправлено
+
+* Команды с аргументами больше двух не работали из-за неверного поиска команды
+* Не работали вызовы к базе данных гильдий из-за чего команды, связанные с ними могли не работать
+
+<a href="https://github.com/KiKaaad/smllyBot/releases/download/v0.8.2-beta/smllyDS-0.8.2-beta.jar" class="button primary" data-icon="folder-arrow-down">Установить релиз</a>
+{% endupdate %}
+
 {% update date="2026-10-20" tags="novoe,fix,veta" %}
 ## &#x20;v0.8.1 — Больше исправлений, милорд!
 
@@ -49,8 +72,6 @@ layout:
 ### ⚙️ Внутренние изменения
 
 * Бот разделен на два модуля: discord и telegram. В планах на будущее сделать бота, который одинаково бы работал в обоих API
-
-<a href="https://github.com/KiKaaad/smllyBot/releases/download/v0.8.1-beta/smllyDS-0.8.1-beta.jar" class="button primary" data-icon="folder-arrow-down">Установить релиз</a>
 {% endupdate %}
 
 {% update date="2026-10-06" tags="veta,novoe,improvement,fix" %}
