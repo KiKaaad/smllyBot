@@ -1,0 +1,1 @@
+ALTER TABLE guild ADD COLUMN prefix VARCHAR(16)[];

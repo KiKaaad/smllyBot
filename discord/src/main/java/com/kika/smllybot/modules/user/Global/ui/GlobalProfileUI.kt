@@ -50,7 +50,7 @@ class GlobalProfileUI {
                 Thumbnail.fromUrl(ctx.target().getEffectiveAvatarUrl()),
                 TextDisplay.of("# Это ${ctx.target().effectiveName} $status"),
                 TextDisplay
-                    .of(ctx.user.badges?.joinToString(" ")?.ifBlank { null } ?: "Пока что бейджиков нет..."),
+                    .of("## ${ctx.user.badges?.joinToString(" ")?.ifBlank { null } ?: "Пока что бейджиков нет..."}"),
                 TextDisplay.of(motto)
             )
 

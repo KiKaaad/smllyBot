@@ -5,5 +5,6 @@ data class GuildData(
     val title: String,
     val staging: Boolean,
     val muteType: String,
-    val muteRole: Long?
+    val muteRole: Long?,
+    val prefix: List<String>?
 )
