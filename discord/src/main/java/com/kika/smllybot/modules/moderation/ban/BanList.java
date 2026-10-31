@@ -30,7 +30,7 @@ public class BanList extends BaseCmd {
     private final BanTable banTable;
 
     public BanList(BanTable banTable) {
-        super(Set.of("банлист", "banlist"));
+        super(Set.of("банист", "banhist", "banhistory", "банистория", "банхист"));
         this.banTable = banTable;
     }
 

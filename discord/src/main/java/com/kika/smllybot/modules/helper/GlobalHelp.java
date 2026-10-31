@@ -13,7 +13,7 @@ import java.util.Set;
 public class GlobalHelp extends BaseCmd {
 
     public GlobalHelp() {
-        super(Set.of("хелпа", "хелп", "хелпер", "помощь"));
+        super(Set.of("хелпа", "хелп", "хелпер", "помощь", "help"));
     }
 
     @Override

@@ -30,7 +30,7 @@ public class MuteList extends BaseCmd {
     private final MuteTable muteTable;
 
     public MuteList(MuteTable muteTable) {
-        super(Set.of("мутлист", "мьютлист", "mutelist"));
+        super(Set.of("мутист", "мьютист", "mutehist", "мутхист", "мьютхист"));
         this.muteTable = muteTable;
     }
 
