@@ -50,6 +50,8 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Manager extends ListenerAdapter {
 
@@ -187,6 +189,8 @@ public class Manager extends ListenerAdapter {
         BaseCmd cmd = null;
         String commandName = "";
 
+        Pattern lastSpacePattern = Pattern.compile("\\s\\S*$");
+
         while (!searchCommand.isEmpty()) {
             if (commands.containsKey(searchCommand)) {
                 cmd = commands.get(searchCommand);
@@ -194,9 +198,12 @@ public class Manager extends ListenerAdapter {
                 break;
             }
 
-            int lastSpace = searchCommand.lastIndexOf('\n');
-            if (lastSpace == -1) break;
-            searchCommand = searchCommand.substring(0, lastSpace);
+            Matcher matcher = lastSpacePattern.matcher(searchCommand);
+            if (matcher.find()) {
+                searchCommand = searchCommand.substring(0, matcher.start());
+            } else {
+                break;
+            }
         }
 
         if (cmd != null) {
