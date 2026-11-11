@@ -24,6 +24,8 @@ import com.kika.smllybot.modules.moderation.mute.Mute;
 import com.kika.smllybot.modules.moderation.mute.MuteList;
 import com.kika.smllybot.modules.moderation.mute.MuteService;
 import com.kika.smllybot.modules.moderation.mute.Unmute;
+import com.kika.smllybot.modules.moderation.mypunishments.MyBans;
+import com.kika.smllybot.modules.moderation.mypunishments.MyMutes;
 import com.kika.smllybot.modules.privacy.Privacy;
 import com.kika.smllybot.modules.privacy.PrivacyInteraction;
 import com.kika.smllybot.modules.statistic.StatisticBot;
@@ -91,6 +93,8 @@ public class Manager extends ListenerAdapter {
         // Модерация
         reg(new Mute(muteService), new Unmute(muteService), new MuteList(muteTable));
         reg(new Ban(banService), new Unban(banService), new BanList(banTable));
+
+        reg(new MyBans(banTable), new MyMutes(muteTable));
         log.info("✅ Модуль модерации загружен");
 
         // Настройки гильдии
