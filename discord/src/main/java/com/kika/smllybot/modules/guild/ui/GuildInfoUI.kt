@@ -69,6 +69,7 @@ class GuildInfoUI {
             val guildInfo = TextDisplay.of("## Информация о гильдии:")
             val channels = TextDisplay.of("\\💬 **Каналов:** $channelsSize | \\🎙️ **Войсов:** $voiceChannels")
             val roles = TextDisplay.of("\\👔 **Ролей:** $rolesCount | **IDG:** `$guildId`")
+            val prefixes = TextDisplay.of("\\🪄 Префиксы бота: ${ctx.guild.prefix?.joinToString(", ")}")
             val footer = TextDisplay.of("-# **IDG** - айди гильдии (ID Guild)")
 
             components.add(header)
@@ -82,6 +83,7 @@ class GuildInfoUI {
             components.add(channels)
             components.add(roles)
             components.add(separator)
+            components.add(prefixes)
             components.add(footer)
 
             return Container.of(components)

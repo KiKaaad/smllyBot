@@ -5,6 +5,8 @@ import com.kika.smllybot.annotations.ModalPrefix;
 import com.kika.smllybot.annotations.RegisteredButton;
 import com.kika.smllybot.annotations.RegisteredModal;
 import com.kika.smllybot.database.sql.guild.ban.BanTable;
+import com.kika.smllybot.database.sql.guild.guild.GuildTable;
+import com.kika.smllybot.database.sql.guild.guild.dto.GuildData;
 import com.kika.smllybot.database.sql.guild.mute.MuteTable;
 import com.kika.smllybot.modules.economy.Bag;
 import com.kika.smllybot.modules.economy.Dice;
@@ -13,6 +15,7 @@ import com.kika.smllybot.modules.fun.Infa;
 import com.kika.smllybot.modules.fun.YesOrNo;
 import com.kika.smllybot.modules.fun.soft.*;
 import com.kika.smllybot.modules.guild.GuildInfo;
+import com.kika.smllybot.modules.guild.GuildPrefix;
 import com.kika.smllybot.modules.guild.Staging;
 import com.kika.smllybot.modules.helper.Changelog;
 import com.kika.smllybot.modules.helper.GlobalHelp;
@@ -50,10 +53,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Manager extends ListenerAdapter {
 
@@ -98,6 +102,7 @@ public class Manager extends ListenerAdapter {
         log.info("✅ Модуль модерации загружен");
 
         // Настройки гильдии
+        reg(new GuildPrefix());
         reg(new Staging());
 
         // Интерактивные команды
@@ -184,9 +189,25 @@ public class Manager extends ListenerAdapter {
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
         if (event.getAuthor().isBot()) return;
+        long botId = event.getJDA().getSelfUser().getIdLong();
+
+        List<String> prefixes;
+        GuildData guildData;
+
+        if (event.isFromGuild()) {
+            guildData = GuildTable.getOrCreateGuild(
+                    event.getGuild().getIdLong(), event.getGuild().getName());
+            prefixes = Stream.of(List.of("<@" + botId + ">"), guildData.getPrefix())
+                    .filter(Objects::nonNull)
+                    .flatMap(List::stream)
+                    .distinct()
+                    .collect(Collectors.toList());
+        } else {
+            prefixes = Main.PREFIXES;
+        }
 
         String command = event.getMessage().getContentRaw();
-        String commandBody = PrefixUtil.getCommandBody(command, Main.PREFIXES);
+        String commandBody = PrefixUtil.getCommandBody(command, prefixes);
         if (commandBody == null || commandBody.isEmpty()) return;
 
         String searchCommand = commandBody.trim().toLowerCase();

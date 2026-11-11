@@ -4,16 +4,12 @@ import com.kika.smllybot.database.sql.DatabaseManager;
 import com.kika.smllybot.database.sql.guild.guild.dto.GuildData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
-import java.io.PrintStream;
-import java.nio.charset.StandardCharsets;
-import java.sql.Array;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.Arrays;
 import java.util.List;
 
@@ -78,14 +74,20 @@ public class GuildTable {
     public static void editPrefix(long guildId, List<String> prefix) {
         JdbcTemplate query = DatabaseManager.getQuery();
         String sql = """
-                INSERT INTO guild_prefix (guild_id, prefix) VALUES (?, ?)
-                ON CONFLICT (guild_id) DO UPDATE SET prefix = EXCLUDED.prefix
-                """;
+            INSERT INTO guild (id, prefix) VALUES (?, ?)
+            ON CONFLICT (id) DO UPDATE SET prefix = EXCLUDED.prefix
+            """;
 
         try {
-            query.update(sql, prefix, guildId);
-        } catch (Exception e) {
-            log.error("Возникла ошибка при попытке обновить префиксы гильдии");
+            query.update(con -> {
+                PreparedStatement ps = con.prepareStatement(sql);
+                ps.setLong(1, guildId);
+                ps.setArray(2, con.createArrayOf("text", prefix.toArray(new String[0])));
+                return ps;
+            });
+        } catch (DataAccessException e) {
+            log.error("❌ Возникла ошибка при попытке обновить префиксы гильдии {}", guildId, e);
+            throw e;
         }
     }
 }

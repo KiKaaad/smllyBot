@@ -41,13 +41,14 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.EnumSet;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Main implements EventListener {
 
 
     private static final Logger log = LoggerFactory.getLogger(Main.class);
-    public static String[] PREFIXES;
-    public static final String VERSION = "🐞 v0.8.2-beta (31.10.2026)";
+    public static List<String> PREFIXES;
+    public static final String VERSION = "🪄 v0.8.3-beta (11.11.2026)";
     public static final String OWNER = "<@683345722611073059>";
 
     static void main() throws InterruptedException {
@@ -63,7 +64,7 @@ public class Main implements EventListener {
         List<?> configPrefixes = Config.getInstance().getList("main.prefix");
         PREFIXES = configPrefixes.stream()
                 .map(Object::toString)
-                .toArray(String[]::new);
+                .collect(Collectors.toList());
 
         // Таблицы модерации
         MuteTable muteTable = new MuteTable(query);
