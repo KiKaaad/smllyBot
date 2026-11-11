@@ -35,28 +35,6 @@ public class GuildTable {
         );
     };
 
-    public static void createTable() {
-        System.setOut(new PrintStream(System.out, true, StandardCharsets.UTF_8));
-
-        String sql = """
-                CREATE TABLE IF NOT EXISTS guild (
-                    id          BIGINT PRIMARY KEY,
-                    title       TEXT,
-                    staging     BOOLEAN DEFAULT FALSE,
-                    mute_type   VARCHAR(32) DEFAULT 'TIMEOUT',
-                    mute_role   BIGINT
-                );
-                """;
-
-        try (Connection conn = DatabaseManager.getConnection();
-             Statement stmt = conn.createStatement()) {
-            stmt.execute(sql);
-            log.info("✅ Таблица GUILD успешно проверена / создана");
-        } catch (SQLException e) {
-            log.error("❌ Ошибка создания таблицы GUILD: ", e);
-        }
-    }
-
     public static GuildData getOrCreateGuild(long id, String guildName) {
         JdbcTemplate query = DatabaseManager.getQuery();
         String selectSql = """

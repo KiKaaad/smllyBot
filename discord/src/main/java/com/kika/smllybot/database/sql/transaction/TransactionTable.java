@@ -12,26 +12,4 @@ public class TransactionTable {
 
     private static final Logger log = LoggerFactory.getLogger(TransactionTable.class);
 
-    public static void createTable() {
-        System.setOut(new PrintStream(System.out, true, StandardCharsets.UTF_8));
-
-        String sql = """
-            CREATE TABLE IF NOT EXISTS statistic (
-                id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-                guild       BIGINT,
-                date        TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
-                action      VARCHAR,
-                value       INT
-            );
-            """;
-
-        try {
-            DatabaseManager.getQuery().execute(sql);
-
-            log.info("✅ Таблица TRANSACTION проверена / создана");
-        } catch (Exception e) {
-            log.error("❌ Ошибка создания таблицы TRANSACTION: ", e);
-        }
-    }
-
 }

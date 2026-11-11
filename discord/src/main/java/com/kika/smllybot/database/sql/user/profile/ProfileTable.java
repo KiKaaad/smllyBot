@@ -23,28 +23,6 @@ public class ProfileTable {
             rs.getObject("created_at", OffsetDateTime.class)
     );
 
-    public static void createTable() {
-        System.setOut(new PrintStream(System.out, true, StandardCharsets.UTF_8));
-
-        String sql = """
-            CREATE TABLE IF NOT EXISTS profile (
-                id          BIGINT REFERENCES users(id) ON DELETE CASCADE,
-                guild_id    BIGINT,
-                name        VARCHAR,
-                created_at  TIMESTAMPTZ,
-                about_me    VARCHAR(255) DEFAULT 'Пользователь ничего не рассказал о себе.',
-                PRIMARY KEY (id, guild_id)
-            );
-            """;
-
-        try {
-            DatabaseManager.getQuery().execute(sql);
-            log.info("✅ Таблица PROFILES проверена / создана");
-        } catch (Exception e) {
-            log.error("❌ Ошибка создания таблицы PROFILES: ", e);
-        }
-    }
-
     public static ProfileAccount getOrCreateProfile(long id, long guildId, String name, OffsetDateTime dateTime) {
         String selectSql = """
                 SELECT id, guild_id, name, created_at, about_me

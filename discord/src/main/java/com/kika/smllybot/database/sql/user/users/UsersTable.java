@@ -38,31 +38,6 @@ public class UsersTable {
         );
     };
 
-    public static void createTable() {
-        System.setOut(new PrintStream(System.out, true, StandardCharsets.UTF_8));
-
-        String sql = """
-            CREATE TABLE IF NOT EXISTS users (
-                id          BIGSERIAL PRIMARY KEY,
-                role        VARCHAR,
-                name        VARCHAR,
-                discord_id  BIGINT UNIQUE NOT NULL,
-                created_at  TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
-                motto       VARCHAR(255) DEFAULT 'Пользователь не указал описание.',
-                reaction    INT DEFAULT 0,
-                citizenship BIGINT,
-                citizenship_data TIMESTAMPTZ
-            );
-            """;
-
-        try {
-            DatabaseManager.getQuery().execute(sql);
-            log.info("✅ Таблица USERS проверена / создана");
-        } catch (Exception e) {
-            log.error("❌ Ошибка создания таблицы USERS: ", e);
-        }
-    }
-
     public static UserAccount getOrCreateUser(long discordId, String name) {
         String selectSql = """
         SELECT u.id, u.discord_id, u.role, u.name, u.motto, u.created_at, u.reaction, u.citizenship, u.citizenship_data,
