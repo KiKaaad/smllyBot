@@ -1,4 +1,4 @@
-package com.kika;
+package com.kika.smllybot.utils;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.spi.ILoggingEvent;

@@ -9,7 +9,6 @@ import org.springframework.jdbc.core.JdbcTemplate
 import java.sql.Connection
 import java.sql.SQLException
 
-// TODO: Удалить createTable из классов таблиц
 object DatabaseManager {
 
     private val log = LoggerFactory.getLogger(DatabaseManager::class.java)
@@ -58,13 +57,13 @@ object DatabaseManager {
             .load()
         flyway.migrate()
 
-        log.info("✅ База данных успешно инициализирована")
+        log.info("✅ База данных инициализирована")
     }
 
     @JvmStatic
     @Throws(SQLException::class)
     fun getConnection(): Connection {
-        val ds = dataSource ?: throw IllegalStateException("Менеджер не инициализирован")
+        val ds = dataSource ?: throw IllegalStateException("❌ Менеджер не инициализирован")
         return ds.connection
     }
 

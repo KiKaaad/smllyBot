@@ -14,7 +14,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-// TODO: Что-то здесь мне не нравится, но понять что пока что не могу
 public class MuteScheduler {
 
     private static final Logger log = LoggerFactory.getLogger(MuteScheduler.class);
@@ -45,6 +44,7 @@ public class MuteScheduler {
                 guild.retrieveMemberById(mute.getDiscordId()).queue(
                         member -> processUnmute(guild, member, mute),
                         throwable -> {
+                            log.warn("🟡 Пользователь помечен размученным, хотя размутить в гильдии его не получилось");
                             muteTable.markAsUnmuted(mute.getId(), null, mute.getGuildId());
                         }
                 );

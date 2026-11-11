@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "kikaaad.smlly"
-version = "0.8.1-beta"
+version = "0.8.2-beta"
 
 java {
     toolchain {
@@ -49,8 +49,8 @@ tasks.shadowJar {
 dependencies {
 //    implementation(project(":telegram"))
     implementation(project(":discord"))
-    implementation("org.flywaydb:flyway-core:10.8.0")
-    implementation("org.flywaydb:flyway-database-postgresql:10.8.0")
+    implementation("org.flywaydb:flyway-core:13.12.0")
+    implementation("org.flywaydb:flyway-database-postgresql:13.12.0")
     implementation("org.jetbrains.lets-plot:lets-plot-kotlin-jvm:4.15.0")
     implementation("org.springframework:spring-jdbc:7.0.9")
     implementation("com.electronwill.night-config:toml:3.9.0")
@@ -63,6 +63,7 @@ dependencies {
     implementation("club.minnced:jda-ktx:0.15.0")
     implementation(libs.org.jetbrains.kotlin.kotlin.stdlib.jdk8)
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.11.0")
+
     testImplementation(libs.org.jetbrains.kotlin.kotlin.test)
 }
 
