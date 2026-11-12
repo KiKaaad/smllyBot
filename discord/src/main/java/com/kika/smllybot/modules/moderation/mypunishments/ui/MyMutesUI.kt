@@ -40,10 +40,10 @@ class MyMutesUI {
             val skip = (currentPage - 1) * ITEMS_PER_PAGE
             val pageItems = data.drop(skip).take(ITEMS_PER_PAGE)
 
-            val buttonPrev: Button = Button.primary("my_ban_list:${currentPage - 1}:${ownerId}", "⬅️ Назад")
+            val buttonPrev: Button = Button.primary("my_mute_list:${currentPage - 1}:${ownerId}", "⬅️ Назад")
                 .withDisabled(currentPage <= 1)
-            val buttonIndex: Button = Button.secondary("my_ban_list:select:${ownerId}", "📖 Стр. $currentPage / $pages")
-            val buttonNext: Button = Button.primary("my_ban_list:${currentPage + 1}:${ownerId}", "Вперед ➡️")
+            val buttonIndex: Button = Button.secondary("my_mute_list:select:${ownerId}", "📖 Стр. $currentPage / $pages")
+            val buttonNext: Button = Button.primary("my_mute_list:${currentPage + 1}:${ownerId}", "Вперед ➡️")
                 .withDisabled(currentPage >= pages)
 
             val header: ContainerChildComponent = TextDisplay.of("# \\📋 История блокировок")
