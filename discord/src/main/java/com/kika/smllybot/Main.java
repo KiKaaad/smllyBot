@@ -2,17 +2,8 @@ package com.kika.smllybot;
 
 import com.kika.smllybot.database.sql.DatabaseManager;
 import com.kika.smllybot.database.sql.guild.ban.BanTable;
-import com.kika.smllybot.database.sql.user.bank.BankTable;
-import com.kika.smllybot.database.sql.guild.guild.GuildTable;
 import com.kika.smllybot.database.sql.guild.mute.MuteTable;
-import com.kika.smllybot.database.sql.user.privacy.PrivacyTable;
-import com.kika.smllybot.database.sql.user.profile.ProfileTable;
-import com.kika.smllybot.database.sql.user.statistic.StatisticTable;
-import com.kika.smllybot.database.sql.user.users.UsersTable;
-import com.kika.smllybot.listeners.MessageCounter;
-import com.kika.smllybot.listeners.NameSave;
-import com.kika.smllybot.listeners.ReactionCounter;
-import com.kika.smllybot.listeners.SelfUnban;
+import com.kika.smllybot.listeners.*;
 import com.kika.smllybot.modules.moderation.ban.BanService;
 import com.kika.smllybot.modules.moderation.mute.MuteService;
 import com.kika.smllybot.modules.ping.PrefixPing;
@@ -26,7 +17,6 @@ import net.dv8tion.jda.api.JDAInfo;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.GenericEvent;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.hooks.EventListener;
 import net.dv8tion.jda.api.requests.GatewayIntent;
@@ -93,6 +83,8 @@ public class Main implements EventListener {
 
                 // Listeners
                 .addEventListeners(new Main())
+                .addEventListeners(new UserBanned())
+                .addEventListeners(new FirstJoin())
                 .addEventListeners(new NameSave())
                 .addEventListeners(new MessageCounter())
                 .addEventListeners(new ReactionCounter())
