@@ -56,7 +56,7 @@ class FirstJoinUI {
             val button = ActionRow.of(
                 Button.of(ButtonStyle.LINK, "https://discord.gg/3JSz5fEeee", "🛟 Сервер поддержки"),
                 Button.of(ButtonStyle.LINK, "https://t.me/smaaaly", "✈️ Телеграм канал"),
-                Button.of(ButtonStyle.LINK, "https://t.me/kikaaad", "🤩 Разработчик")
+                Button.of(ButtonStyle.LINK, "https://t.me/kikaaad", "❤️ Разработчик >w<")
             )
 
             val page = buildList {
