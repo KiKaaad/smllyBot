@@ -24,26 +24,6 @@ public class PrivacyTable {
         this.query = DatabaseManager.getQuery();
     }
 
-    public void createTable() {
-        System.setOut(new PrintStream(System.out, true, StandardCharsets.UTF_8));
-
-        String sql = """
-                CREATE TABLE IF NOT EXISTS privacy (
-                    id              BIGINT PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
-                    bag             BOOLEAN DEFAULT false,
-                    activity        BOOLEAN DEFAULT false,
-                    last_activity   BOOLEAN DEFAULT false
-                );
-                """;
-
-        try {
-            query.execute(sql);
-            log.info("✅ Таблица PRIVACY успешно проверена / создана");
-        } catch (Exception e) {
-            log.error("❌ Ошибка создания таблицы PRIVACY: ");
-        }
-    }
-
     public PrivacyAccount getOrCreatePrivacy(long id) {
         String sql = """
             INSERT INTO privacy (id)

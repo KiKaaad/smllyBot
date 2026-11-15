@@ -2,22 +2,12 @@ package com.kika.smllybot;
 
 import com.kika.smllybot.database.sql.DatabaseManager;
 import com.kika.smllybot.database.sql.guild.ban.BanTable;
-import com.kika.smllybot.database.sql.user.bank.BankTable;
-import com.kika.smllybot.database.sql.guild.guild.GuildTable;
 import com.kika.smllybot.database.sql.guild.mute.MuteTable;
-import com.kika.smllybot.database.sql.user.privacy.PrivacyTable;
-import com.kika.smllybot.database.sql.user.profile.ProfileTable;
-import com.kika.smllybot.database.sql.user.statistic.StatisticTable;
-import com.kika.smllybot.database.sql.user.users.UsersTable;
-import com.kika.smllybot.listeners.MessageCounter;
-import com.kika.smllybot.listeners.NameSave;
-import com.kika.smllybot.listeners.ReactionCounter;
-import com.kika.smllybot.listeners.SelfUnban;
+import com.kika.smllybot.listeners.*;
 import com.kika.smllybot.modules.moderation.ban.BanService;
 import com.kika.smllybot.modules.moderation.mute.MuteService;
 import com.kika.smllybot.modules.ping.PrefixPing;
 import com.kika.smllybot.modules.ping.SlashPing;
-import com.kika.smllybot.other.slashCmdInfo;
 import com.kika.smllybot.schedule.BanScheduler;
 import com.kika.smllybot.schedule.MuteScheduler;
 import com.kika.smllybot.schedule.Stars;
@@ -41,13 +31,14 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.EnumSet;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Main implements EventListener {
 
 
     private static final Logger log = LoggerFactory.getLogger(Main.class);
-    public static String[] PREFIXES;
-    public static final String VERSION = "🐞 v0.8.2-beta (31.10.2026)";
+    public static List<String> PREFIXES;
+    public static final String VERSION = "🪄 v0.8.3-beta (15.11.2026)";
     public static final String OWNER = "<@683345722611073059>";
 
     static void main() throws InterruptedException {
@@ -63,25 +54,7 @@ public class Main implements EventListener {
         List<?> configPrefixes = Config.getInstance().getList("main.prefix");
         PREFIXES = configPrefixes.stream()
                 .map(Object::toString)
-                .toArray(String[]::new);
-
-        // Создание таблиц баз данных
-        try {
-            UsersTable.createTable();
-            BankTable.createTable();
-            StatisticTable.createTable();
-            ProfileTable.createTable();
-            GuildTable.createTable();
-
-            new PrivacyTable().createTable();
-            new MuteTable(query).createTable();
-            new BanTable(query).createTable();
-
-            log.info("✅ База данных PostgreSQL и таблицы успешно инициализированы!");
-        } catch (Exception e) {
-            log.error("❌ Ошибка при инициализации таблиц базы данных: ", e);
-            throw new RuntimeException(e);
-        }
+                .collect(Collectors.toList());
 
         // Таблицы модерации
         MuteTable muteTable = new MuteTable(query);
@@ -110,6 +83,8 @@ public class Main implements EventListener {
 
                 // Listeners
                 .addEventListeners(new Main())
+                .addEventListeners(new UserBanned())
+                .addEventListeners(new FirstJoin())
                 .addEventListeners(new NameSave())
                 .addEventListeners(new MessageCounter())
                 .addEventListeners(new ReactionCounter())
@@ -125,7 +100,6 @@ public class Main implements EventListener {
         // Запрет на пинги
         MessageRequest.setDefaultMentions(EnumSet.noneOf(Message.MentionType.class));
         jda.awaitReady();
-        slashCmdInfo.registerCommands(jda);
 
         MuteScheduler muteScheduler = new MuteScheduler(muteTable, jda);
         BanScheduler banScheduler = new BanScheduler(banTable, jda);

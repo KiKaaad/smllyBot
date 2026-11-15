@@ -24,30 +24,31 @@ public class GlobalProfile extends BaseCmd {
     @Override
     public Container execute(MessageReceivedEvent event, String raw, String args) {
 
-        String[] parts = raw.trim().split("\\s+", 2);
+        String[] parts = args.trim().split("\\s+", 2);
 
         if (event.getMessage().getReferencedMessage() != null) {
             sendAnketaResponse(event, event.getMessage().getReferencedMessage().getAuthor());
             return null;
         }
 
-        if (parts.length < 2) {
+        System.out.println(args);
+        if (parts.length < 1) {
             sendAnketaResponse(event, event.getAuthor());
             return null;
         }
 
-        String arg = parts[1];
-
-        if (!event.getMessage().getMentions().getUsers().isEmpty()) {
-            sendAnketaResponse(event, event.getMessage().getMentions().getUsers().getFirst());
-            return null;
-        }
+        String arg = parts[0];
 
         if (arg.matches("\\d+")) {
             event.getJDA().retrieveUserById(arg).queue(
                     targetUser -> sendAnketaResponse(event, targetUser),
                     throwable -> ErrorThrow.userNotFound(event, arg)
             );
+            return null;
+        }
+
+        if (!event.getMessage().getMentions().getUsers().isEmpty()) {
+            sendAnketaResponse(event, event.getMessage().getMentions().getUsers().getLast());
             return null;
         }
 

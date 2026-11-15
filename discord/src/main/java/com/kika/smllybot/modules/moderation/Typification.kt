@@ -23,9 +23,9 @@ class Typification {
         val lines: List<String> = message.trim().split("\\n".toRegex(), 2)
         val parts: List<String> = lines[0].trim().split("\\h+".toRegex(), 4)
 
-        if (parts.size == 3) {
-            duration = parts[1]
-            unit = parts[2]
+        if (parts.size == 2) {
+            duration = parts[0]
+            unit = parts[1]
         }
         if (lines.size == 2 && !lines[1].isBlank()) reason = lines[1].trim()
 
@@ -45,9 +45,9 @@ class Typification {
             )
         }
 
-        if (parts.size == 4) {
-            duration = parts[2]
-            unit = parts[3]
+        if (parts.size == 3) {
+            duration = parts[1]
+            unit = parts[2]
         }
 
         try {
@@ -57,18 +57,7 @@ class Typification {
             return TargetUser(UserSnowflake.fromId(0), null, null, null)
         }
 
-        if (!event.message.mentions.users.isEmpty()) {
-            val user = event.message.mentions.users.first()
-
-            return TargetUser(
-                user,
-                duration?.toLong(),
-                unit,
-                reason
-            )
-        }
-
-        val userIdAndNickname = parts[1]
+        val userIdAndNickname = parts[0]
         if (userIdAndNickname.matches(Regex("\\d+"))) {
             val user = UserSnowflake.fromId(userIdAndNickname)
 
@@ -82,6 +71,17 @@ class Typification {
 
         if (!event.guild.getMembersByNickname(userIdAndNickname, true).isEmpty()) {
             val user = event.guild.getMembersByNickname(userIdAndNickname, true).first()
+
+            return TargetUser(
+                user,
+                duration?.toLong(),
+                unit,
+                reason
+            )
+        }
+
+        if (!event.message.mentions.users.isEmpty()) {
+            val user = event.message.mentions.users.last()
 
             return TargetUser(
                 user,

@@ -25,36 +25,6 @@ public class MuteTable {
         this.query = query;
     }
 
-    public void createTable() {
-        System.setOut(new PrintStream(System.out, true, StandardCharsets.UTF_8));
-
-        String sql = """
-                CREATE TABLE IF NOT EXISTS mute (
-                    id              BIGSERIAL PRIMARY KEY,
-                    mute_type       VARCHAR NOT NULL,                   -- Тип мута: TIMEOUT | ROLE
-                    guild_id        BIGINT NOT NULL,
-                    discord_id      BIGINT NOT NULL,                    -- Кого замутили
-                    by_discord_id   BIGINT NOT NULL,                    -- Кто выдал мут
-                    reason          VARCHAR(512),                       -- Причина мута
-                    created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(), -- Дата выдачи мута
-                    until           TIMESTAMPTZ,                        -- До какого времени мут (NULL = навсегда)
-                    removed_at      TIMESTAMPTZ,                        -- Когда мут сняли по факту
-                    removed_by      BIGINT,                             -- Кто снял мут (NULL = снял бот по таймеру)
-                    active          BOOLEAN NOT NULL DEFAULT TRUE       -- Активен ли мут сейчас
-                );
-                CREATE UNIQUE INDEX IF NOT EXISTS idx_mute_guild_discord_active
-                ON mute (guild_id, discord_id)
-                WHERE active = true;
-                """;
-
-        try {
-            query.execute(sql);
-            log.info("✅ Таблица MUTE успешно проверена / создана");
-        } catch (Exception e) {
-            log.error("❌ Ошибка создания таблицы MUTE: ", e);
-        }
-    }
-
     public void createMute(MuteCreateData data) {
         String sql = """
                 INSERT INTO mute (mute_type, guild_id, discord_id, by_discord_id, reason, until)
@@ -101,6 +71,15 @@ public class MuteTable {
                 """;
 
         return query.query(sql, MUTE_MAPPER, guildId);
+    }
+
+    public List<MuteData> getMemberMutes(long discordId) {
+        String sql = """
+                SELECT * FROM mute
+                WHERE discord_id = ?
+                """;
+
+        return query.query(sql, MUTE_MAPPER, discordId);
     }
 
     public void markAsUnmuted(long discordId, Long removedByDiscordId, long guildId) {

@@ -1,8 +1,10 @@
 package com.kika.smllybot.utils;
 
+import java.util.List;
+
 public class PrefixUtil {
 
-    public static String getCommandBody(String content, String[] prefixes) {
+    public static String getCommandBody(String content, List<String> prefixes) {
         if (content == null || content.isEmpty()) return null;
 
         String match = null;

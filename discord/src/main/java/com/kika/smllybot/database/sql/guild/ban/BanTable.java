@@ -23,33 +23,6 @@ public class BanTable {
         this.query = query;
     }
 
-    public void createTable() {
-        String sql = """
-                CREATE TABLE IF NOT EXISTS ban (
-                    id              BIGSERIAL PRIMARY KEY,
-                    guild_id        BIGINT NOT NULL,
-                    discord_id      BIGINT NOT NULL,                    -- Кого замутили
-                    by_discord_id   BIGINT NOT NULL,                    -- Кто выдал бан
-                    reason          VARCHAR(512),                       -- Причина бана
-                    created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(), -- Дата выдачи бана
-                    until           TIMESTAMPTZ,                        -- До какого времени бана (NULL = навсегда)
-                    removed_at      TIMESTAMPTZ,                        -- Когда бан сняли по факту
-                    removed_by      BIGINT,                             -- Кто снял бан (NULL = снял бот по таймеру)
-                    active          BOOLEAN NOT NULL DEFAULT TRUE       -- Активен ли бан сейчас
-                );
-                CREATE UNIQUE INDEX IF NOT EXISTS idx_ban_guild_discord_active
-                ON ban (guild_id, discord_id)
-                WHERE active = true;
-                """;
-
-        try {
-            query.execute(sql);
-            log.info("✅ Таблица BAN успешно проверена / создана");
-        } catch (Exception e) {
-            log.error("❌ Ошибка создания таблицы BAN: ", e);
-        }
-    }
-
     public void createBan(BanCreateData data) {
         String sql = """
                 INSERT INTO ban (guild_id, discord_id, by_discord_id, reason, until)
@@ -94,6 +67,15 @@ public class BanTable {
                 """;
 
         return query.query(sql, BAN_MAPPER, guildId);
+    }
+
+    public List<BanData> getMemberBans(long discordId) {
+        String sql = """
+                SELECT * FROM ban
+                WHERE discord_id = ?
+                """;
+
+        return query.query(sql, BAN_MAPPER, discordId);
     }
 
     public void markAsUnbanned(long discordId, Long removedByDiscordId, long guildId) {

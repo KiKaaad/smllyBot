@@ -18,26 +18,6 @@ public class BankTable {
 
     private static final RowMapper<BankAccount> BANK_MAPPER = DataClassRowMapper.newInstance(BankAccount.class);
 
-    public static void createTable() {
-        String sql = """
-                CREATE TABLE IF NOT EXISTS bank (
-                    id        BIGINT PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
-                    name      VARCHAR(32),
-                    star      INT DEFAULT 0,
-                    iris      BIGINT DEFAULT 0,
-                    iris_coin BIGINT DEFAULT 0,
-                    last_farm TIMESTAMP DEFAULT CURRENT_TIMESTAMP - INTERVAL '4 hours'
-                );
-                """;
-
-        try {
-            DatabaseManager.getQuery().execute(sql);
-            log.info("✅ Таблица BANK успешно проверена / создана");
-        } catch (Exception e) {
-            log.error("❌ Ошибка создания таблицы BANK: ", e);
-        }
-    }
-
     public static BankAccount getOrCreateBank(long id, String defaultName) {
         String upsertSql = """
                 INSERT INTO bank (id, name) VALUES (?, ?)

@@ -45,16 +45,16 @@ public class Profile extends BaseCmd {
 
         String[] parts = args.trim().split("\\h+");
 
-        if (!event.getMessage().getMentions().getUsers().isEmpty()) {
-            sendProfileResponse(event, event.getMessage().getMentions().getUsers().getFirst());
-            return null;
-        }
-
         if (parts[0].matches("\\d+")) {
             event.getJDA().retrieveUserById(parts[0]).queue(
                     user -> sendProfileResponse(event, user),
                     throwable -> sendError(event, "### \\❌ Упс... Пользователь с таким ID не найден")
             );
+            return null;
+        }
+
+        if (!event.getMessage().getMentions().getUsers().isEmpty()) {
+            sendProfileResponse(event, event.getMessage().getMentions().getUsers().getLast());
             return null;
         }
 

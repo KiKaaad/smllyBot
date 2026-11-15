@@ -16,28 +16,6 @@ public class StatisticTable {
 
     private static final Logger log = LoggerFactory.getLogger(StatisticTable.class);
 
-    public static void createTable() {
-        System.setOut(new PrintStream(System.out, true, StandardCharsets.UTF_8));
-
-        String sql = """
-            CREATE TABLE IF NOT EXISTS statistic (
-                id              BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-                guild           BIGINT NOT NULL,
-                date            DATE DEFAULT CURRENT_TIMESTAMP,
-                message_count   INT,
-                PRIMARY KEY (id, guild, date)
-            );
-            """;
-
-        try {
-            DatabaseManager.getQuery().execute(sql);
-
-            log.info("✅ Таблица STATISTIC проверена / создана");
-        } catch (Exception e) {
-            log.error("❌ Ошибка создания таблицы STATISTIC: ", e);
-        }
-    }
-
     public static void createStatistic(long id, long guildId) {
 
         String sql = """

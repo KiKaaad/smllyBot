@@ -25,7 +25,9 @@ public class Ban extends BaseCmd {
     @Override
     public Container execute(MessageReceivedEvent event, String raw, String args) {
         if (!event.isFromGuild()) return null;
+
         GuildData guildData = GuildTable.getOrCreateGuild(event.getGuild().getIdLong(), event.getGuild().getName());
+
         if (!guildData.getStaging()) {
             ErrorThrow.onlyOnStaging(event);
             return null;
@@ -47,7 +49,7 @@ public class Ban extends BaseCmd {
         }
 
         Typification typification = new Typification();
-        TargetUser context = typification.find(event, raw);
+        TargetUser context = typification.find(event, args);
 
         banService.ban(event, moderator, context);
 
