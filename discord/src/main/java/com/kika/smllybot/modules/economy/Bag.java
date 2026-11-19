@@ -1,15 +1,14 @@
 package com.kika.smllybot.modules.economy;
 
 import com.kika.smllybot.database.sql.Repository;
+import com.kika.smllybot.handler.ErrorThrow;
 import com.kika.smllybot.modules.economy.ui.BagUI;
 import com.kika.smllybot.other.BaseCmd;
 import net.dv8tion.jda.api.components.container.Container;
-import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 
-import java.time.Duration;
 import java.util.Set;
 
 public class Bag extends BaseCmd {
@@ -80,10 +79,7 @@ public class Bag extends BaseCmd {
 
     public void sendError(MessageReceivedEvent event) {
 
-        event.getChannel().sendMessage("\\❌ Увы и ах мешок этого пользователя не найден")
-                .delay(Duration.ofSeconds(5))
-                .flatMap(Message::delete)
-                .queue();
+        ErrorThrow.userNotFound(event, null);
 
     }
 
