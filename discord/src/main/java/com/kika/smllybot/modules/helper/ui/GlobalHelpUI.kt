@@ -33,7 +33,8 @@ class GlobalHelpUI {
             val buttons: ContainerChildComponent = ActionRow.of(
                 Button.of(ButtonStyle.LINK, "https://discord.gg/3JSz5fEeee", "🛟 Сервер поддержки"),
                 Button.of(ButtonStyle.LINK, "https://github.com/KiKaaad/smllyBot", "🐈‍⬛ Гитхаб"),
-                Button.of(ButtonStyle.LINK, "https://github.com/KiKaaad/smllyBot/issues", "🐞 Нашел ошибку")
+                Button.of(ButtonStyle.LINK, "https://github.com/KiKaaad/smllyBot/issues", "🐞 Нашел ошибку"),
+                Button.of(ButtonStyle.LINK, "https://discord.com/oauth2/authorize?client_id=873596380659191859", "➕ Установить себе :3")
             )
             val help = Section.of(
                 Button.of(ButtonStyle.LINK, "https://smlly.gitbook.io/i", "🛟 Вики"),
@@ -327,11 +328,7 @@ class GlobalHelpUI {
                 add(footer)
             }
 
-            return Container.of(
-                components
-            )
+            return Container.of(components)
         }
     }
 }
-
-// TODO: Требует рефакторинг общих деталей (футер)

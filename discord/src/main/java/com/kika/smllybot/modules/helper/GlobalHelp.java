@@ -5,6 +5,7 @@ import com.kika.smllybot.modules.helper.ui.GlobalHelpUI;
 import com.kika.smllybot.other.BaseCmd;
 import com.kika.smllybot.utils.Interaction;
 import net.dv8tion.jda.api.components.container.Container;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
@@ -25,6 +26,7 @@ public class GlobalHelp extends BaseCmd {
             event.getChannel().sendMessageComponents(response)
                     .useComponentsV2(true)
                     .queue();
+
             return response;
         }
 
@@ -34,6 +36,63 @@ public class GlobalHelp extends BaseCmd {
         // TODO: Добавить хелп <категория / команда>
 
         return null;
+    }
+
+    @Override
+    public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
+        long discordId = event.getUser().getIdLong();
+
+        if (event.getName().equals("хелп") && event.getOption("модуль") != null) {
+            switch (event.getOption("модуль").getAsString()) {
+                case "анкета и профиль" -> {
+                    Container response = GlobalHelpUI.profileAndAnketa(discordId);
+
+                    event.deferReply().queue();
+                    event.getHook().sendMessageComponents(response).useComponentsV2(true).queue();
+                }
+                case "модерация" -> {
+                    Container response = GlobalHelpUI.moderation(discordId);
+
+                    event.deferReply().queue();
+                    event.getHook().sendMessageComponents(response).useComponentsV2(true).queue();
+                }
+                case "топы" -> {
+                    Container response = GlobalHelpUI.tops(discordId);
+
+                    event.deferReply().queue();
+                    event.getHook().sendMessageComponents(response).useComponentsV2(true).queue();
+                }
+                case "экономика" -> {
+                    Container response = GlobalHelpUI.economy(discordId);
+
+                    event.deferReply().queue();
+                    event.getHook().sendMessageComponents(response).useComponentsV2(true).queue();
+                }
+                case "статистика" -> {
+                    Container response = GlobalHelpUI.statistic(discordId);
+
+                    event.deferReply().queue();
+                    event.getHook().sendMessageComponents(response).useComponentsV2(true).queue();
+                }
+                case "интерактивные команды" -> {
+                    Container response = GlobalHelpUI.interactive(discordId);
+
+                    event.deferReply().queue();
+                    event.getHook().sendMessageComponents(response).useComponentsV2(true).queue();
+                }
+                case "другое" -> {
+                    Container response = GlobalHelpUI.other(discordId);
+
+                    event.deferReply().queue();
+                    event.getHook().sendMessageComponents(response).useComponentsV2(true).queue();
+                }
+            }
+        } else {
+            Container response = GlobalHelpUI.defaultHelp(event.getUser().getIdLong(), 1);
+
+            event.deferReply().queue();
+            event.getHook().sendMessageComponents(response).useComponentsV2(true).queue();
+        }
     }
 
     @ButtonPrefix(prefix = "help")

@@ -9,6 +9,8 @@ import net.dv8tion.jda.api.components.container.ContainerChildComponent;
 import net.dv8tion.jda.api.components.mediagallery.MediaGallery;
 import net.dv8tion.jda.api.components.mediagallery.MediaGalleryItem;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.command.UserContextInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 import java.util.ArrayList;
@@ -31,8 +33,7 @@ public class GlobalProfile extends BaseCmd {
             return null;
         }
 
-        System.out.println(args);
-        if (parts.length < 1) {
+        if (args.isEmpty()) {
             sendAnketaResponse(event, event.getAuthor());
             return null;
         }
@@ -52,7 +53,7 @@ public class GlobalProfile extends BaseCmd {
             return null;
         }
 
-        var members = event.getGuild().getMembersByName(arg, true);
+        var members = event.getGuild(). getMembersByName(arg, true);
 
         if (members.isEmpty()) {
             members = event.getGuild().getMembersByNickname(arg, true);
@@ -103,4 +104,50 @@ public class GlobalProfile extends BaseCmd {
         );
     }
 
+    public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
+        Repository repo = new Repository();
+
+        long discordId = event.getUser().getIdLong();
+        String name = event.getUser().getEffectiveName();
+
+        if (event.getName().equals("анкета")) {
+            GlobalProfileContext ctx = new GlobalProfileContext(
+                    event.getUser(),
+                    event.getUser(),
+                    event.getMember(),
+                    repo.getUser(discordId, name),
+                    repo.getBank(discordId, name),
+                    repo.getPrivacy(discordId, name)
+            );
+
+            Container response = GlobalProfileUI.buildProfile(ctx);
+
+            event.deferReply().queue();
+            event.getHook().sendMessageComponents(response).useComponentsV2(true).queue();
+        }
+    }
+
+    @Override
+    public void onUserContextInteraction(UserContextInteractionEvent event) {
+        Repository repo = new Repository();
+
+        long discordId = event.getTarget().getIdLong();
+        String name = event.getTarget().getEffectiveName();
+
+        if (event.getName().equalsIgnoreCase("анкета")) {
+            GlobalProfileContext ctx = new GlobalProfileContext(
+                    event.getTarget(),
+                    event.getTarget(),
+                    event.getTargetMember(),
+                    repo.getUser(discordId, name),
+                    repo.getBank(discordId, name),
+                    repo.getPrivacy(discordId, name)
+            );
+
+            Container response = GlobalProfileUI.buildProfile(ctx);
+
+            event.deferReply().queue();
+            event.getHook().sendMessageComponents(response).useComponentsV2(true).queue();
+        }
+    }
 }

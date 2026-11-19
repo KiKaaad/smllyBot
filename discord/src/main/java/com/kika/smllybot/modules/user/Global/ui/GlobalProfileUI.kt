@@ -26,7 +26,7 @@ class GlobalProfileUI {
 
             val statistic: StatisticAccount = StatisticTable.getTotalUserStatistic(ctx.user.id)
 
-            val status: String = UserStatus.getEmoji(ctx.member())
+            val status: String = if (ctx.member != null) UserStatus.getEmoji(ctx.member()) else "\\❔"
 
             val discordCreated: String = TimeUtil.getTimestamp(ctx.target.timeCreated)
             val discordCreatedRelative: String = TimeUtil.getTimestampRelative(ctx.target.timeCreated)
