@@ -46,9 +46,12 @@ import com.kika.smllybot.other.BaseCmd;
 import com.kika.smllybot.utils.Interaction;
 import com.kika.smllybot.utils.PrefixUtil;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.command.UserContextInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -193,15 +196,19 @@ public class Manager extends ListenerAdapter {
 
         List<String> prefixes;
         GuildData guildData;
+        guildData = GuildTable.getOrCreateGuild(
+                event.getGuild().getIdLong(), event.getGuild().getName());
 
         if (event.isFromGuild()) {
-            guildData = GuildTable.getOrCreateGuild(
-                    event.getGuild().getIdLong(), event.getGuild().getName());
-            prefixes = Stream.of(List.of("<@" + botId + ">"), guildData.getPrefix())
-                    .filter(Objects::nonNull)
-                    .flatMap(List::stream)
+            List<String> guildPrefixes = guildData.getPrefix();
+            List<String> base = (guildPrefixes == null || guildPrefixes.isEmpty())
+                    ? Main.PREFIXES
+                    : guildPrefixes;
+
+            prefixes = Stream.concat(Stream.of("<@" + botId + ">"), base.stream())
                     .distinct()
                     .collect(Collectors.toList());
+            prefixes.sort(Comparator.comparingInt(String::length).reversed());
         } else {
             prefixes = Main.PREFIXES;
         }
@@ -235,5 +242,17 @@ public class Manager extends ListenerAdapter {
             String arg = commandBody.substring(commandName.length()).stripLeading().trim();
             cmd.execute(event, command, arg);
         }
+    }
+
+    @Override
+    public void onSlashCommandInteraction(@NonNull SlashCommandInteractionEvent event) {
+        BaseCmd cmd = commands.get(event.getName().toLowerCase());
+        cmd.onSlashCommandInteraction(event);
+    }
+
+    @Override
+    public void onUserContextInteraction(UserContextInteractionEvent event) {
+        BaseCmd cmd = commands.get(event.getName().toLowerCase());
+        cmd.onUserContextInteraction(event);
     }
 }
