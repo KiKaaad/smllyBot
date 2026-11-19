@@ -1,0 +1,93 @@
+package com.kika.smllybot.modules.economy;
+
+import com.kika.smllybot.Config;
+import com.kika.smllybot.database.sql.Repository;
+import com.kika.smllybot.database.sql.user.bank.BankTable;
+import com.kika.smllybot.utils.TimeUtil;
+
+import java.util.Locale;
+import java.util.concurrent.ThreadLocalRandom;
+
+public class FarmService {
+
+    private static int calcReward() {
+
+        int minLoss = Config.getInstance().getInt("economy.min_loss");
+        int maxLoss = Config.getInstance().getInt("economy.max_loss");
+        int min = Config.getInstance().getInt("economy.min");
+        int max = Config.getInstance().getInt("economy.max");
+        int minMini = Config.getInstance().getInt("economy.min_mini");
+        int maxMini = Config.getInstance().getInt("economy.max_mini");
+        int minLarge = Config.getInstance().getInt("economy.min_large");
+        int maxLarge = Config.getInstance().getInt("economy.max_large");
+        double chanceLossReward = Config.getInstance().getFloat("economy.chances.loss_reward");
+        double chanceMiniReward = Config.getInstance().getFloat("economy.chances.mini_reward");
+        double chanceLargeReward = Config.getInstance().getFloat("economy.chances.large_reward");
+
+        double currentSum = 0.0;
+
+        double roll = ThreadLocalRandom.current().nextDouble(0.0, 100.0);
+
+        currentSum += chanceLossReward;
+        if (roll < currentSum) return ThreadLocalRandom.current().nextInt(maxLoss, minLoss + 1);
+        currentSum += chanceMiniReward;
+        if (roll < currentSum) return ThreadLocalRandom.current().nextInt(minMini, maxMini + 1);
+        currentSum += chanceLargeReward;
+        if (roll < currentSum) return ThreadLocalRandom.current().nextInt(minLarge, maxLarge + 1);
+
+        return ThreadLocalRandom.current().nextInt(min, max);
+    }
+
+    protected static FarmContext reward(long discordId, String name) {
+        Repository repo = new Repository();
+
+        var bank = repo.getBank(discordId, name);
+
+        // Расчет фармы с момента, когда последний раз команда использована
+        // Разница = Время сейчас - время в бд
+        long waitMillis = System.currentTimeMillis() - bank.getLastFarm().getTime();
+        long minWait = 4 * 60 * 60 * 1000L;     // Часы в минуты в секунды в миллисекунды
+        long maxWait = 24 * 60 * 60 * 1000L;
+
+        // Прошло менее 4 часов, перед получением ирисисев
+        if (waitMillis < minWait) {
+            long timeLeft = minWait - waitMillis;
+            String formattedTime = TimeUtil.formatTimeLeft(timeLeft);
+
+            return new FarmContext(0, 0, 0, null, formattedTime);
+        }
+
+        long star = bank.getStar();
+
+        double multiplier;
+        // Чтобы получить максимальный множитель, нужно иметь 10.000 звездочек
+        double starMultiplier = (star * 0.001) + 1;
+        if (starMultiplier >= 10) starMultiplier = 10;
+
+        if (waitMillis >= maxWait) {
+            multiplier = 3.0;
+        } else {
+            double progress = (double) (waitMillis - minWait) / (maxWait - minWait);
+            multiplier = 1.0 + (progress * 2.0);
+        }
+        multiplier = Math.round(multiplier * 100.0) / 100.0;
+
+        String multiplierText = String.format(Locale.US, "%.2f", multiplier);
+
+        long baseReward = calcReward();
+        if (baseReward < 0) starMultiplier = 1;
+        long finalReward = (long) (baseReward * multiplier * starMultiplier);
+
+        BankTable.addIrisCoin(bank.getId(), finalReward);
+        BankTable.updateLastFarm(bank.getId());
+
+        return new FarmContext(
+                baseReward,
+                finalReward,
+                starMultiplier,
+                multiplierText,
+                null
+        );
+    }
+
+}
