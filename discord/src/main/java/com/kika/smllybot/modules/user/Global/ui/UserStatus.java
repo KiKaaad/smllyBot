@@ -17,7 +17,7 @@ public enum UserStatus {
     }
 
     public static String getEmoji(Member member) {
-        if (member == null) return "\\❔";
+        if (member == null || member.isDetached()) return "\\❔";
         if (member.getUser().isBot()) return BOT.emoji;
 
         return switch (member.getOnlineStatus()) {
