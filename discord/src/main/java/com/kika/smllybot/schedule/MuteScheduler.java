@@ -37,15 +37,15 @@ public class MuteScheduler {
             for (MuteData mute : expiredMutes) {
                 Guild guild = jda.getGuildById(mute.getGuildId());
                 if (guild == null) {
-                    muteTable.markAsUnmuted(mute.getId(), null, mute.getGuildId());
-                    continue;
+                    muteTable.markAsUnmuted(mute.getDiscordId(), null, mute.getGuildId());
+                    break;
                 }
 
                 guild.retrieveMemberById(mute.getDiscordId()).queue(
                         member -> processUnmute(guild, member, mute),
                         throwable -> {
                             log.warn("🟡 Пользователь помечен размученным, хотя размутить в гильдии его не получилось");
-                            muteTable.markAsUnmuted(mute.getId(), null, mute.getGuildId());
+                            muteTable.markAsUnmuted(mute.getDiscordId(), null, mute.getGuildId());
                         }
                 );
             }
