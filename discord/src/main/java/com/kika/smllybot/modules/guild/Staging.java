@@ -9,15 +9,17 @@ import com.kika.smllybot.other.BaseCmd;
 import com.kika.smllybot.utils.SendComponents;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.components.container.Container;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import org.jspecify.annotations.NonNull;
 
 import java.util.Set;
 
 public class Staging extends BaseCmd {
 
     public Staging() {
-        super(Set.of("staging", "рд"));
+        super(Set.of("staging", "рд", "ранний доступ"));
     }
 
     @Override
@@ -45,6 +47,26 @@ public class Staging extends BaseCmd {
                 .queue();
 
         return null;
+    }
+
+    @Override
+    public void onSlashCommandInteraction(@NonNull SlashCommandInteractionEvent event) {
+        Repository repo = new Repository();
+
+        long guildId = event.getGuild().getIdLong();
+        String guildName = event.getGuild().getName();
+
+        StagingContext context = new StagingContext(
+                repo.getGuild(guildId, guildName),
+                event.getMember().getIdLong()
+        );
+
+        if (event.getName().equals("ранний") && event.getSubcommandName().equals("доступ")) {
+            var response = StagingUI.build(context);
+
+            event.deferReply().queue();
+            event.getHook().sendMessageComponents(response).useComponentsV2(true).queue();
+        }
     }
 
     @ButtonPrefix(prefix = "staging")

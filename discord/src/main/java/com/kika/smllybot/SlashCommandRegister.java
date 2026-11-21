@@ -10,6 +10,7 @@ import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
+import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 
 import java.util.Arrays;
 import java.util.List;
@@ -21,6 +22,11 @@ public class SlashCommandRegister extends ListenerAdapter {
     public static void registerCommands(JDA jda) {
 
         jda.updateCommands().addCommands(
+                Commands.slash("ранний", "🧪 Включает эксперементальные функции бота")
+                        .addSubcommands(new SubcommandData("доступ", "🧪 Включает эксперементальные функции бота"))
+                        .setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.ADMINISTRATOR))
+                        .setIntegrationTypes(IntegrationType.GUILD_INSTALL),
+
                 Commands.slash("мут", "🔇 Выдать тайм-аут пользователю (замутить)")
                         .setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.MODERATE_MEMBERS))
                         .setIntegrationTypes(IntegrationType.GUILD_INSTALL)

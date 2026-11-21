@@ -247,7 +247,12 @@ public class Manager extends ListenerAdapter {
 
     @Override
     public void onSlashCommandInteraction(@NonNull SlashCommandInteractionEvent event) {
-        BaseCmd cmd = commands.get(event.getName().toLowerCase());
+        BaseCmd cmd;
+
+        if (event.getSubcommandName() != null) {
+            cmd = commands.get(event.getName().toLowerCase() + " " + event.getSubcommandName());
+        } else cmd = commands.get(event.getName().toLowerCase());
+
         cmd.onSlashCommandInteraction(event);
     }
 
