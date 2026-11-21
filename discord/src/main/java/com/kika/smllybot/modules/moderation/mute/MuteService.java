@@ -3,13 +3,18 @@ package com.kika.smllybot.modules.moderation.mute;
 import com.kika.smllybot.database.sql.guild.mute.MuteTable;
 import com.kika.smllybot.database.sql.guild.mute.dto.MuteCreateData;
 import com.kika.smllybot.handler.ErrorThrow;
+import com.kika.smllybot.modules.moderation.TargetUser;
 import com.kika.smllybot.modules.moderation.mute.ui.MuteUI;
+import com.kika.smllybot.utils.SendComponents;
 import com.kika.smllybot.utils.TimeUtil;
+import net.dv8tion.jda.api.components.container.Container;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 import java.time.OffsetDateTime;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public class MuteService {
 
@@ -19,54 +24,37 @@ public class MuteService {
         this.muteTable = muteTable;
     }
 
-    protected void mute(MessageReceivedEvent event, Member target,
-                               Member moderator, String rawAmount, String unit, String reason) {
-        Guild guild = event.getGuild();
-
-        if (!guild.getSelfMember().canInteract(target)) {
-            ErrorThrow.smallPermission(event);
-            return;
-        }
+    protected CompletableFuture<List<Container>> mute(Guild guild, Member moderator, TargetUser targetUser) {
 
 //        if (!moderator.canInteract(target)) {
 //            log.error("❌ Вы не можете замутить этого пользователя: Роль пользователя выше вашей роли.");
 //            return;
 //        }
 
-        long amount;
-        try {
-            amount = Long.parseLong(rawAmount);
-        } catch (NumberFormatException e) {
-            ErrorThrow.notNumber(event, rawAmount);
-            return;
-        }
+        OffsetDateTime until = TimeUtil.calculateUntil(targetUser.getDuration(), targetUser.getUnit());
 
-        OffsetDateTime until = TimeUtil.calculateUntil(amount, unit);
-
-        target.timeoutUntil(until).reason(reason).queue(
+        return guild.timeoutUntil(targetUser.getUser(), until).reason(targetUser.getReason()).submit().thenApply(
                 success -> {
                     MuteCreateData data = new MuteCreateData(
                             "TIMEOUT",
                             guild.getIdLong(),
-                            target.getIdLong(),
+                            targetUser.getUser().getIdLong(),
                             moderator.getIdLong(),
-                            reason,
+                            targetUser.getReason(),
                             until
                     );
                     muteTable.createMute(data);
 
-                    var response = MuteUI.mute(target.getIdLong(), moderator.getIdLong(), until, reason);
-                    event.getChannel().sendMessageComponents(response).useComponentsV2(true).queue();
-                },
-                error -> ErrorThrow.undefined(event, error.getMessage())
-        );
+                    return List.of(MuteUI.mute(targetUser.getUser().getIdLong(), moderator.getIdLong(), until, targetUser.getReason()));
+                }).exceptionally(error -> ErrorThrow.undefined(error.getMessage()));
+
     }
 
     protected void unMute(MessageReceivedEvent event, Member target, Member moderator) {
         Guild guild = event.getGuild();
 
         if (!guild.getSelfMember().canInteract(target)) {
-            ErrorThrow.smallPermission(event);
+            SendComponents.sendTo15(event, ErrorThrow.smallPermission());
             return;
         }
 
