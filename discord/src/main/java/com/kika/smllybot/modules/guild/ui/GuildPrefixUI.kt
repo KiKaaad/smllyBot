@@ -10,12 +10,28 @@ class GuildPrefixUI {
 
     companion object {
         @JvmStatic
+        val separator = Separator.createDivider(Separator.Spacing.SMALL)
+
+        @JvmStatic
         fun build(prefix: List<String>): Container {
-            val components: MutableList<ContainerChildComponent?> = ArrayList(12)
+            val components: MutableList<ContainerChildComponent?> = ArrayList(4)
 
             val header = TextDisplay.of("# \\✅ Префиксы установлены")
-            val separator = Separator.createDivider(Separator.Spacing.SMALL)
             val prefixes = TextDisplay.of("Новые префиксы: ${prefix.joinToString(", ")}")
+
+            components.add(header)
+            components.add(separator)
+            components.add(prefixes)
+
+            return Container.of(components)
+        }
+
+        @JvmStatic
+        fun deletePrefix(): Container {
+            val components: MutableList<ContainerChildComponent> = ArrayList(4)
+
+            val header = TextDisplay.of("# \\✅ Префиксы гильдии сброшены")
+            val prefixes = TextDisplay.of("Теперь используются стандартные: `!`, `.`")
 
             components.add(header)
             components.add(separator)

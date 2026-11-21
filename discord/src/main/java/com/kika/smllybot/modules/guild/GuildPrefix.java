@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 public class GuildPrefix extends BaseCmd {
 
     public GuildPrefix() {
-        super(Set.of("установить префиксы", "установить префикс"));
+        super(Set.of("установить префиксы", "установить префикс", "+префикс", "+префиксы"));
     }
 
     @Override
