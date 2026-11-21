@@ -105,8 +105,8 @@ public class TimeUtil {
             case "год", "года", "лет", "г", "л" -> now.plusYears(rawTime);
             case "месяц", "месяца", "месяцев", "мес" -> now.plusMonths(rawTime);
             case "неделю", "недели", "недель", "нед" -> now.plusWeeks(rawTime);
-            case "день", "дня", "дней", "д" -> now.plusDays(rawTime);
-            case "час", "часа", "часов", "ч" -> now.plusHours(rawTime);
+            case "дни", "день", "дня", "дней", "д" -> now.plusDays(rawTime);
+            case "часы", "час", "часа", "часов", "ч" -> now.plusHours(rawTime);
             case "минуту", "минуты", "минут", "м" -> now.plusMinutes(rawTime);
             case "секунду", "секунды", "секунд", "с" -> now.plusSeconds(rawTime);
             default -> null;
