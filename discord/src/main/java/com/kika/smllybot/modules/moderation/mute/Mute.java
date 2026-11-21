@@ -3,11 +3,16 @@ package com.kika.smllybot.modules.moderation.mute;
 import com.kika.smllybot.database.sql.guild.guild.GuildTable;
 import com.kika.smllybot.database.sql.guild.guild.dto.GuildData;
 import com.kika.smllybot.handler.ErrorThrow;
+import com.kika.smllybot.modules.moderation.TargetUser;
+import com.kika.smllybot.modules.moderation.Typification;
 import com.kika.smllybot.other.BaseCmd;
+import com.kika.smllybot.utils.SendComponents;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.components.container.Container;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.UserSnowflake;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +35,7 @@ public class Mute extends BaseCmd {
         if (!event.isFromGuild()) return null;
         GuildData guildData = GuildTable.getOrCreateGuild(event.getGuild().getIdLong(), event.getGuild().getName());
         if (!guildData.getStaging()) {
-            ErrorThrow.onlyOnStaging(event);
+            SendComponents.sendTo15(event, ErrorThrow.onlyOnStaging());
             return null;
         }
 
@@ -39,90 +44,43 @@ public class Mute extends BaseCmd {
 
         // Проверка прав модератора и бота
         if (moderator == null || !moderator.hasPermission(Permission.MODERATE_MEMBERS)) {
-            ErrorThrow.noAccessPermission(event, Permission.MODERATE_MEMBERS);
+            SendComponents.sendTo15(event, ErrorThrow.noAccessPermission(Permission.MODERATE_MEMBERS));
             return null;
         }
 
         if (!guild.getSelfMember().hasPermission(Permission.MODERATE_MEMBERS)) {
-            ErrorThrow.noAccessPermissionBot(event, Permission.MODERATE_MEMBERS);
+            SendComponents.sendTo15(event, ErrorThrow.noAccessPermission(Permission.MODERATE_MEMBERS));
             return null;
         }
 
-        String[] matches = raw.trim().split("\\n", 2);
-        String firstLine = matches[0].trim();
-        String[] parts = firstLine.split("\\h+");
+        Typification typification = new Typification();
+        TargetUser targetUser = typification.find(event, args);
 
-        String reason = (matches.length >= 2 && !matches[1].isBlank()) ? matches[1].trim() : null;
-
-        // Ответом на сообщение
-        if (event.getMessage().getReferencedMessage() != null) {
-            Member target = event.getMessage().getReferencedMessage().getMember();
-            if (target == null) {
-                log.error("❌ Не удалось получить участника из отвеченного сообщения.");
-                return null;
-            }
-
-            if (parts.length < 3) {
-                ErrorThrow.timeoutOverhead(event);
-                return null;
-            }
-
-            muteService.mute(event, target, moderator, parts[1], parts[2], reason);
-            return null;
-        }
-
-        // Упоминание -> @username
-        if (!event.getMessage().getMentions().getMembers().isEmpty()) {
-            Member target = event.getMessage().getMentions().getMembers().getFirst();
-
-            if (parts.length < 4) {
-                ErrorThrow.timeoutOverhead(event);
-                return null;
-            }
-
-            muteService.mute(event, target, moderator, parts[2], parts[3], reason);
-            return null;
-        }
-
-        if (parts.length < 2) {
-            return null;
-        }
-
-        String arg = parts[1];
-
-        // ID -> 12345678910121314
-        if (arg.matches("\\d+")) {
-            long targetId = Long.parseLong(arg);
-            guild.retrieveMemberById(targetId).queue(
-                    target -> {
-                        if (parts.length < 4) {
-                            ErrorThrow.timeoutOverhead(event);
-                            return;
-                        }
-                        muteService.mute(event, target, moderator, parts[2], parts[3], reason);
-                    },
-                    failure -> ErrorThrow.userNotFound(event, arg)
-            );
-            return null;
-        }
-
-        // Никнейм -> kefichik.
-        var members = guild.getMembersByName(arg, true);
-        if (members.isEmpty()) {
-            members = guild.getMembersByNickname(arg, true);
-        }
-
-        if (!members.isEmpty()) {
-            if (parts.length < 4) {
-                ErrorThrow.timeoutOverhead(event);
-                return null;
-            }
-            muteService.mute(event, members.getFirst(), moderator, parts[2], parts[3], reason);
-        } else {
-            ErrorThrow.userNotFound(event, members.getFirst().getNickname());
-        }
+        muteService.mute(event.getGuild(), moderator, targetUser)
+                .thenAccept(containers -> {
+                    event.getChannel().sendMessageComponents(containers).useComponentsV2(true).queue();
+                });;
 
         return null;
+    }
+
+    public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
+        if (event.getName().equals("мут")) {
+            event.deferReply().queue();
+            Member moderator = event.getMember();
+
+            UserSnowflake user = event.getOptionsByName("юзер").getFirst().getAsUser();
+            Long duration = event.getOptionsByName("время").getFirst().getAsLong();
+            String unit = event.getOptionsByName("интервал").getFirst().getAsString();
+            String reason = event.getOptionsByName("причина").getFirst().getAsString();
+
+            TargetUser targetUser = new TargetUser(user, duration, unit, reason);
+
+            muteService.mute(event.getGuild(), moderator, targetUser)
+                    .thenAccept(containers -> {
+                        event.getHook().sendMessageComponents(containers).useComponentsV2(true).queue();
+                    });
+        }
     }
 
 }
