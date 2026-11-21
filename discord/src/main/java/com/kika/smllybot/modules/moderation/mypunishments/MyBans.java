@@ -4,22 +4,18 @@ import com.kika.smllybot.annotations.ButtonPrefix;
 import com.kika.smllybot.annotations.ModalPrefix;
 import com.kika.smllybot.database.sql.guild.ban.BanTable;
 import com.kika.smllybot.database.sql.guild.ban.dto.BanData;
-import com.kika.smllybot.modules.moderation.ban.BanListContext;
-import com.kika.smllybot.modules.moderation.ban.ui.BanListUI;
 import com.kika.smllybot.modules.moderation.mypunishments.ui.MyBansUI;
 import com.kika.smllybot.other.BaseCmd;
 import net.dv8tion.jda.api.components.container.Container;
 import net.dv8tion.jda.api.components.label.Label;
 import net.dv8tion.jda.api.components.textinput.TextInput;
 import net.dv8tion.jda.api.components.textinput.TextInputStyle;
-import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.modals.Modal;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 
 public class MyBans extends BaseCmd {
@@ -70,11 +66,6 @@ public class MyBans extends BaseCmd {
         int page = Integer.parseInt(parts[1]);
 
         List<BanData> banData = banTable.getMemberBans(event.getUser().getIdLong());
-        List<String> guildNames = banData.stream()
-                .map(ban -> event.getJDA().getGuildById(ban.getGuildId()))
-                .filter(Objects::nonNull)
-                .map(Guild::getName)
-                .toList();
 
         response = MyBansUI.build(banData, page, owner);
 
@@ -93,13 +84,13 @@ public class MyBans extends BaseCmd {
             targetPage = Integer.parseInt(inputPage.trim());
         } catch (NumberFormatException ignored) {}
 
-        Container response = buildResponse(event.getGuild().getIdLong(), targetPage, owner, event);
+        Container response = buildResponse(targetPage, owner);
 
         event.editComponents(response).useComponentsV2(true).queue();
     }
 
-    private Container buildResponse(long guildId, int page, long owner, ModalInteractionEvent event) {
-        List<BanData> banData = banTable.getBanList(guildId);
+    private Container buildResponse(int page, long owner) {
+        List<BanData> banData = banTable.getMemberBans(owner);
 
         return MyBansUI.build(banData, page, owner);
     }

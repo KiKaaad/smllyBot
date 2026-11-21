@@ -197,10 +197,11 @@ public class Manager extends ListenerAdapter {
 
         List<String> prefixes;
         GuildData guildData;
-        guildData = GuildTable.getOrCreateGuild(
-                event.getGuild().getIdLong(), event.getGuild().getName());
 
         if (event.isFromGuild()) {
+            guildData = GuildTable.getOrCreateGuild(
+                    event.getGuild().getIdLong(), event.getGuild().getName());
+
             List<String> guildPrefixes = guildData.getPrefix();
             List<String> base = (guildPrefixes == null || guildPrefixes.isEmpty())
                     ? Main.PREFIXES

@@ -84,13 +84,13 @@ public class MyMutes extends BaseCmd {
             targetPage = Integer.parseInt(inputPage.trim());
         } catch (NumberFormatException ignored) {}
 
-        Container response = buildResponse(event.getGuild().getIdLong(), targetPage, owner, event);
+        Container response = buildResponse(targetPage, owner, event);
 
         event.editComponents(response).useComponentsV2(true).queue();
     }
 
-    private Container buildResponse(long guildId, int page, long owner, ModalInteractionEvent event) {
-        List<MuteData> muteData = muteTable.getMemberMutes(guildId);
+    private Container buildResponse(int page, long owner, ModalInteractionEvent event) {
+        List<MuteData> muteData = muteTable.getMemberMutes(owner);
 
         return MyMutesUI.build(muteData, page, owner);
     }
