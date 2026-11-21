@@ -10,7 +10,7 @@ import com.kika.smllybot.modules.ping.PrefixPing;
 import com.kika.smllybot.modules.ping.SlashPing;
 import com.kika.smllybot.schedule.BanScheduler;
 import com.kika.smllybot.schedule.MuteScheduler;
-import com.kika.smllybot.schedule.Stars;
+import com.kika.smllybot.schedule.StarsScheduler;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.JDAInfo;
@@ -46,7 +46,7 @@ public class Main implements EventListener {
         DatabaseManager.init();
         JdbcTemplate query = DatabaseManager.getQuery();
 
-        Stars.minusStarsScheduler();
+        StarsScheduler.minusStarsScheduler();
 
         String token = Config.getInstance().getString("main.token");
 

@@ -8,9 +8,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class Stars {
+public class StarsScheduler {
 
-    private static final Logger log = LoggerFactory.getLogger(Stars.class);
+    private static final Logger log = LoggerFactory.getLogger(StarsScheduler.class);
 
     public static void minusStarsScheduler() {
         ScheduledExecutorService schedule = Executors.newScheduledThreadPool(1);
