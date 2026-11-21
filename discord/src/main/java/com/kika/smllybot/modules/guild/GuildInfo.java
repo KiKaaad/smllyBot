@@ -6,6 +6,7 @@ import com.kika.smllybot.modules.guild.ui.GuildInfoUI;
 import com.kika.smllybot.other.BaseCmd;
 import net.dv8tion.jda.api.components.container.Container;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 import java.util.EnumSet;
@@ -20,13 +21,14 @@ public class GuildInfo extends BaseCmd {
     @Override
     public Container execute(MessageReceivedEvent event, String raw, String args) {
         if (!event.isFromGuild()) return null;
+
         long guildId = event.getGuild().getIdLong();
         String guildName = event.getGuild().getName();
 
         Repository repo = new Repository();
         GuildData guild = repo.getGuild(guildId, guildName);
 
-        GuildInfoContext ctx = new GuildInfoContext(guild, event);
+        GuildInfoContext ctx = new GuildInfoContext(guild, event.getGuild());
 
         Container response = GuildInfoUI.build(ctx);
 
@@ -36,6 +38,23 @@ public class GuildInfo extends BaseCmd {
                 .queue();
 
         return response;
+    }
+
+    public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
+        long guildId = event.getGuild().getIdLong();
+        String guildName = event.getGuild().getName();
+
+        Repository repo = new Repository();
+        GuildData guild = repo.getGuild(guildId, guildName);
+
+        GuildInfoContext ctx = new GuildInfoContext(guild, event.getGuild());
+
+        Container response = GuildInfoUI.build(ctx);
+
+        if (event.getName().equals("гильдия")) {
+            event.deferReply().queue();
+            event.getHook().sendMessageComponents(response).useComponentsV2(true).queue();
+        }
     }
 
 }
