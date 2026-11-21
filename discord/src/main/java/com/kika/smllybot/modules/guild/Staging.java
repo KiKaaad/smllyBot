@@ -6,6 +6,7 @@ import com.kika.smllybot.database.sql.guild.guild.GuildTable;
 import com.kika.smllybot.handler.ErrorThrow;
 import com.kika.smllybot.modules.guild.ui.StagingUI;
 import com.kika.smllybot.other.BaseCmd;
+import com.kika.smllybot.utils.SendComponents;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.components.container.Container;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
@@ -23,7 +24,7 @@ public class Staging extends BaseCmd {
     public Container execute(MessageReceivedEvent event, String raw, String args) {
         if (!event.isFromGuild()) return null;
         if (event.getMember() == null || !event.getMember().hasPermission(Permission.ADMINISTRATOR)) {
-            ErrorThrow.noAccessPermission(event, Permission.ADMINISTRATOR);
+            SendComponents.sendTo15(event, ErrorThrow.noAccessPermission(Permission.ADMINISTRATOR));
 
             return null;
         }

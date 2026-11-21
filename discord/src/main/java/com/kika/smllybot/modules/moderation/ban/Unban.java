@@ -4,6 +4,7 @@ import com.kika.smllybot.database.sql.guild.guild.GuildTable;
 import com.kika.smllybot.database.sql.guild.guild.dto.GuildData;
 import com.kika.smllybot.handler.ErrorThrow;
 import com.kika.smllybot.other.BaseCmd;
+import com.kika.smllybot.utils.SendComponents;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.components.container.Container;
 import net.dv8tion.jda.api.entities.Guild;
@@ -26,7 +27,7 @@ public class Unban extends BaseCmd {
         if (!event.isFromGuild()) return null;
         GuildData guildData = GuildTable.getOrCreateGuild(event.getGuild().getIdLong(), event.getGuild().getName());
         if (!guildData.getStaging()) {
-            ErrorThrow.onlyOnStaging(event);
+            SendComponents.sendTo15(event, ErrorThrow.onlyOnStaging());
             return null;
         }
 
@@ -35,12 +36,12 @@ public class Unban extends BaseCmd {
 
         // Проверка прав модератора и бота
         if (moderator == null || !moderator.hasPermission(Permission.BAN_MEMBERS)) {
-            ErrorThrow.noAccessPermission(event, Permission.BAN_MEMBERS);
+            SendComponents.sendTo15(event, ErrorThrow.noAccessPermission(Permission.BAN_MEMBERS));
             return null;
         }
 
         if (!guild.getSelfMember().hasPermission(Permission.BAN_MEMBERS)) {
-            ErrorThrow.noAccessPermissionBot(event, Permission.BAN_MEMBERS);
+            SendComponents.sendTo15(event, ErrorThrow.noAccessPermissionBot(Permission.BAN_MEMBERS));
             return null;
         }
 
@@ -75,7 +76,7 @@ public class Unban extends BaseCmd {
             long targetId = Long.parseLong(arg);
             event.getJDA().retrieveUserById(targetId).queue(
                     target -> banService.unban(event, target, moderator),
-                    failure -> ErrorThrow.userNotFound(event, arg)
+                    failure -> SendComponents.sendTo15(event, ErrorThrow.userNotFound(arg))
             );
             return null;
         }

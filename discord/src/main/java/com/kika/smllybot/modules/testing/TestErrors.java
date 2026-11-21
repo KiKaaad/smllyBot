@@ -3,6 +3,7 @@ package com.kika.smllybot.modules.testing;
 import com.kika.smllybot.handler.ErrorThrow;
 import com.kika.smllybot.other.BaseCmd;
 
+import com.kika.smllybot.utils.SendComponents;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.components.container.Container;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -23,11 +24,11 @@ public class TestErrors extends BaseCmd {
         String argument = arg[2];
 
         switch (argument.toLowerCase()) {
-            case "noaccesspermission" -> ErrorThrow.noAccessPermission(event, Permission.BYPASS_SLOWMODE);
-            case "usernotfound" -> ErrorThrow.userNotFound(event, "kef123");
-            case "timeoverhead" -> ErrorThrow.timeoutOverhead(event);
-            case "onlyonstaging" -> ErrorThrow.onlyOnStaging(event);
-            case "undefined" -> ErrorThrow.undefined(event, """
+            case "noaccesspermission" -> SendComponents.sendTo15(event, ErrorThrow.noAccessPermission(Permission.BYPASS_SLOWMODE));
+            case "usernotfound" -> SendComponents.sendTo15(event, ErrorThrow.userNotFound("kef123"));
+            case "timeoverhead" -> SendComponents.sendTo15(event, ErrorThrow.timeoutOverhead());
+            case "onlyonstaging" -> SendComponents.sendTo15(event, ErrorThrow.onlyOnStaging());
+            case "undefined" -> SendComponents.sendTo15(event, ErrorThrow.undefined("""
                     [13:42:07] [JDA MainWS-ReadThread | ERROR]: One of the EventListeners had an uncaught exception
                     java.lang.IllegalArgumentException: URL may not be null
                             at net.dv8tion.jda.internal.utils.Checks.notNull(Checks.java:89)
@@ -54,7 +55,7 @@ public class TestErrors extends BaseCmd {
                             at com.neovisionaries.ws.client.ReadingThread.main(ReadingThread.java:108)
                             at com.neovisionaries.ws.client.ReadingThread.runMain(ReadingThread.java:64)
                             at com.neovisionaries.ws.client.WebSocketThread.run(WebSocketThread.java:45)
-                    """);
+                    """));
         }
 
         return null;

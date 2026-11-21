@@ -5,6 +5,7 @@ import com.kika.smllybot.database.sql.guild.ban.dto.BanCreateData;
 import com.kika.smllybot.handler.ErrorThrow;
 import com.kika.smllybot.modules.moderation.TargetUser;
 import com.kika.smllybot.modules.moderation.ban.ui.BanUI;
+import com.kika.smllybot.utils.SendComponents;
 import com.kika.smllybot.utils.TimeUtil;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -43,7 +44,7 @@ public class BanService {
                     var response = BanUI.ban(targetId, moderator.getIdLong(), until, target.getReason());
 
                     event.getChannel().sendMessageComponents(response).useComponentsV2(true).queue();
-                    }, throwable -> ErrorThrow.userNotFound(event, String.valueOf(targetId))
+                    }, throwable -> SendComponents.sendTo15(event, ErrorThrow.userNotFound(String.valueOf(targetId)))
         );
 
     }

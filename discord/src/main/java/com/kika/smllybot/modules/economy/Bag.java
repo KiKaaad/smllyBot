@@ -4,6 +4,7 @@ import com.kika.smllybot.database.sql.Repository;
 import com.kika.smllybot.handler.ErrorThrow;
 import com.kika.smllybot.modules.economy.ui.BagUI;
 import com.kika.smllybot.other.BaseCmd;
+import com.kika.smllybot.utils.SendComponents;
 import net.dv8tion.jda.api.components.container.Container;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -79,7 +80,7 @@ public class Bag extends BaseCmd {
 
     public void sendError(MessageReceivedEvent event) {
 
-        ErrorThrow.userNotFound(event, null);
+        SendComponents.sendTo15(event, ErrorThrow.userNotFound(null));
 
     }
 

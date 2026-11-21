@@ -9,6 +9,7 @@ import com.kika.smllybot.database.sql.guild.mute.dto.MuteData;
 import com.kika.smllybot.handler.ErrorThrow;
 import com.kika.smllybot.modules.moderation.mute.ui.MuteListUI;
 import com.kika.smllybot.other.BaseCmd;
+import com.kika.smllybot.utils.SendComponents;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.components.container.Container;
 import net.dv8tion.jda.api.components.label.Label;
@@ -39,7 +40,7 @@ public class MuteList extends BaseCmd {
         if (!event.isFromGuild()) return null;
         GuildData guildData = GuildTable.getOrCreateGuild(event.getGuild().getIdLong(), event.getGuild().getName());
         if (!guildData.getStaging()) {
-            ErrorThrow.onlyOnStaging(event);
+            SendComponents.sendTo15(event, ErrorThrow.onlyOnStaging());
             return null;
         }
 
@@ -48,7 +49,7 @@ public class MuteList extends BaseCmd {
 
         // Проверка прав модератора и бота
         if (moderator == null || !moderator.hasPermission(Permission.MODERATE_MEMBERS)) {
-            ErrorThrow.noAccessPermission(event, Permission.MODERATE_MEMBERS);
+            SendComponents.sendTo15(event, ErrorThrow.noAccessPermission(Permission.MODERATE_MEMBERS));
             return null;
         }
 

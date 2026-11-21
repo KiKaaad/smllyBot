@@ -4,6 +4,7 @@ import com.kika.smllybot.database.sql.guild.guild.GuildTable;
 import com.kika.smllybot.database.sql.guild.guild.dto.GuildData;
 import com.kika.smllybot.handler.ErrorThrow;
 import com.kika.smllybot.other.BaseCmd;
+import com.kika.smllybot.utils.SendComponents;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.components.container.Container;
 import net.dv8tion.jda.api.entities.Guild;
@@ -26,7 +27,7 @@ public class Unmute extends BaseCmd {
         if (!event.isFromGuild()) return null;
         GuildData guildData = GuildTable.getOrCreateGuild(event.getGuild().getIdLong(), event.getGuild().getName());
         if (!guildData.getStaging()) {
-            ErrorThrow.onlyOnStaging(event);
+            SendComponents.sendTo15(event, ErrorThrow.onlyOnStaging());
             return null;
         }
 
@@ -35,12 +36,12 @@ public class Unmute extends BaseCmd {
 
         // Проверка прав модератора и бота
         if (moderator == null || !moderator.hasPermission(Permission.MODERATE_MEMBERS)) {
-            ErrorThrow.noAccessPermission(event, Permission.MODERATE_MEMBERS);
+            SendComponents.sendTo15(event, ErrorThrow.noAccessPermission(Permission.MODERATE_MEMBERS));
             return null;
         }
 
         if (!guild.getSelfMember().hasPermission(Permission.MODERATE_MEMBERS)) {
-            ErrorThrow.noAccessPermissionBot(event, Permission.MODERATE_MEMBERS);
+            SendComponents.sendTo15(event, ErrorThrow.noAccessPermissionBot(Permission.MODERATE_MEMBERS));
             return null;
         }
 
@@ -80,7 +81,7 @@ public class Unmute extends BaseCmd {
                     target -> {
                         muteService.unMute(event, target, moderator);
                     },
-                    failure -> ErrorThrow.userNotFound(event, arg)
+                    failure -> SendComponents.sendTo15(event, ErrorThrow.userNotFound(arg))
             );
             return null;
         }
@@ -94,7 +95,7 @@ public class Unmute extends BaseCmd {
         if (!members.isEmpty()) {
             muteService.unMute(event, members.getFirst(), moderator);
         } else {
-            ErrorThrow.userNotFound(event, members.getFirst().getNickname());
+            SendComponents.sendTo15(event, ErrorThrow.userNotFound(members.getFirst().getNickname()));
         }
 
         return null;

@@ -8,6 +8,7 @@ import com.kika.smllybot.database.sql.user.users.dto.UserAccount;
 import com.kika.smllybot.handler.ErrorThrow;
 import com.kika.smllybot.modules.user.Local.ui.ProfileUI;
 import com.kika.smllybot.other.BaseCmd;
+import com.kika.smllybot.utils.SendComponents;
 import net.dv8tion.jda.api.components.container.Container;
 import net.dv8tion.jda.api.components.container.ContainerChildComponent;
 import net.dv8tion.jda.api.components.mediagallery.MediaGallery;
@@ -67,7 +68,7 @@ public class Profile extends BaseCmd {
         if (!members.isEmpty()) {
             sendProfileResponse(event, members.getFirst().getUser());
         } else {
-            ErrorThrow.userNotFound(event, "");
+            SendComponents.sendTo15(event, ErrorThrow.userNotFound(""));
         }
 
         return null;

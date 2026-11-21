@@ -4,6 +4,7 @@ import com.kika.smllybot.database.sql.Repository;
 import com.kika.smllybot.handler.ErrorThrow;
 import com.kika.smllybot.modules.user.Global.ui.GlobalProfileUI;
 import com.kika.smllybot.other.BaseCmd;
+import com.kika.smllybot.utils.SendComponents;
 import net.dv8tion.jda.api.components.container.Container;
 import net.dv8tion.jda.api.components.container.ContainerChildComponent;
 import net.dv8tion.jda.api.components.mediagallery.MediaGallery;
@@ -43,7 +44,7 @@ public class GlobalProfile extends BaseCmd {
         if (arg.matches("\\d+")) {
             event.getJDA().retrieveUserById(arg).queue(
                     targetUser -> sendAnketaResponse(event, targetUser),
-                    throwable -> ErrorThrow.userNotFound(event, arg)
+                    throwable -> SendComponents.sendTo15(event, ErrorThrow.userNotFound(arg))
             );
             return null;
         }
@@ -62,7 +63,7 @@ public class GlobalProfile extends BaseCmd {
         if (!members.isEmpty()) {
             sendAnketaResponse(event, members.getFirst().getUser());
         } else {
-            ErrorThrow.userNotFound(event, arg);
+            SendComponents.sendTo15(event, ErrorThrow.userNotFound(arg));
         }
         return null;
     }
