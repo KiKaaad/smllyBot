@@ -5,7 +5,7 @@ import net.dv8tion.jda.api.components.container.Container
 import net.dv8tion.jda.api.components.container.ContainerChildComponent
 import net.dv8tion.jda.api.components.separator.Separator
 import net.dv8tion.jda.api.components.textdisplay.TextDisplay
-import kotlin.time.Clock
+import java.util.Locale
 
 class FarmUI {
 
@@ -13,6 +13,8 @@ class FarmUI {
         @JvmStatic
         fun buildFarm(ctx: FarmContext): Container {
             val components: MutableList<ContainerChildComponent?> = ArrayList(5)
+
+            val multiplierText: String = String.format(Locale.US, "%.2f", ctx.starMultiplier)
 
             if (ctx.cooldown != null) {
                 val main: ContainerChildComponent = TextDisplay.of(
@@ -48,7 +50,7 @@ class FarmUI {
             val separator: ContainerChildComponent = Separator.createDivider(Separator.Spacing.SMALL)
             val footer: ContainerChildComponent = TextDisplay.of(
                 """
-                    \✨ **Сила звёздности:** ${ctx.starMultiplier}
+                    \✨ **Сила звёздности:** $multiplierText
                     \⏳ **Урожайность:** ${ctx.multiplierText}
                     """
                     .trimIndent()
