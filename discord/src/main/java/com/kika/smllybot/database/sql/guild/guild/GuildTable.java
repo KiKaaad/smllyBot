@@ -90,4 +90,15 @@ public class GuildTable {
             throw e;
         }
     }
+
+    public static void deletePrefix(long guildId) {
+        JdbcTemplate query = DatabaseManager.getQuery();
+        String sql = "UPDATE guild SET prefix = NULL WHERE id = ?";
+
+        try {
+            query.update(sql, guildId);
+        } catch (Exception e) {
+            log.error("❌ Не удалось сбросить префиксы в гильдии {}", guildId, e);
+        }
+    }
 }

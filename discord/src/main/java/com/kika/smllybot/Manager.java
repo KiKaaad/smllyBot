@@ -16,6 +16,7 @@ import com.kika.smllybot.modules.fun.YesOrNo;
 import com.kika.smllybot.modules.fun.soft.*;
 import com.kika.smllybot.modules.guild.GuildInfo;
 import com.kika.smllybot.modules.guild.GuildPrefix;
+import com.kika.smllybot.modules.guild.GuildPrefixDelete;
 import com.kika.smllybot.modules.guild.Staging;
 import com.kika.smllybot.modules.helper.Changelog;
 import com.kika.smllybot.modules.helper.GlobalHelp;
@@ -105,7 +106,7 @@ public class Manager extends ListenerAdapter {
         log.info("✅ Модуль модерации загружен");
 
         // Настройки гильдии
-        reg(new GuildPrefix());
+        reg(new GuildPrefix(), new GuildPrefixDelete());
         reg(new Staging());
 
         // Интерактивные команды
