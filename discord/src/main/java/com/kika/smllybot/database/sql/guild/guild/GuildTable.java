@@ -62,7 +62,7 @@ public class GuildTable {
 
     public static void editStaging(long guildId, boolean staging) {
         JdbcTemplate query = DatabaseManager.getQuery();
-        String sql = "UPDATE guild SET staging = ? WHERE guildId = ?";
+        String sql = "UPDATE guild SET staging = ? WHERE id = ?";
 
         try {
             query.update(sql, staging, guildId);
