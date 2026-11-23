@@ -85,7 +85,7 @@ public class SlashCommandRegister extends ListenerAdapter {
     public void onCommandAutoCompleteInteraction(CommandAutoCompleteInteractionEvent event) {
         String[] help = {
                 "анкета и профиль", "модерация", "топы",
-                "экономика", "статистика", "интерактивные команды",
+                "экономика", "статистика", "интерактивные команды", "гильдия",
                 "другое"
         };
         int[] durations = {1, 2, 6, 12, 24};

@@ -80,6 +80,12 @@ public class GlobalHelp extends BaseCmd {
                     event.deferReply().queue();
                     event.getHook().sendMessageComponents(response).useComponentsV2(true).queue();
                 }
+                case "гильдия" -> {
+                    Container response = GlobalHelpUI.guild(discordId);
+
+                    event.deferReply().queue();
+                    event.getHook().sendMessageComponents(response).useComponentsV2(true).queue();
+                }
                 case "другое" -> {
                     Container response = GlobalHelpUI.other(discordId);
 
@@ -141,6 +147,13 @@ public class GlobalHelp extends BaseCmd {
             }
             case "moderation" -> {
                 var response = GlobalHelpUI.moderation(discordId);
+
+                event.editComponents(response)
+                        .useComponentsV2(true)
+                        .queue();
+            }
+            case "guild" -> {
+                var response = GlobalHelpUI.guild(discordId);
 
                 event.editComponents(response)
                         .useComponentsV2(true)
