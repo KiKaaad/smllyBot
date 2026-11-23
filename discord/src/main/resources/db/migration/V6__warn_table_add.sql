@@ -11,6 +11,6 @@ CREATE TABLE IF NOT EXISTS warn (
     active          BOOLEAN NOT NULL DEFAULT TRUE       -- Активен ли варн сейчас
 );
 
-CREATE UNIQUE INDEX IF NOT EXISTS idx_warn_guild_discord_active
-ON warn (guild_id, discord_id)
+CREATE UNIQUE INDEX IF NOT EXISTS idx_warn_id_guild_discord_active
+ON warn (id, guild_id, discord_id)
 WHERE active = true;
