@@ -8,6 +8,7 @@ import com.kika.smllybot.utils.TimeUtil;
 import net.dv8tion.jda.api.components.container.Container;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.UserSnowflake;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 import java.time.OffsetDateTime;
@@ -50,6 +51,13 @@ public class WarnService {
             Container response = WarnUI.buildKick(targetId);
             event.getChannel().sendMessageComponents(response).useComponentsV2().queue();
         }
+    }
+
+    protected void unWarnAll(MessageReceivedEvent event, Member moderator, UserSnowflake target) {
+        warnTable.clearMemberWarns(target.getIdLong(), event.getGuild().getIdLong());
+
+        Container response = WarnUI.buildUnWarn(target.getIdLong());
+        event.getChannel().sendMessageComponents(response).useComponentsV2(true).queue();
     }
 
 }

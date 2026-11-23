@@ -3,12 +3,14 @@ package com.kika.smllybot.modules.moderation.mute;
 import com.kika.smllybot.database.sql.guild.guild.GuildTable;
 import com.kika.smllybot.database.sql.guild.guild.dto.GuildData;
 import com.kika.smllybot.handler.ErrorThrow;
+import com.kika.smllybot.modules.moderation.FindUser;
 import com.kika.smllybot.other.BaseCmd;
 import com.kika.smllybot.utils.SendComponents;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.components.container.Container;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.UserSnowflake;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 import java.util.Set;
@@ -45,58 +47,13 @@ public class Unmute extends BaseCmd {
             return null;
         }
 
-        String[] matches = raw.trim().split("\\n", 2);
-        String firstLine = matches[0].trim();
-        String[] parts = firstLine.split("\\h+");
+        FindUser findUser = new FindUser();
+        UserSnowflake userSnowflake = findUser.find(event.getMessage(), args);
 
-        // Ответом на сообщение
-        if (event.getMessage().getReferencedMessage() != null) {
-            Member target = event.getMessage().getReferencedMessage().getMember();
-            if (target == null) {
-                return null;
-            }
-
-            muteService.unMute(event, target, moderator);
-            return null;
-        }
-
-        // Упоминание -> @username
-        if (!event.getMessage().getMentions().getMembers().isEmpty()) {
-            Member target = event.getMessage().getMentions().getMembers().getFirst();
-
-            muteService.unMute(event, target, moderator);
-            return null;
-        }
-
-        if (parts.length < 2) {
-            return null;
-        }
-
-        String arg = parts[1];
-
-        // ID -> 12345678910121314
-        if (arg.matches("\\d+")) {
-            long targetId = Long.parseLong(arg);
-            guild.retrieveMemberById(targetId).queue(
-                    target -> {
-                        muteService.unMute(event, target, moderator);
-                    },
-                    failure -> SendComponents.sendTo15(event, ErrorThrow.userNotFound(arg))
-            );
-            return null;
-        }
-
-        // Никнейм -> kefichik.
-        var members = guild.getMembersByName(arg, true);
-        if (members.isEmpty()) {
-            members = guild.getMembersByNickname(arg, true);
-        }
-
-        if (!members.isEmpty()) {
-            muteService.unMute(event, members.getFirst(), moderator);
-        } else {
-            SendComponents.sendTo15(event, ErrorThrow.userNotFound(members.getFirst().getNickname()));
-        }
+        event.getGuild().retrieveMemberById(userSnowflake.getIdLong()).queue(
+                success -> muteService.unMute(event, success, moderator),
+                throwable -> SendComponents.sendTo15(event, ErrorThrow.userNotFound(userSnowflake.toString()))
+        );
 
         return null;
     }

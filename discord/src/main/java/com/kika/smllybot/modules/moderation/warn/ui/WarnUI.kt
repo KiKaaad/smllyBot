@@ -32,7 +32,14 @@ class WarnUI {
 
         @JvmStatic
         fun buildKick(discordId: Long): Container {
-            val header = TextDisplay.of("# <@$discordId> достиг лимита варнов (3/3). Кикаю...")
+            val header = TextDisplay.of("## \\❗\\❗\\❗ <@$discordId> достиг лимита варнов (3/3). Кикаю...")
+
+            return Container.of(header)
+        }
+
+        @JvmStatic
+        fun buildUnWarn(discordId: Long): Container {
+            val header = TextDisplay.of("## \\✅ С <@$discordId> сняты все варны!")
 
             return Container.of(header)
         }
