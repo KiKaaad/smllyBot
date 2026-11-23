@@ -8,6 +8,7 @@ import com.kika.smllybot.database.sql.guild.ban.BanTable;
 import com.kika.smllybot.database.sql.guild.guild.GuildTable;
 import com.kika.smllybot.database.sql.guild.guild.dto.GuildData;
 import com.kika.smllybot.database.sql.guild.mute.MuteTable;
+import com.kika.smllybot.database.sql.guild.warn.WarnTable;
 import com.kika.smllybot.modules.economy.Bag;
 import com.kika.smllybot.modules.economy.Dice;
 import com.kika.smllybot.modules.economy.Farm;
@@ -30,6 +31,8 @@ import com.kika.smllybot.modules.moderation.mute.MuteService;
 import com.kika.smllybot.modules.moderation.mute.Unmute;
 import com.kika.smllybot.modules.moderation.mypunishments.MyBans;
 import com.kika.smllybot.modules.moderation.mypunishments.MyMutes;
+import com.kika.smllybot.modules.moderation.warn.Warn;
+import com.kika.smllybot.modules.moderation.warn.WarnService;
 import com.kika.smllybot.modules.privacy.Privacy;
 import com.kika.smllybot.modules.privacy.PrivacyInteraction;
 import com.kika.smllybot.modules.statistic.StatisticBot;
@@ -71,7 +74,9 @@ public class Manager extends ListenerAdapter {
     private final Map<String, RegisteredModal> modal = new HashMap<>();
 
     public Manager(MuteService muteService, MuteTable muteTable,
-                   BanTable banTable, BanService banService) {
+                   BanTable banTable, BanService banService,
+                   WarnTable warnTable, WarnService warnService
+    ) {
         // Экономика
         reg(new GlobalTop());
         reg(new Farm());
@@ -101,6 +106,7 @@ public class Manager extends ListenerAdapter {
         // Модерация
         reg(new Mute(muteService), new Unmute(muteService), new MuteList(muteTable));
         reg(new Ban(banService), new Unban(banService), new BanList(banTable));
+        reg(new Warn(warnService));
 
         reg(new MyBans(banTable), new MyMutes(muteTable));
         log.info("✅ Модуль модерации загружен");

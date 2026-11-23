@@ -3,9 +3,11 @@ package com.kika.smllybot;
 import com.kika.smllybot.database.sql.DatabaseManager;
 import com.kika.smllybot.database.sql.guild.ban.BanTable;
 import com.kika.smllybot.database.sql.guild.mute.MuteTable;
+import com.kika.smllybot.database.sql.guild.warn.WarnTable;
 import com.kika.smllybot.listeners.*;
 import com.kika.smllybot.modules.moderation.ban.BanService;
 import com.kika.smllybot.modules.moderation.mute.MuteService;
+import com.kika.smllybot.modules.moderation.warn.WarnService;
 import com.kika.smllybot.modules.ping.PrefixPing;
 import com.kika.smllybot.modules.ping.SlashPing;
 import com.kika.smllybot.schedule.BanScheduler;
@@ -37,7 +39,7 @@ public class Main implements EventListener {
 
     private static final Logger log = LoggerFactory.getLogger(Main.class);
     public static List<String> PREFIXES;
-    public static final String VERSION = "🪄 v0.8.4-beta (?)";
+    public static final String VERSION = "🫵 v0.9.0-beta (24.11.2026)";
     public static final String OWNER = "<@683345722611073059>";
 
     static void main() throws InterruptedException {
@@ -62,10 +64,14 @@ public class Main implements EventListener {
         BanTable banTable = new BanTable(query);
         BanService banService = new BanService(banTable);
 
+        WarnTable warnTable = new WarnTable(query);
+        WarnService warnService = new WarnService(warnTable);
+
         // Передача сервисов в менеджер
         Manager manager = new Manager(
                 muteService, muteTable,
-                banTable, banService
+                banTable, banService,
+                warnTable, warnService
         );
 
         MemberCachePolicy memberCachePolicy = Config.getInstance().getMemberCachePolicy("jda.cache_policy");
