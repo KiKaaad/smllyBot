@@ -80,7 +80,7 @@ class Typification {
             )
         }
 
-        if (!event.message.mentions.users.isEmpty()) {
+        if (!event.message.mentions.users.isEmpty() && event.message.mentions.users.last() != event.jda.selfUser) {
             val user = event.message.mentions.users.last()
 
             return TargetUser(

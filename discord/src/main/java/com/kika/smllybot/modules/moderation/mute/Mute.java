@@ -77,9 +77,10 @@ public class Mute extends BaseCmd {
             TargetUser targetUser = new TargetUser(user, duration, unit, reason);
 
             muteService.mute(event.getGuild(), moderator, targetUser)
-                    .thenAccept(containers -> {
-                        event.getHook().sendMessageComponents(containers).useComponentsV2(true).queue();
-                    });
+                    .thenAccept(containers -> event.getHook()
+                            .sendMessageComponents(containers)
+                            .useComponentsV2(true)
+                            .queue());
         }
     }
 

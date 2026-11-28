@@ -31,6 +31,13 @@ public class ErrorThrow {
         );
     }
 
+    public static List<Container> notEnoughArgument(String text) {
+        return createErrorMessage(
+                "## \\❌ Неверно указаны аргументы",
+                "%s".formatted(text)
+        );
+    }
+
     public static List<Container> smallPermission() {
         return createErrorMessage(
                 "## \\❌ Ваша роль или роль бота ниже",

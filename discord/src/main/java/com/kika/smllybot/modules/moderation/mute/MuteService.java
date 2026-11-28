@@ -47,7 +47,6 @@ public class MuteService {
 
                     return List.of(MuteUI.mute(targetUser.getUser().getIdLong(), moderator.getIdLong(), until, targetUser.getReason()));
                 }).exceptionally(error -> ErrorThrow.undefined(error.getMessage()));
-
     }
 
     protected void unMute(MessageReceivedEvent event, Member target, Member moderator) {
