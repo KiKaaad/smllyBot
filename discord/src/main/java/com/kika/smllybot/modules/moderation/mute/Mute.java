@@ -59,7 +59,7 @@ public class Mute extends BaseCmd {
         muteService.mute(event.getGuild(), moderator, targetUser)
                 .thenAccept(containers -> {
                     event.getChannel().sendMessageComponents(containers).useComponentsV2(true).queue();
-                });;
+                });
 
         return null;
     }
