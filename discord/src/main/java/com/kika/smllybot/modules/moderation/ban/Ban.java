@@ -6,6 +6,7 @@ import com.kika.smllybot.handler.ErrorThrow;
 import com.kika.smllybot.modules.moderation.TargetUser;
 import com.kika.smllybot.modules.moderation.Typification;
 import com.kika.smllybot.other.BaseCmd;
+import com.kika.smllybot.utils.SendComponents;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.components.container.Container;
 import net.dv8tion.jda.api.entities.Guild;
@@ -29,7 +30,7 @@ public class Ban extends BaseCmd {
         GuildData guildData = GuildTable.getOrCreateGuild(event.getGuild().getIdLong(), event.getGuild().getName());
 
         if (!guildData.getStaging()) {
-            ErrorThrow.onlyOnStaging(event);
+            SendComponents.sendTo15(event, ErrorThrow.onlyOnStaging());
             return null;
         }
 
@@ -38,13 +39,13 @@ public class Ban extends BaseCmd {
 
         // Проверка прав модератора и бота
         if (moderator == null || !moderator.hasPermission(Permission.BAN_MEMBERS)) {
-            ErrorThrow.noAccessPermission(event, Permission.BAN_MEMBERS);
+            SendComponents.sendTo15(event, ErrorThrow.noAccessPermission(Permission.BAN_MEMBERS));
             return null;
         }
 
         // Если бот не имеет прав
         if (!guild.getSelfMember().hasPermission(Permission.BAN_MEMBERS)) {
-            ErrorThrow.noAccessPermissionBot(event, Permission.BAN_MEMBERS);
+            SendComponents.sendTo15(event, ErrorThrow.noAccessPermissionBot(Permission.BAN_MEMBERS));
             return null;
         }
 

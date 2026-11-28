@@ -27,14 +27,16 @@ public class GuildTable {
                 rs.getBoolean("staging"),
                 rs.getString("mute_type"),
                 rs.getLong("mute_role"),
-                prefix
+                prefix,
+                rs.getInt("warn_limit"),
+                rs.getLong("warn_role")
         );
     };
 
     public static GuildData getOrCreateGuild(long id, String guildName) {
         JdbcTemplate query = DatabaseManager.getQuery();
         String selectSql = """
-                SELECT id, title, staging, mute_type, mute_role, prefix
+                SELECT id, title, staging, mute_type, mute_role, prefix, warn_limit, warn_role
                 FROM guild
                 WHERE id = ?
                 """;
@@ -42,7 +44,7 @@ public class GuildTable {
         String insertSql = """
                 INSERT INTO guild (id, title) VALUES (?, ?)
                 ON CONFLICT (id) DO UPDATE SET id = EXCLUDED.id
-                RETURNING id, title, staging, mute_type, mute_role, prefix;
+                RETURNING id, title, staging, mute_type, mute_role, prefix, warn_limit, warn_role;
                 """;
 
         try {
@@ -62,7 +64,7 @@ public class GuildTable {
 
     public static void editStaging(long guildId, boolean staging) {
         JdbcTemplate query = DatabaseManager.getQuery();
-        String sql = "UPDATE guild SET staging = ? WHERE guildId = ?";
+        String sql = "UPDATE guild SET staging = ? WHERE id = ?";
 
         try {
             query.update(sql, staging, guildId);
@@ -88,6 +90,17 @@ public class GuildTable {
         } catch (DataAccessException e) {
             log.error("❌ Возникла ошибка при попытке обновить префиксы гильдии {}", guildId, e);
             throw e;
+        }
+    }
+
+    public static void deletePrefix(long guildId) {
+        JdbcTemplate query = DatabaseManager.getQuery();
+        String sql = "UPDATE guild SET prefix = NULL WHERE id = ?";
+
+        try {
+            query.update(sql, guildId);
+        } catch (Exception e) {
+            log.error("❌ Не удалось сбросить префиксы в гильдии {}", guildId, e);
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.kika.smllybot.modules.moderation
 
 import com.kika.smllybot.handler.ErrorThrow
+import com.kika.smllybot.utils.SendComponents
 import net.dv8tion.jda.api.entities.UserSnowflake
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 
@@ -12,10 +13,9 @@ class Typification {
         var reason: String? = null
 
         /*
-        * parts[0] - мут
-        * parts[1] - <@юзер> / 123456789 / юзер
-        * parts[2] - время: 123
-        * parts[3] - тип: часов
+        * parts[0] - <@юзер> / 123456789 / юзер
+        * parts[1] - время: 123
+        * parts[2] - тип: часов
         * lines[1] - причина
         *
         * Может смещаться, если команда использована в ответ на сообщение
@@ -32,7 +32,7 @@ class Typification {
         try {
             duration?.toLong()
         } catch (e: NumberFormatException) {
-            ErrorThrow.notNumber(event, e.message)
+            SendComponents.sendTo15(event, ErrorThrow.notNumber(e.message))
             return TargetUser(UserSnowflake.fromId(0), null, null, null)
         }
 
@@ -53,7 +53,7 @@ class Typification {
         try {
             duration?.toLong()
         } catch (e: NumberFormatException) {
-            ErrorThrow.notNumber(event, e.message)
+            SendComponents.sendTo15(event, ErrorThrow.notNumber(e.message))
             return TargetUser(UserSnowflake.fromId(0), null, null, null)
         }
 
@@ -80,7 +80,7 @@ class Typification {
             )
         }
 
-        if (!event.message.mentions.users.isEmpty()) {
+        if (!event.message.mentions.users.isEmpty() && event.message.mentions.users.last() != event.jda.selfUser) {
             val user = event.message.mentions.users.last()
 
             return TargetUser(

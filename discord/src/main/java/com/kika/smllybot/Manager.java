@@ -8,6 +8,7 @@ import com.kika.smllybot.database.sql.guild.ban.BanTable;
 import com.kika.smllybot.database.sql.guild.guild.GuildTable;
 import com.kika.smllybot.database.sql.guild.guild.dto.GuildData;
 import com.kika.smllybot.database.sql.guild.mute.MuteTable;
+import com.kika.smllybot.database.sql.guild.warn.WarnTable;
 import com.kika.smllybot.modules.economy.Bag;
 import com.kika.smllybot.modules.economy.Dice;
 import com.kika.smllybot.modules.economy.Farm;
@@ -16,6 +17,7 @@ import com.kika.smllybot.modules.fun.YesOrNo;
 import com.kika.smllybot.modules.fun.soft.*;
 import com.kika.smllybot.modules.guild.GuildInfo;
 import com.kika.smllybot.modules.guild.GuildPrefix;
+import com.kika.smllybot.modules.guild.GuildPrefixDelete;
 import com.kika.smllybot.modules.guild.Staging;
 import com.kika.smllybot.modules.helper.Changelog;
 import com.kika.smllybot.modules.helper.GlobalHelp;
@@ -29,6 +31,9 @@ import com.kika.smllybot.modules.moderation.mute.MuteService;
 import com.kika.smllybot.modules.moderation.mute.Unmute;
 import com.kika.smllybot.modules.moderation.mypunishments.MyBans;
 import com.kika.smllybot.modules.moderation.mypunishments.MyMutes;
+import com.kika.smllybot.modules.moderation.warn.UnWarns;
+import com.kika.smllybot.modules.moderation.warn.Warn;
+import com.kika.smllybot.modules.moderation.warn.WarnService;
 import com.kika.smllybot.modules.privacy.Privacy;
 import com.kika.smllybot.modules.privacy.PrivacyInteraction;
 import com.kika.smllybot.modules.statistic.StatisticBot;
@@ -46,9 +51,12 @@ import com.kika.smllybot.other.BaseCmd;
 import com.kika.smllybot.utils.Interaction;
 import com.kika.smllybot.utils.PrefixUtil;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.command.UserContextInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,7 +75,9 @@ public class Manager extends ListenerAdapter {
     private final Map<String, RegisteredModal> modal = new HashMap<>();
 
     public Manager(MuteService muteService, MuteTable muteTable,
-                   BanTable banTable, BanService banService) {
+                   BanTable banTable, BanService banService,
+                   WarnTable warnTable, WarnService warnService
+    ) {
         // Экономика
         reg(new GlobalTop());
         reg(new Farm());
@@ -97,12 +107,13 @@ public class Manager extends ListenerAdapter {
         // Модерация
         reg(new Mute(muteService), new Unmute(muteService), new MuteList(muteTable));
         reg(new Ban(banService), new Unban(banService), new BanList(banTable));
+        reg(new Warn(warnService), new UnWarns(warnService));
 
         reg(new MyBans(banTable), new MyMutes(muteTable));
         log.info("✅ Модуль модерации загружен");
 
         // Настройки гильдии
-        reg(new GuildPrefix());
+        reg(new GuildPrefix(), new GuildPrefixDelete());
         reg(new Staging());
 
         // Интерактивные команды
@@ -197,11 +208,16 @@ public class Manager extends ListenerAdapter {
         if (event.isFromGuild()) {
             guildData = GuildTable.getOrCreateGuild(
                     event.getGuild().getIdLong(), event.getGuild().getName());
-            prefixes = Stream.of(List.of("<@" + botId + ">"), guildData.getPrefix())
-                    .filter(Objects::nonNull)
-                    .flatMap(List::stream)
+
+            List<String> guildPrefixes = guildData.getPrefix();
+            List<String> base = (guildPrefixes == null || guildPrefixes.isEmpty())
+                    ? Main.PREFIXES
+                    : guildPrefixes;
+
+            prefixes = Stream.concat(Stream.of("<@" + botId + ">"), base.stream())
                     .distinct()
                     .collect(Collectors.toList());
+            prefixes.sort(Comparator.comparingInt(String::length).reversed());
         } else {
             prefixes = Main.PREFIXES;
         }
@@ -235,5 +251,22 @@ public class Manager extends ListenerAdapter {
             String arg = commandBody.substring(commandName.length()).stripLeading().trim();
             cmd.execute(event, command, arg);
         }
+    }
+
+    @Override
+    public void onSlashCommandInteraction(@NonNull SlashCommandInteractionEvent event) {
+        BaseCmd cmd;
+
+        if (event.getSubcommandName() != null) {
+            cmd = commands.get(event.getName().toLowerCase() + " " + event.getSubcommandName());
+        } else cmd = commands.get(event.getName().toLowerCase());
+
+        cmd.onSlashCommandInteraction(event);
+    }
+
+    @Override
+    public void onUserContextInteraction(UserContextInteractionEvent event) {
+        BaseCmd cmd = commands.get(event.getName().toLowerCase());
+        cmd.onUserContextInteraction(event);
     }
 }

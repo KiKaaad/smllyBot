@@ -94,7 +94,7 @@ public class MuteTable {
         try {
             query.update(sql, removedByDiscordId, discordId, guildId);
         } catch (Exception e) {
-            log.error("Возникла ошибка при попытке размутить пользователя", e);
+            log.error("❌ Возникла ошибка при попытке размутить пользователя", e);
         }
     }
 }

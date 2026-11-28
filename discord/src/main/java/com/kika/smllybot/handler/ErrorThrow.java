@@ -8,44 +8,45 @@ import net.dv8tion.jda.api.components.container.Container;
 import net.dv8tion.jda.api.components.section.Section;
 import net.dv8tion.jda.api.components.separator.Separator;
 import net.dv8tion.jda.api.components.textdisplay.TextDisplay;
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 import java.awt.*;
-import java.time.Duration;
 import java.time.OffsetDateTime;
+import java.util.List;
 
 public class ErrorThrow {
 
     private ErrorThrow() {}
 
-    public static void noAccessPermission(MessageReceivedEvent event, Permission permission) {
-        createErrorMessage(
-                event,
+    public static List<Container> noAccessPermission(Permission permission) {
+        return createErrorMessage(
                 "## \\❌ Нет требуемых прав",
                 "Нет следующего права: %s".formatted(permission.getName())
         );
     }
 
-    public static void noAccessPermissionBot(MessageReceivedEvent event, Permission permission) {
-        createErrorMessage(
-                event,
+    public static List<Container> noAccessPermissionBot(Permission permission) {
+        return createErrorMessage(
                 "## \\❌ У бота нет требуемых прав",
                 "Нет следующего права: %s".formatted(permission.getName())
         );
     }
 
-    public static void smallPermission(MessageReceivedEvent event) {
-        createErrorMessage(
-                event,
+    public static List<Container> notEnoughArgument(String text) {
+        return createErrorMessage(
+                "## \\❌ Неверно указаны аргументы",
+                "%s".formatted(text)
+        );
+    }
+
+    public static List<Container> smallPermission() {
+        return createErrorMessage(
                 "## \\❌ Ваша роль или роль бота ниже",
                 "Вы или бот не могут замутить пользователя выше своей роли"
         );
     }
 
-    public static void notNumber(MessageReceivedEvent event, String input) {
-        createErrorMessage(
-                event,
+    public static List<Container> notNumber(String input) {
+        return createErrorMessage(
                 "## \\❌ Вы ввели не число",
                 """
                         Пожалуйста, проверьте, как вы заполнили аргументы команды
@@ -54,25 +55,22 @@ public class ErrorThrow {
         );
     }
 
-    public static void userNotFound(MessageReceivedEvent event, String user) {
-        createErrorMessage(
-                event,
+    public static List<Container> userNotFound(String user) {
+        return createErrorMessage(
                 "## \\❌ Пользователь не найден",
                 "Пытались найти: " + user
         );
     }
 
-    public static void timeoutOverhead(MessageReceivedEvent event) {
-        createErrorMessage(
-                event,
+    public static List<Container> timeoutOverhead() {
+        return createErrorMessage(
                 "## \\❌ Время слишком большое",
                 "Время мута __не может__ быть более, чем **на 28 дней**"
         );
     }
 
-    public static void onlyOnStaging(MessageReceivedEvent event) {
-        createErrorMessage(
-                event,
+    public static List<Container> onlyOnStaging() {
+        return createErrorMessage(
                 "## \\❌ Режим тестирования выключен",
                 """
                         \\⚠️ Режим тестирования крайне нестабилен, используйте на свой страх и риск OwO
@@ -81,9 +79,8 @@ public class ErrorThrow {
         );
     }
 
-    public static void undefined(MessageReceivedEvent event, String error) {
-        createErrorMessage(
-                event,
+    public static List<Container> undefined(String error) {
+        return createErrorMessage(
                 "## \\❌ Неизвестная ошибка",
                 """
                         ## Ошибка:
@@ -94,8 +91,7 @@ public class ErrorThrow {
         );
     }
 
-    private static void createErrorMessage(MessageReceivedEvent event,
-            String header, String text) {
+    private static List<Container> createErrorMessage(String header, String text) {
 
         OffsetDateTime time = OffsetDateTime.now().plusSeconds(15);
         String timestampRelative = TimeUtil.getTimestampRelative(time);
@@ -108,14 +104,10 @@ public class ErrorThrow {
                 Button.secondary("undefined", "скоро...").asDisabled(),
                 TextDisplay.of(StackTrace.getCallerLocation()));
 
-        event.getChannel().sendMessageComponents(
-                        Container.of(head, separator, main).withAccentColor(Color.RED),
-                        Container.of(section).withAccentColor(Color.RED)
-                )
-                .useComponentsV2(true)
-                .delay(Duration.ofSeconds(15))
-                .flatMap(Message::delete)
-                .queue();
+        return List.of(
+                Container.of(head, separator, main).withAccentColor(Color.RED),
+                Container.of(section).withAccentColor(Color.RED)
+        );
     }
 
 }

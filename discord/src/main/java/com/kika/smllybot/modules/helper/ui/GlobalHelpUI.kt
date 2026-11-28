@@ -16,7 +16,7 @@ class GlobalHelpUI {
 
     companion object {
         val footer = TextDisplay.of("""
-        -# \ℹ️ **< аргумент >** — необязательные аргументы | **[ аргумент ]** — обязательные аргументы
+        -# \ℹ️ **< >** — необязательные аргументы | **[ ]** — обязательные аргументы
         -# \⬇️ — знаком вниз помечаются аргументы которые пишутся на следующей строке (shift + enter) 
         """.trimIndent())
 
@@ -33,7 +33,8 @@ class GlobalHelpUI {
             val buttons: ContainerChildComponent = ActionRow.of(
                 Button.of(ButtonStyle.LINK, "https://discord.gg/3JSz5fEeee", "🛟 Сервер поддержки"),
                 Button.of(ButtonStyle.LINK, "https://github.com/KiKaaad/smllyBot", "🐈‍⬛ Гитхаб"),
-                Button.of(ButtonStyle.LINK, "https://github.com/KiKaaad/smllyBot/issues", "🐞 Нашел ошибку")
+                Button.of(ButtonStyle.LINK, "https://github.com/KiKaaad/smllyBot/issues", "🐞 Нашел ошибку"),
+                Button.of(ButtonStyle.LINK, "https://discord.com/oauth2/authorize?client_id=873596380659191859", "➕ Установить себе :3")
             )
             val help = Section.of(
                 Button.of(ButtonStyle.LINK, "https://smlly.gitbook.io/i", "🛟 Вики"),
@@ -75,6 +76,11 @@ class GlobalHelpUI {
                 TextDisplay.of("## \\🥰 Интерактивные, рп-команды"),
                 TextDisplay.of("### Позволяют взаимодействовать с другими пользователями путем ответа на его сообщение определенном командой")
             )
+            val guild = Section.of(
+                Button.of(ButtonStyle.SECONDARY, "help:guild:$discordId", "➡️"),
+                TextDisplay.of("## \\🏰 Команды гильдии"),
+                TextDisplay.of("### Информация о гильдии и большая настройка бота под локальные задачи сервера")
+            )
             val others: ContainerChildComponent = Section.of(
                 Button.of(ButtonStyle.SECONDARY, "help:other:$discordId", "➡️"),
                 TextDisplay.of("## \\❔ Другое"),
@@ -109,6 +115,8 @@ class GlobalHelpUI {
                     add(help)
                     add(separator)
                     add(interactive)
+                    add(separator)
+                    add(guild)
                     add(separator)
                     add(others)
                     add(pagination)
@@ -291,6 +299,8 @@ class GlobalHelpUI {
                 - `бан` <юзернейм / айди / никнейм> <время> <тип> <причина>\⬇️ — блокирует пользователь на указанное время
                    - `разбан` <юзернейм / айди / никнейм> — разблокировать пользователя
                 - `банлист` — показывает все баны, которые когда либо были
+                - `варн` <юзернейм / айди / никнейм> <время> <тип> <причина>\⬇️ — выдает предупреждение пользователю на указанное время
+                  - `снять варны` или `-варны` <юзернейм / айди / никнейм> — снимает все активные варны пользователя
                 """.trimIndent())
             val components = buildList {
                 add(header)
@@ -306,8 +316,32 @@ class GlobalHelpUI {
         }
 
         @JvmStatic
-        fun other(discordId: Long): Container {
+        fun guild(discordId: Long): Container {
+            val header: ContainerChildComponent = Section.of(
+                Button.of(ButtonStyle.SECONDARY, "help:back:$discordId", "🔙"),
+                TextDisplay.of("# \\🏰 Команды гильдии")
+            )
+            val mainInfo: ContainerChildComponent = TextDisplay.of(
+                "### Информация о гильдии и большая настройка бота под локальные задачи сервера")
+            val separator: ContainerChildComponent = Separator.createDivider(Separator.Spacing.SMALL)
+            val otherModule: ContainerChildComponent = TextDisplay.of("""
+                - `гильдия` — информация о гильдии, количество участников, бустов, статус раннего доступа и многое другое
+                - `установить префиксы` [префикс, префикс, префикс] — устанавливает кастомные префиксы для вашей гильдии
+                """.trimIndent())
+            val components = buildList {
+                add(header)
+                add(mainInfo)
+                add(separator)
+                add(otherModule)
+                add(separator)
+                add(footer)
+            }
 
+            return Container.of(components)
+        }
+
+        @JvmStatic
+        fun other(discordId: Long): Container {
             val header: ContainerChildComponent = Section.of(
                 Button.of(ButtonStyle.SECONDARY, "help:back:$discordId", "🔙"),
                 TextDisplay.of("# \\❔ Другое")
@@ -327,11 +361,7 @@ class GlobalHelpUI {
                 add(footer)
             }
 
-            return Container.of(
-                components
-            )
+            return Container.of(components)
         }
     }
 }
-
-// TODO: Требует рефакторинг общих деталей (футер)

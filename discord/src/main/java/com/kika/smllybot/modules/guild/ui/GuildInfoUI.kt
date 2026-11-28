@@ -18,23 +18,23 @@ class GuildInfoUI {
         fun build(ctx: GuildInfoContext): Container {
             val components: MutableList<ContainerChildComponent?> = ArrayList(12)
 
-            val guildId = ctx.event.guild.idLong
-            val guildTitle = ctx.event.guild.name
-            val description: String = ctx.event.guild.description ?: "Описание гильдии не установлено"
-            val rolesCount = ctx.event.guild.roles.size
-            val ownerName = ctx.event.guild.owner!!.user.name
-            val ownerId = ctx.event.guild.owner!!.idLong
-            val voiceChannels = ctx.event.guild.voiceChannels.size
-            val channelsSize = ctx.event.guild.channels.size
-            val boostCount = ctx.event.guild.boostCount
-            val userCount = ctx.event.guild.memberCount
-            val botCount = ctx.event.guild.members.count { it.user.isBot }
-            val data = TimeUtil.getTimestamp(ctx.event.guild.timeCreated)
-            val dataRelative = TimeUtil.getTimestampRelative(ctx.event.guild.timeCreated)
+            val guildId = ctx.guild.idLong
+            val guildTitle = ctx.guild.name
+            val description: String = ctx.guild.description ?: "Описание гильдии не установлено"
+            val rolesCount = ctx.guild.roles.size
+            val ownerName = ctx.guild.owner!!.user.name
+            val ownerId = ctx.guild.owner!!.idLong
+            val voiceChannels = ctx.guild.voiceChannels.size
+            val channelsSize = ctx.guild.channels.size
+            val boostCount = ctx.guild.boostCount
+            val userCount = ctx.guild.memberCount
+            val botCount = ctx.guild.members.count { it.user.isBot }
+            val data = TimeUtil.getTimestamp(ctx.guild.timeCreated)
+            val dataRelative = TimeUtil.getTimestampRelative(ctx.guild.timeCreated)
             var dev = ""
-            if (ctx.guild.staging) dev = "\\🛠️"
+            if (ctx.guildData.staging) dev = "\\🛠️"
 
-            val levelBoost = ctx.event.guild.boostCount
+            val levelBoost = ctx.guild.boostCount
             val emojiBoost: String = when (levelBoost) {
                 0 -> "👾"
                 in 2..6 -> "🍬"
@@ -42,14 +42,14 @@ class GuildInfoUI {
                 else -> "🎂"
             }
 
-            ctx.event.guild.banner?.let { guildBanner ->
+            ctx.guild.banner?.let { guildBanner ->
                 val bannerUrl = guildBanner.getUrl(2048)
                 val banner = MediaGallery.of(MediaGalleryItem.fromUrl(bannerUrl))
                 components.addFirst(banner)
             }
 
             var icon = "https://i.pinimg.com/736x/a9/bd/25/a9bd25bc0cb5a63fa184e4a8bab2b2ea.jpg"
-            if (ctx.event.guild.icon != null) icon = ctx.event.guild.getIcon()!!.getUrl(1024)
+            if (ctx.guild.icon != null) icon = ctx.guild.getIcon()!!.getUrl(1024)
 
             val header = Section.of(
                 Thumbnail.fromUrl(icon),
@@ -69,7 +69,7 @@ class GuildInfoUI {
             val guildInfo = TextDisplay.of("## Информация о гильдии:")
             val channels = TextDisplay.of("\\💬 **Каналов:** $channelsSize | \\🎙️ **Войсов:** $voiceChannels")
             val roles = TextDisplay.of("\\👔 **Ролей:** $rolesCount | **IDG:** `$guildId`")
-            val prefixes = TextDisplay.of("\\🪄 Префиксы бота: ${ctx.guild.prefix?.joinToString(", ")}")
+            val prefixes = TextDisplay.of("\\🪄 Префиксы бота: ${ctx.guildData.prefix?.joinToString(", ")}")
             val footer = TextDisplay.of("-# **IDG** - айди гильдии (ID Guild)")
 
             components.add(header)
